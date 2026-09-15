@@ -1,8 +1,7 @@
 # Documentación del Proyecto: [Nombre a definir]
 
 > **Producto (placeholder):** Asistente Autónomo de Cobranzas B2B  
-> **Materia:** Seminario de Integración Profesional (TIF / SIP)  
-> **Fuentes:** propuesta técnica-comercial (`TPO - AI Chatbot`), teoría de Clases 01–06 (UADE - Seminario de Integración Profesional) y presentación académica *La Estrategia del Océano Azul* (W. Chan Kim & Renée Mauborgne, INSEAD).
+> > **Fuentes:** propuesta técnica-comercial (`TPO - AI Chatbot`), teoría fundamental  y presentación académica *La Estrategia del Océano Azul* (W. Chan Kim & Renée Mauborgne, INSEAD).
 > **Regla de trabajo:** este documento **no inventa** evidencia. Donde la propuesta no cubre un requisito de la teoría, hay un bloque `TODO`.
 > 
 > ---
@@ -19,14 +18,14 @@
 
 | Sección | Ancla teórica | Ancla de la propuesta |
 | --- | --- | --- |
-| 1. Problema | Clase 02 (reglas de redacción; antipatrones) y Clase 03 (sintaxis y características de un buen problema) | Redacción del problema, dolor de morosidad y métodos actuales |
-| 2. Segmentación y target | Clase 02 (tipos de segmentación, target market, modelos de mercado) | Secciones 2 y 3 de la propuesta |
-| 3. MVP y JTBD | Clase 01 (MVP, paradoja de la maleta, lista negra) y Clase 03 (JTBD) | MVP, scope y dolores operativos |
-| 4. Design Thinking | Clase 04 (persona, mapa de empatía, research) y Clase 06 (proceso no lineal, fail cheap) | Psicografía, iteración y fricción de cobranza |
+| 1. Problema | el marco teórico (reglas de redacción; antipatrones) y el marco teórico (sintaxis y características de un buen problema) | Redacción del problema, dolor de morosidad y métodos actuales |
+| 2. Segmentación y target | el marco teórico (tipos de segmentación, target market, modelos de mercado) | Secciones 2 y 3 de la propuesta |
+| 3. MVP y JTBD | el marco teórico (MVP, paradoja de la maleta, lista negra) y el marco teórico (JTBD) | MVP, scope y dolores operativos |
+| 4. Design Thinking | el marco teórico (persona, mapa de empatía, research) y el marco teórico (proceso no lineal, fail cheap) | Psicografía, iteración y fricción de cobranza |
 | 5. Scope y arquitectura | — (mapeo técnico de la propuesta) | Scope, monorepo y stack |
-| 6. Negocio y pitch | Clase 05 (elevator pitch, método Tony Robbins) | Modelos de facturación y pros/contras |
-| 7. Ideación y Roadmaps | Clase 06 (reglas de ideación, priorización, releases sucesivos y roadmap de producto) | Prototipo web evolutivo hacia WhatsApp multi-tenant |
-| 8. Océano Azul | Clase 06 y Presentación INSEAD (Kim & Mauborgne: ERIC, lienzo, debates, no clientes, secuencia BOI, ejecución) | Diferenciación frente a agencias de cobro y ERPs contables |
+| 6. Negocio y pitch | el marco teórico (elevator pitch, método Tony Robbins) | Modelos de facturación y pros/contras |
+| 7. Ideación y Roadmaps | el marco teórico (reglas de ideación, priorización, releases sucesivos y roadmap de producto) | Prototipo web evolutivo hacia WhatsApp multi-tenant |
+| 8. Océano Azul | el marco teórico y Presentación INSEAD (Kim & Mauborgne: ERIC, lienzo, debates, no clientes, secuencia BOI, ejecución) | Diferenciación frente a agencias de cobro y ERPs contables |
 
 ---
 
@@ -34,22 +33,22 @@
 
 ### 1.1 Hipótesis del problema (sin solución)
 
-Según la Clase 02 y la Clase 03, el problema es el **punto de partida** del proyecto: una **hipótesis** de un suceso actual con **impacto negativo**, escrita en oraciones cortas y objetivas, **sin incluir la solución**, sin frases del tipo “una app / un bot / una plataforma que…”, y sin prejuicios sobre causas o efectos. Esa hipótesis se **ratifica o se refuta** después, con investigación (encuestas, entrevistas, papers).
+Según el marco teórico y el marco teórico, el problema es el **punto de partida** del proyecto: una **hipótesis** de un suceso actual con **impacto negativo**, escrita en oraciones cortas y objetivas, **sin incluir la solución**, sin frases del tipo “una app / un bot / una plataforma que…”, y sin prejuicios sobre causas o efectos. Esa hipótesis se **ratifica o se refuta** después, con investigación (encuestas, entrevistas, papers).
 
 La propuesta describe un dolor actual en Argentina: la **alta morosidad** en administraciones de consorcios, colegios e instituciones intermedias. Cobrar es **incómodo**, **consume mucho tiempo**, y los métodos tradicionales (mail genérico o llamada) **generan fricción o son ignorados**. No hay capacidad humana para negociar un plan de pagos personalizado con cada deudor. Los mails masivos de intimación tienen **bajísima tasa de respuesta**; las llamadas de cobro generan **desgaste y evasión**. El seguimiento de morosos es **100% manual**, mes a mes.
 
-Eso cumple las reglas de un **buen problema para MVP** (Clase 03):
+Eso cumple las reglas de un **buen problema para MVP** (el marco teórico):
 
-| Criterio (Clase 03) | Cómo se cumple en esta hipótesis |
+| Criterio (el marco teórico) | Cómo se cumple en esta hipótesis |
 | --- | --- |
 | **Específico** | No es “la gente pierde tiempo”; es mora + seguimiento manual + canales genéricos en un usuario concreto. |
 | **Relevante** | Hay dolor económico (liquidez, recupero dilatado) e interpersonal (desgaste, evasión). |
 | **Enfocado** | No es “todos”: apunta a administradores de consorcios e instituciones educativas privadas (ver §2 y §3). |
 | **Validable en el corto plazo** | El MVP propuesto permite experimentar si un deudor responde a una negociación parametrizada (ver §3). |
 
-> **TODO:** La propuesta afirma “altas tasas de morosidad” y “bajísima tasa de respuesta”, pero **no cita datos reales** (porcentaje, fuente, paper o entrevista). La Clase 03 exige datos reales *siempre que sea posible*. Completar magnitud con investigación de mercado / user research.
+> **TODO:** La propuesta afirma “altas tasas de morosidad” y “bajísima tasa de respuesta”, pero **no cita datos reales** (porcentaje, fuente, paper o entrevista). El marco teórico exige datos reales *siempre que sea posible*. Completar magnitud con investigación de mercado / user research.
 
-### 1.2 Declaración del problema (sintaxis Clase 03)
+### 1.2 Declaración del problema (sintaxis formal)
 
 Plantilla obligatoria:
 
@@ -69,7 +68,7 @@ Esta redacción:
 - cierra con **impacto negativo objetivo** (respuesta, relación, tiempo de recupero, liquidez);
 - **no** nombra bot, app, IA ni WhatsApp como “la falta”.
 
-### 1.3 Preguntas guía (Clase 02 / Clase 03)
+### 1.3 Preguntas guía (el marco teórico / el marco teórico)
 
 | Pregunta | Respuesta con lo que hay hoy | Hueco |
 | --- | --- | --- |
@@ -82,7 +81,7 @@ Esta redacción:
 
 ### 1.4 Árbol de problemas y 5 Whys (borrador, no cerrado)
 
-La Clase 02 y la Clase 03 piden modelar **causas (raíces) → problema central (tronco) → efectos (ramas)** y no quedarse en la primera causa aparente (**5 Whys**).
+El marco teórico y el marco teórico piden modelar **causas (raíces) → problema central (tronco) → efectos (ramas)** y no quedarse en la primera causa aparente (**5 Whys**).
 
 ```text
 Causas (hipótesis, a validar)
@@ -99,9 +98,9 @@ Efectos
   └── Impacto negativo en liquidez y capacidad operativa
 ```
 
-> **TODO:** Completar un **Árbol de Problemas** cerrado y una cadena de **5 Whys** con evidencia (entrevistas a administradores/tesoreros). No tratar “no hay un bot” como causa raíz: la Clase 03 lo marca como antipatrón (“el problema del usuario NUNCA es ‘no existe una app’”).
+> **TODO:** Completar un **Árbol de Problemas** cerrado y una cadena de **5 Whys** con evidencia (entrevistas a administradores/tesoreros). No tratar “no hay un bot” como causa raíz: el marco teórico lo marca como antipatrón (“el problema del usuario NUNCA es ‘no existe una app’”).
 
-### 1.5 Diagnóstico de magnitud (Clase 03) — preliminar
+### 1.5 Diagnóstico de magnitud (el marco teórico) — preliminar
 
 | Variable | Lectura preliminar sobre el usuario primario | Nivel |
 | --- | --- | --- |
@@ -118,15 +117,15 @@ Lectura: perfil **mayoría B/C** (problema con potencial de superar la capacidad
 
 ## 2. Segmentación y Mercado Objetivo
 
-### 2.1 Para qué segmentamos (Clase 02)
+### 2.1 Para qué segmentamos (el marco teórico)
 
-La Clase 02 define **mercado** como el lugar de intercambio entre oferentes y demandantes, divisible en **segmentos y nichos**. Segmentar es clasificar usuarios por características compartidas para **satisfacer mejor necesidades**, identificar nichos, y **decidir a quién servir y a quién ignorar**.
+El marco teórico define **mercado** como el lugar de intercambio entre oferentes y demandantes, divisible en **segmentos y nichos**. Segmentar es clasificar usuarios por características compartidas para **satisfacer mejor necesidades**, identificar nichos, y **decidir a quién servir y a quién ignorar**.
 
-La misma clase advierte que la **demografía sola no alcanza** (ejemplo Príncipe Carlos vs. Ozzy Osbourne): *las personas se deberían considerar por los problemas y desafíos a los que se enfrentan*. Por eso la propuesta combina las cuatro variables y ancla el target en el **trabajo mensual de cobrar**, no solo en edad/ocupación.
+La metodología advierte que la **demografía sola no alcanza** (ejemplo Príncipe Carlos vs. Ozzy Osbourne): *las personas se deberían considerar por los problemas y desafíos a los que se enfrentan*. Por eso la propuesta combina las cuatro variables y ancla el target en el **trabajo mensual de cobrar**, no solo en edad/ocupación.
 
 ### 2.2 Las cuatro variables (extraídas de la propuesta)
 
-| Tipo (Clase 02) | Pregunta / definición de la clase | Aplicación en la propuesta |
+| Tipo (el marco teórico) | Pregunta / definición teórica | Aplicación en la propuesta |
 | --- | --- | --- |
 | **Geográfica** | Ubicación (país, región, ciudad). | Zonas urbanas de alta densidad en **Argentina**, foco inicial **CABA y GBA**. |
 | **Demográfica** | *¿Quién es nuestro cliente?* Edad, sexo, ocupación, etc. | Hombres y mujeres **30–60 años**. Ocupación: administradores de consorcios **matriculados**, dueños/gerentes de pymes de servicios, personal directivo o de **tesorería** en colegios e instituciones privadas. |
@@ -141,11 +140,11 @@ Justificación teórica: el corte geográfico acota el mercado inicial; el demog
 
 **No es el comprador del SaaS:** el deudor (moroso) es un **actor del flujo**, no el target comercial B2B.
 
-> **TODO:** Explicitar segmentos **fuera de alcance** para el cuatrimestre (por ejemplo: estudios jurídicos de cobro masivo, bancos, utilities, cobranzas B2C de retail). La Clase 02 exige decidir a quién **ignorar**.
+> **TODO:** Explicitar segmentos **fuera de alcance** para el cuatrimestre (por ejemplo: estudios jurídicos de cobro masivo, bancos, utilities, cobranzas B2C de retail). El marco teórico exige decidir a quién **ignorar**.
 
 ### 2.4 Target market primario
 
-La Clase 02: el **target market** es el **consumidor primario**; una vez identificado, se modela el producto hacia sus necesidades.
+El marco teórico: el **target market** es el **consumidor primario**; una vez identificado, se modela el producto hacia sus necesidades.
 
 **Target primario (propuesta):**
 
@@ -154,11 +153,11 @@ La Clase 02: el **target market** es el **consumidor primario**; una vez identif
 
 Patrón común: hacen el seguimiento **100% manual** y **absorben ellos mismos** la carga horaria y emocional de contactar deudores **uno por uno cada mes**.
 
-Eso cumple “orientado a un usuario concreto, no a todos” (Clase 03).
+Eso cumple “orientado a un usuario concreto, no a todos” (el marco teórico).
 
 > **TODO:** Decidir si el **único** comprador del MVP académico es el administrador de consorcios (más fácil de reclutar y de demo) y el tesorero queda como segmento secundario. Hoy la propuesta los pone **al mismo nivel**.
 
-### 2.5 Clasificación del modelo de mercado (Clase 02)
+### 2.5 Clasificación del modelo de mercado (el marco teórico)
 
 No es **mercado en masa** (necesidades comunes de un público enorme).  
 Se parece a **mercado de nicho** (vendedor–comprador B2B, segmento específico) con un matiz de **mercado segmentado**: consorcios y colegios tienen problemas *ligeramente similares* (mora, contacto manual, caja), no *muy distintos* (eso sería diversificado).  
@@ -170,11 +169,11 @@ No es **multilateral** en el sentido Uber/Airbnb: el deudor no es un segundo cli
 
 ## 3. Enfoque MVP y Jobs to be Done (JTBD)
 
-### 3.1 Qué es un MVP aquí (Clase 01)
+### 3.1 Qué es un MVP aquí (el marco teórico)
 
-La Clase 01: el MVP es la versión **más elemental** que reúne **solo** funcionalidades y atributos básicos para salir al mercado, **probar las aguas** y iterar con **feedback real**, sin gastar el cuatrimestre en un producto final complejo.
+El marco teórico: el MVP es la versión **más elemental** que reúne **solo** funcionalidades y atributos básicos para salir al mercado, **probar las aguas** y iterar con **feedback real**, sin gastar el cuatrimestre en un producto final complejo.
 
-Ejemplos de la clase: Amazon empezó vendiendo libros; Instagram, fotos con filtros; UberCab, pedir un viaje en una ciudad. Lo que vino después (Prime, Reels, carpooling) **no era el MVP**.
+Ejemplos clásicos: Amazon empezó vendiendo libros; Instagram, fotos con filtros; UberCab, pedir un viaje en una ciudad. Lo que vino después (Prime, Reels, carpooling) **no era el MVP**.
 
 **MVP declarado en la propuesta:** un **prototipo web que simula un chat de WhatsApp**.
 
@@ -184,11 +183,11 @@ Ejemplos de la clase: Amazon empezó vendiendo libros; Instagram, fotos con filt
 | Usuario (deudor simulado) | Negocia en lenguaje natural (*“No tengo todo el dinero ahora, ¿puedo pagar la mitad la semana que viene?”*). |
 | Sistema | Procesa la excusa y ofrece un **acuerdo formal** **solo** con los parámetros preconfigurados. |
 
-Eso es “mínimo” en el sentido de la clase: **una** conversación de negociación bajo políticas, no un ERP de consorcios, no un WhatsApp productivo a escala, no un motor de scoring crediticio.
+Eso es “mínimo” en el sentido metodológico: **una** conversación de negociación bajo políticas, no un ERP de consorcios, no un WhatsApp productivo a escala, no un motor de scoring crediticio.
 
-La Clase 03 refuerza: un MVP **no** busca el producto completo; busca validar si el problema **existe**, si alguien **quiere resolverlo**, y si la solución **tiene sentido**.
+El marco teórico refuerza: un MVP **no** busca el producto completo; busca validar si el problema **existe**, si alguien **quiere resolverlo**, y si la solución **tiene sentido**.
 
-### 3.2 Innovación en valor y la paradoja de la maleta (Clase 01)
+### 3.2 Innovación en valor y la paradoja de la maleta (el marco teórico)
 
 La **paradoja de la maleta**: la rueda (~3500 a.C.) y la maleta (~600 d.C.) existían por separado; recién en 1970 se **integraron** y se eliminó el esfuerzo de viajar. Eso ilustra la **brecha de innovación** y la **innovación en valor**: el MVP nace de **conectar piezas existentes** para un dolor real, no de inventar tecnología por la tecnología.
 
@@ -205,9 +204,9 @@ La **innovación en valor** del MVP no es “tener un chat”, es **integrar** d
 
 Eso es análogo a rueda + maleta: el valor está en la **unión al servicio del trabajo**, no en cada componente.
 
-### 3.3 Lista negra (Clase 01): qué no somos
+### 3.3 Lista negra (el marco teórico): qué no somos
 
-La Clase 01 **no acepta** (entre otros): sistemas de **reservas**; **ABM** genéricos (incluye *consorcios*); sistemas **para pagar** rentas, **expensas** o **cuotas de colegio**.
+El marco teórico **no acepta** (entre otros): sistemas de **reservas**; **ABM** genéricos (incluye *consorcios*); sistemas **para pagar** rentas, **expensas** o **cuotas de colegio**.
 
 | Ítem de la lista negra | Por qué esta propuesta no es ese ítem |
 | --- | --- |
@@ -215,17 +214,17 @@ La Clase 01 **no acepta** (entre otros): sistemas de **reservas**; **ABM** gené
 | ABM / CRUD de consorcios | El corazón del MVP **no** es alta/baja de unidades funcionales ni un padrón. El corazón es **procesar una excusa y cerrar un acuerdo bajo reglas**. El alta de una deuda es insumo, no el producto. |
 | “Sistema para pagar expensas / cuotas” | La lista negra apunta a un **pagador de cuotas** (portal de pago / tesorería CRUD). El trabajo que ataca la propuesta es la **negociación personalizada que hoy no escala**, el **desgaste de cobrar** y el **recupero dilatado** — no reemplazar el medio de pago de la expensa al día. |
 
-La justificación hay que poder **defenderla en clase**: el dominio (consorcios, colegios) **linda** con un ítem prohibido. La diferenciación es el **job** (negociar mora con política), no “otro ABM para pagar la cuota”.
+La justificación hay que poder **defenderla ante los evaluadores**: el dominio (consorcios, colegios) **linda** con un ítem prohibido. La diferenciación es el **job** (negociar mora con política), no “otro ABM para pagar la cuota”.
 
 > **TODO:** Dejar por escrito, para la defensa, una frase de una línea: *“No construimos un sistema para pagar expensas; construimos la validación de si se puede negociar mora con reglas, sin que el administrador haga la llamada.”* Confirmar con docentes si el recorte de dominio es aceptable.
 
-### 3.4 Job to be Done (Clase 03)
+### 3.4 Job to be Done (el marco teórico)
 
-Insight de la clase: el problema **nunca** es “no existe una app”; el problema está en el **proceso**. El administrador no “quiere un bot”; quiere **sacar adelante el recupero sin destruir la relación ni el mes laboral**.
+Insight fundamental: el problema **nunca** es “no existe una app”; el problema está en el **proceso**. El administrador no “quiere un bot”; quiere **sacar adelante el recupero sin destruir la relación ni el mes laboral**.
 
 **Situación real (paso 1 JTBD):** cada mes, una cartera de deudores; Excel/WhatsApp; mails que no contestan; llamadas que desgastan; presión de caja; miedo a quedar como “el que hostiga al vecino”.
 
-**Job (paso 2) — plantilla de la clase:** *“Cuando [situación], quiero [motivación], para poder [resultado].”*
+**Job (paso 2) — plantilla metodológica:** *“Cuando [situación], quiero [motivación], para poder [resultado].”*
 
 > Cuando cierra el mes y hay saldos vencidos en la cartera, quiero negociar un plan de pago **viable y dentro de la política de la administración** con cada deudor **sin** absorber yo la pelea ni las veinte llamadas, para poder **recuperar liquidez** y **seguir siendo profesional y empático** frente a vecinos o familias.
 
@@ -237,14 +236,14 @@ Insight de la clase: el problema **nunca** es “no existe una app”; el proble
 | Atender muchos casos en paralelo (la propuesta habla de **cientos** sin empleados extra — eso es la visión de producto; el MVP valida **un** diálogo). | Evitar **incomodidad, enojo y desgaste** de cobrar en persona o por teléfono. | Mantener **imagen empática** y gestión **profesional/moderna**. |
 | Convertir una excusa en un **acuerdo escrito** trazable. | Reducir la frustración de que el mail masivo **sea ignorado**. | Mostrar responsabilidad ante el consorcio / la institución (flujo de caja a cargo). |
 
-**Impacto en el corte del MVP (Clase 03):**
+**Impacto en el corte del MVP (el marco teórico):**
 
 - *Sin JTBD:* se construye un SaaS enorme (multi-tenant + WhatsApp real + métricas + créditos + hostigamiento legal).
 - *Con JTBD:* lo mínimo para **hacer el trabajo** es: deuda + reglas + diálogo + acuerdo dentro de parámetros.
 
 Eso coincide con el prototipo web simulado de la propuesta.
 
-**Señales de validación que la clase pide buscar** (múltiples herramientas desconectadas, confusión, mala carga, estrés): la propuesta ya las narra (Excel + WhatsApp desordenado + llamadas + estrés). Falta oírlas en campo.
+**Señales de validación que la metodología sugiere buscar** (múltiples herramientas desconectadas, confusión, mala carga, estrés): la propuesta ya las narra (Excel + WhatsApp desordenado + llamadas + estrés). Falta oírlas en campo.
 
 > **TODO:** Entrevistar al target y anotar citas textuales del job. Completar **solución actual** del deudor y del administrador (qué hacen hoy, no qué “deberían” hacer).
 
@@ -252,9 +251,9 @@ Eso coincide con el prototipo web simulado de la propuesta.
 
 ## 4. Design Thinking: Exploración del Usuario
 
-### 4.1 Trinidad y trampa del ingeniero (Clase 04)
+### 4.1 Trinidad y trampa del ingeniero (el marco teórico)
 
-La Clase 04 ordena tres lentes:
+El marco teórico ordena tres lentes:
 
 1. **Design Thinking** — explorar el problema; **qué** construir (empatía).  
 2. **Lean Startup** — validar si el negocio **tiene sentido** (MVP).  
@@ -262,13 +261,13 @@ La Clase 04 ordena tres lentes:
 
 Advierte que el **90%** de las startups fallan por construir algo que **nadie necesita**, no por mal código. Un MVP sano equilibra **deseabilidad**, **factibilidad** y **viabilidad**. Este documento cubre deseabilidad (persona/empatía) y factibilidad (stack); la viabilidad está en §6, aún con huecos de pricing.
 
-Las cinco fases del Design Thinking (**Empatizar / Entender → Definir / Enfocar → Idear / Explorar → Prototipar / Construir → Testear / Aprender**) tienen una naturaleza no lineal y recursiva (Clase 06). Los aprendizajes del testeo y prototipado disparan replanteos de la definición y de la empatía. 
+Las cinco fases del Design Thinking (**Empatizar / Entender → Definir / Enfocar → Idear / Explorar → Prototipar / Construir → Testear / Aprender**) tienen una naturaleza no lineal y recursiva (el marco teórico). Los aprendizajes del testeo y prototipado disparan replanteos de la definición y de la empatía. 
 
-La máxima rectora de la Clase 06 es tajante para perfiles técnicos: **“Itera rápido. Falla barato. El código es caro; el diseño es barato.”** Esto justifica metodológicamente por qué el equipo no arranca programando una integración compleja con la API oficial de WhatsApp ni un multi-tenant cerrado, sino un prototipo/sandbox web de simulación: validar las dinámicas de negociación y la aceptación del usuario antes de que el costo de desarrollo se dispare.
+La máxima rectora de el marco teórico es tajante para perfiles técnicos: **“Itera rápido. Falla barato. El código es caro; el diseño es barato.”** Esto justifica metodológicamente por qué el equipo no arranca programando una integración compleja con la API oficial de WhatsApp ni un multi-tenant cerrado, sino un prototipo/sandbox web de simulación: validar las dinámicas de negociación y la aceptación del usuario antes de que el costo de desarrollo se dispare.
 
-Lo que sigue es un **borrador analítico** a partir de la psicografía y los dolores de la propuesta, no un entregable cerrado. La cátedra exige **rigor** en la persona: *no hipotética*.
+Lo que sigue es un **borrador analítico** a partir de la psicografía y los dolores de la propuesta, no un entregable cerrado. La metodología adoptada exige **rigor** en la persona: *no hipotética*.
 
-> **TODO (entregable Clases 04 y 06):** 400 respuestas de encuesta difundida y analizada; entrevistas y observación de campo; Design Thinking de **al menos 3 usuarios** (persona + mapa de empatía + journey AS-IS). Hoy hay **un** borrador y **cero** fieldwork empírico consolidado.
+> **TODO (entregable):** 400 respuestas de encuesta difundida y analizada; entrevistas y observación de campo; Design Thinking de **al menos 3 usuarios** (persona + mapa de empatía + journey AS-IS). Hoy hay **un** borrador y **cero** fieldwork empírico consolidado.
 
 ### 4.2 Pregunta “¿Cómo podríamos…?” (Fase Definir)
 
@@ -280,7 +279,7 @@ En lugar de “hacer un bot de WhatsApp”:
 
 Representación **ficticia** con datos **tomados de la propuesta** (demografía + escenario + motivaciones). Nombre genérico, sin marca.
 
-| Campo (Clase 04) | Borrador |
+| Campo (el marco teórico) | Borrador |
 | --- | --- |
 | **Nombre (placeholder)** | Persona A — “Quien cobra el mes” |
 | **Demografía** | 30–60 años; ocupación: administrador/a de consorcios matriculado/a **o** tesorería de colegio privado mediano. |
@@ -294,7 +293,7 @@ Representación **ficticia** con datos **tomados de la propuesta** (demografía 
 
 ### 4.4 Mapa de empatía — cuadrantes pedidos (Persona A)
 
-La Clase 04 divide el mapa en **seis** cuadrantes. Aquí se desarrollan los tres que pediste el equipo; los otros tres quedan como TODO.
+El marco teórico divide el mapa en **seis** cuadrantes. Aquí se desarrollan los tres que pediste el equipo; los otros tres quedan como TODO.
 
 #### ¿Qué piensa y siente?
 
@@ -405,7 +404,7 @@ Separar **plataforma** y **agente** es el mecanismo para que dos frentes del equ
 
 ### 6.1 Cómo se vende el acceso
 
-La propuesta no vende instalación on-prem: vende **cuenta** en la plataforma web. El cliente carga deudores; el sistema opera el resto (visión). Eso es coherente con SaaS B2B de nicho (Clase 02).
+La propuesta no vende instalación on-prem: vende **cuenta** en la plataforma web. El cliente carga deudores; el sistema opera el resto (visión). Eso es coherente con SaaS B2B de nicho (el marco teórico).
 
 ### 6.2 Modelo de Facturación (Pricing)
 
@@ -428,11 +427,11 @@ La propuesta lista ventajas y riesgos del **servicio**, útiles para el slide de
 **Pros:** escalabilidad (muchas cobranzas sin headcount extra); menos fricción humana al cobrar; acuerdos **trazables por escrito**.  
 **Contras:** riesgo normativo (horarios/frecuencia → hostigamiento); **alucinaciones** (descuento que no existe); dependencia de **WhatsApp** (reportes → baneo).
 
-> **TODO (Plan de negocio Clase 01 / roadmap):** Business Model Canvas, costos (P&L) y decisión de **mix** (¿A+B, A+C?). Sin eso, “viabilidad” de la Clase 04 queda incompleta.
+> **TODO (Plan de negocio el marco teórico / roadmap):** Business Model Canvas, costos (P&L) y decisión de **mix** (¿A+B, A+C?). Sin eso, “viabilidad” de el marco teórico queda incompleta.
 
-### 6.3 Elevator pitch (Clase 05)
+### 6.3 Elevator pitch (el marco teórico)
 
-La Clase 05: si te cruzás a un inversor en un ascensor, tenés **~20 segundos**. Un pitch no empieza con “hemos construido…”, sino con el **dolor**. El **Método Tony Robbins** (clave 2 y 5) pide: **dolor → empatía → solución como alivio → impacto real + pedido concreto**. No abrir con el stack.
+El marco teórico: si te cruzás a un inversor en un ascensor, tenés **~20 segundos**. Un pitch no empieza con “hemos construido…”, sino con el **dolor**. El **Método Tony Robbins** (clave 2 y 5) pide: **dolor → empatía → solución como alivio → impacto real + pedido concreto**. No abrir con el stack.
 
 **Borrador (~20 s, sin marca):**
 
@@ -448,19 +447,19 @@ La Clase 05: si te cruzás a un inversor en un ascensor, tenés **~20 segundos**
 | Impacto real | Más recupero, menos pelea; validación en sandbox. |
 | Petición concreta | Reunión de 15 minutos / prueba con una mora. |
 
-Apoyos de oratoria (Clase 05), para cuando se *diga* este texto: visualizar el cierre antes de subir; cuerpo abierto; una idea por frase; cero jerga (`multi-tenant`, `LLM`) en el ascensor; el **conflicto** del storytelling es el administrador entre la caja y el vínculo humano.
+Apoyos de oratoria (el marco teórico), para cuando se *diga* este texto: visualizar el cierre antes de subir; cuerpo abierto; una idea por frase; cero jerga (`multi-tenant`, `LLM`) en el ascensor; el **conflicto** del storytelling es el administrador entre la caja y el vínculo humano.
 
-> **TODO:** Ensayar en voz alta y recortar a 20 segundos reales. Completar slide 1 del Pitch Deck (Clase 05) con este texto; el deck de 10 slides (problema, solución, mercado, competencia, marketing, negocio, roadmap, equipo, inversión) **no está** en la propuesta.
+> **TODO:** Ensayar en voz alta y recortar a 20 segundos reales. Completar slide 1 del Pitch Deck (el marco teórico) con este texto; el deck de 10 slides (problema, solución, mercado, competencia, marketing, negocio, roadmap, equipo, inversión) **no está** en la propuesta.
 
 ---
 
 ## 7. Proceso de Ideación, Releases y Roadmap del Producto
 
-### 7.1 Reglas de ideación y pensamiento divergente (Clase 06)
+### 7.1 Reglas de ideación y pensamiento divergente (el marco teórico)
 
-La Clase 06 profundiza la fase de **Idear (Explorar)** del Design Thinking bajo una consigna metafórica: **“¿Osos, helicópteros y miel?”**. Esta dinámica sintetiza el principio de **pensamiento lateral y recombinación**: las soluciones innovadoras rara vez surgen de la nada absoluta; suelen provenir de combinar elementos preexistentes de dominios dispares (anclaje directo con la *Paradoja de la Maleta* vista en §3.2).
+El marco teórico profundiza la fase de **Idear (Explorar)** del Design Thinking bajo una consigna metafórica: **“¿Osos, helicópteros y miel?”**. Esta dinámica sintetiza el principio de **pensamiento lateral y recombinación**: las soluciones innovadoras rara vez surgen de la nada absoluta; suelen provenir de combinar elementos preexistentes de dominios dispares (anclaje directo con la *Paradoja de la Maleta* vista en §3.2).
 
-La cátedra fija reglas explícitas para gobernar las sesiones de ideación del equipo de ingeniería:
+La metodología adoptada fija reglas explícitas para gobernar las sesiones de ideación del equipo de ingeniería:
 
 1. **No juzgar cantidad sobre calidad:** Maximizar el volumen inicial de propuestas sin censura previa.
 2. **Fomentar ideas locas / extremas:** Romper el marco convencional de la cobranza punitiva tradicional (por ejemplo: negociación con personalidades empáticas variables, subastas inversas de plazos de pago, acuerdos dinámicos gamificados).
@@ -472,18 +471,18 @@ La cátedra fija reglas explícitas para gobernar las sesiones de ideación del 
 8. **No necesitamos detalle minucioso al inicio:** Privilegiar la conceptualización amplia y la interacción global.
 9. **Uso sistemático de analogías:** Concebir al asistente como un *“mediador conciliador extrajudicial de faltas vecinales disponible las 24 horas”*.
 
-> **Premisa rectora de la clase:** *“No hay ideas que estén bien o mal, solo hay ideas. Se pueden encontrar soluciones a partir de cosas que ya existen y que no son nuevas.”*
+> **Premisa rectora:** *“No hay ideas que estén bien o mal, solo hay ideas. Se pueden encontrar soluciones a partir de cosas que ya existen y que no son nuevas.”*
 
-### 7.2 Grilla de priorización y narrativa de la solución (Entregable Clase 06)
+### 7.2 Grilla de priorización y narrativa de la solución (Entregable)
 
-Para convertir la divergencia creativa en un plan factible de ejecución, la Clase 06 exige dos herramientas: la **Grilla de Priorización** y la **Narrativa de la Propuesta de Solución**.
+Para convertir la divergencia creativa en un plan factible de ejecución, el marco teórico exige dos herramientas: la **Grilla de Priorización** y la **Narrativa de la Propuesta de Solución**.
 
 #### Grilla de Priorización (Impacto vs. Esfuerzo)
 
 | Nivel de Esfuerzo | Alto Impacto | Bajo Impacto |
 | --- | --- | --- |
 | **Bajo Esfuerzo** | **CUADRANTE I: Quick Wins (Corazón del MVP)**<br>• Chatbot web simulado en lenguaje natural.<br>• Módulo de reglas básicas fijas (tope de cuotas y quita condicional de punitorios).<br>• Carga unificada de deudor y monto adeudado.<br>• Resumen formal y acta de acuerdo trazable por escrito. | **CUADRANTE III: Rellenos / Tareas Menores**<br>• Configuración de tema visual (modo oscuro/claro).<br>• Descarga de acuerdos en PDF decorado.<br>• Mensaje predefinido de bienvenida configurable. |
-| **Alto Esfuerzo** | **CUADRANTE II: Proyectos Estratégicos (Roadmap Releases 2 y 3)**<br>• Conexión oficial a Meta Cloud API (WhatsApp Business multi-tenant).<br>• Generación dinámica de links de pago bancarios / fintech (Mercado Pago, MODO).<br>• Sincronización bidireccional vía API con ERPs de consorcios y colegios.<br>• Motor predictivo de propensión al pago y guardrails anti-alucinación robustos. | **CUADRANTE IV: Tareas a Descartar (Trampas)**<br>• Bot de llamadas telefónicas automáticas por voz sintetizada (genera rechazo psicológico severo y hostigamiento).<br>• Desarrollo de un sistema de facturación o ERP propio de expensas (cae en la lista negra de la cátedra).<br>• Motor de scoring crediticio complejo con machine learning propietario. |
+| **Alto Esfuerzo** | **CUADRANTE II: Proyectos Estratégicos (Roadmap Releases 2 y 3)**<br>• Conexión oficial a Meta Cloud API (WhatsApp Business multi-tenant).<br>• Generación dinámica de links de pago bancarios / fintech (Mercado Pago, MODO).<br>• Sincronización bidireccional vía API con ERPs de consorcios y colegios.<br>• Motor predictivo de propensión al pago y guardrails anti-alucinación robustos. | **CUADRANTE IV: Tareas a Descartar (Trampas)**<br>• Bot de llamadas telefónicas automáticas por voz sintetizada (genera rechazo psicológico severo y hostigamiento).<br>• Desarrollo de un sistema de facturación o ERP propio de expensas (cae en la lista negra de la metodología adoptada).<br>• Motor de scoring crediticio complejo con machine learning propietario. |
 
 #### Narrativa de la Propuesta de Solución
 
@@ -491,9 +490,9 @@ Para convertir la divergencia creativa en un plan factible de ejecución, la Cla
 >  
 > Nuestra propuesta de solución introduce un **asistente autónomo de cobranzas B2B**: un intermediario digital neutral que se contacta con el deudor a través de mensajería instantánea en un entorno privado, empático y respetuoso. El acreedor define previamente las políticas de flexibilidad aceptables (porcentaje máximo de quita de punitorios, cantidad admisible de cuotas y plazos de compromiso). El asistente dialoga en lenguaje natural, escucha la justificación o excusa del deudor y formula contrapropuestas estructuradas exclusivamente dentro de los parámetros autorizados. Una vez alcanzado el acuerdo, emite un compromiso documentado con enlace de pago. El administrador recupera liquidez y trazabilidad sin exponerse a la confrontación interpersonal, transformando un conflicto mensual en un proceso de concertación predecible y automatizado.
 
-### 7.3 Evolución por Releases: Del MVP al producto integral (Clase 06)
+### 7.3 Evolución por Releases: Del MVP al producto integral (el marco teórico)
 
-La Clase 06 conceptualiza el ciclo de vida del producto más allá del entregable inicial:
+El marco teórico conceptualiza el ciclo de vida del producto más allá del entregable inicial:
 - **Release 1 (MVP):** La versión más elemental posible para validar si el deudor está dispuesto a negociar con un asistente y si los acuerdos se mantienen dentro de la política sin alucinaciones.
 - **Release $N$:** Versiones incrementales que incorporan capas de automatización, canales reales y reportería estratégica, articuladas en un **Product Roadmap**.
 
@@ -517,10 +516,10 @@ La Clase 06 conceptualiza el ciclo de vida del producto más allá del entregabl
 | **Cierre y cobro** | Emisión de resumen de acuerdo textual con fecha de compromiso. | Generación dinámica de link de pago (Mercado Pago / pasarela fintech). | Conciliación automática de acreditación bancaria y libramiento de libre deuda. |
 | **Arquitectura** | Frontend web + sandbox de IA desacoplado. | SaaS multi-inquilino (Supabase auth + DB Postgres) y colas de mensajes. | Infraestructura distribuida de alta disponibilidad con analítica de datos agregada. |
 
-### 7.4 Product Roadmap visual y puntos estratégicos (Caso Uber, Clase 06)
+### 7.4 Product Roadmap visual y puntos estratégicos (Caso Uber, el marco teórico)
 
-La Clase 06 ilustra cómo productos líderes mundiales nacieron de un MVP hiper-enfocado y estructuraron su crecimiento mediante un **Timeline Roadmap**:
-- *Caso Uber (Clase 06):* Inició en San Francisco en 2010 como **UberCab** (MVP: una app para pedir un auto negro privado mediante un botón), continuó en 2012 con **UberX** (baja de costos y masificación), siguió con **UberPool** (carpooling para capturar usuarios sensibles al precio), y evolucionó hacia pruebas de vehículos autónomos, **UberMoto**, **Uber Freight** y **Uber Auto**. Ninguna de esas variantes existía en el Release 1.
+El marco teórico ilustra cómo productos líderes mundiales nacieron de un MVP hiper-enfocado y estructuraron su crecimiento mediante un **Timeline Roadmap**:
+- *Caso Uber (el marco teórico):* Inició en San Francisco en 2010 como **UberCab** (MVP: una app para pedir un auto negro privado mediante un botón), continuó en 2012 con **UberX** (baja de costos y masificación), siguió con **UberPool** (carpooling para capturar usuarios sensibles al precio), y evolucionó hacia pruebas de vehículos autónomos, **UberMoto**, **Uber Freight** y **Uber Auto**. Ninguna de esas variantes existía en el Release 1.
 
 Siguiendo esta metodología, el Roadmap visual del proyecto se estructura en hitos estratégicos temporales:
 
@@ -535,7 +534,7 @@ HITO 1 (Meses 1-2)          HITO 2 (Meses 3-4)          HITO 3 (Meses 5-7)      
   negociación IA.            y alucinaciones.            desde planillas.          • Conciliación bancaria.    • Reportería macro.
 ```
 
-> **TODO (Entregable Clase 06):** Formalizar con el equipo la versión final de la Grilla de Priorización y el Timeline Roadmap gráfico para el pitch y la entrega de hitos del proyecto.
+> **TODO:** Formalizar con el equipo la versión final de la Grilla de Priorización y el Timeline Roadmap gráfico para el pitch y la entrega de hitos del proyecto.
 
 ---
 
@@ -543,7 +542,7 @@ HITO 1 (Meses 1-2)          HITO 2 (Meses 3-4)          HITO 3 (Meses 5-7)      
 
 ### 8.1 Diagnóstico de Océano Rojo en Cobranzas y el Salto al Océano Azul
 
-El mercado actual de cobranzas y gestión de mora se comporta como un **Océano Rojo arquetípico** (Clase 06 y Cap. 1 INSEAD):
+El mercado actual de cobranzas y gestión de mora se comporta como un **Océano Rojo arquetípico** (el marco teórico y Cap. 1 INSEAD):
 - **Espacio saturado y sangriento:** Empresas de cobranza extrajudicial y estudios jurídicos compiten encarnizadamente mediante llamadas reiterativas, intimidación y cartas documento.
 - **Rivalidad destructiva:** La competencia se basa en “pisar cabezas” y cobrar comisiones leoninas (20% al 35% del recupero) que terminan perjudicando tanto al deudor como a la institución acreedora.
 - **Oferta commoditizada y pasiva:** Los sistemas de software administrativo de consorcios y colegios se limitan a emitir una liquidación mensual con el saldo adeudado, sin ofrecer ninguna capacidad activa de negociación.
@@ -618,7 +617,7 @@ La formulación sistemática del Océano Azul no es fruto de la inspiración for
 
 ### 8.4 Benchmarking Competitivo y Curva de Valor (Lienzo Estratégico)
 
-El **Lienzo Estratégico (Strategy Canvas)** es la herramienta de diagnóstico visual que permite graficar la curva de valor del producto contra las alternativas existentes del mercado, identificando las convergencias del océano rojo y proyectando la divergencia hacia el "espacio blanco" (Clase 06 y Cap. 2 INSEAD).
+El **Lienzo Estratégico (Strategy Canvas)** es la herramienta de diagnóstico visual que permite graficar la curva de valor del producto contra las alternativas existentes del mercado, identificando las convergencias del océano rojo y proyectando la divergencia hacia el "espacio blanco" (el marco teórico y Cap. 2 INSEAD).
 
 #### Factores de Competencia de la Industria (Eje X)
 
@@ -661,7 +660,7 @@ Nivel de Oferta
 
 ### 8.5 Esquema de las Cuatro Acciones: Matriz ERIC para el Proyecto
 
-La **Matriz ERIC (Eliminar, Reducir, Incrementar y Crear)** traduce el lienzo estratégico en acciones operativas concretas (Clase 06 y Cap. 2 INSEAD):
+La **Matriz ERIC (Eliminar, Reducir, Incrementar y Crear)** traduce el lienzo estratégico en acciones operativas concretas (el marco teórico y Cap. 2 INSEAD):
 
 ```text
 ┌───────────────────────────────────────────────┬───────────────────────────────────────────────┐
@@ -762,7 +761,7 @@ Kim y Mauborgne determinan que una idea de Océano Azul debe superar cuatro filt
 
 ### 8.10 De la Formulación a la Ejecución: Liderazgo en el Punto de Inflexión (Cap. 7 INSEAD)
 
-Las mejores estrategias fracasan si chocan contra obstáculos organizacionales en la ejecución. La cátedra rescata la doctrina del **Liderazgo en el Punto de Inflexión (Tipping Point Leadership)** aplicada por Bill Bratton en el NYPD: en lugar de dispersar esfuerzos, concentrar recursos en los puntos de inflexión crítica.
+Las mejores estrategias fracasan si chocan contra obstáculos organizacionales en la ejecución. La metodología adoptada rescata la doctrina del **Liderazgo en el Punto de Inflexión (Tipping Point Leadership)** aplicada por Bill Bratton en el NYPD: en lugar de dispersar esfuerzos, concentrar recursos en los puntos de inflexión crítica.
 
 ```text
 ┌──────────────────────────┬───────────────────────────────────────────┬──────────────────────────────────────────┐
@@ -812,7 +811,7 @@ Una estrategia de Océano Azul es sostenible únicamente si alinea en un sistema
 
 ### 8.13 Prevención de las Diez Trampas del Océano Rojo (Cap. 11 INSEAD)
 
-La cátedra y la obra de Kim & Mauborgne identifican **diez trampas mentales** comunes que arrastran a los innovadores de regreso al océano rojo. El proyecto establece defensas explícitas contra cada una:
+La metodología adoptada y la obra de Kim & Mauborgne identifican **diez trampas mentales** comunes que arrastran a los innovadores de regreso al océano rojo. El proyecto establece defensas explícitas contra cada una:
 
 ```text
 ┌─────────────────────────────────────────────────────────┬─────────────────────────────────────────────────────────┐
@@ -854,20 +853,20 @@ La cátedra y la obra de Kim & Mauborgne identifican **diez trampas mentales** c
 
 ## Anexo A — Trazabilidad teoría ↔ decisión
 
-| Decisión del Proyecto | Clase / Marco Teórico | Fundamentación en la Documentación |
+| Decisión del Proyecto | Marco Teórico | Fundamentación en la Documentación |
 | --- | --- | --- |
-| Redactar el problema como impacto negativo objetivo (mora, liquidez, desgaste), sin nombrar la solución | Clases 02 y 03 | Cumplimiento estricto de sintaxis de problema y eliminación de antipatrones en §1.2 |
-| Segmentación en cuatro variables y target market primario estrecho (administradores 5+ consorcios / colegios) | Clase 02 | Superación del sesgo demográfico puro; priorización psicográfica en §2.2 y §2.4 |
-| Prototipo web interactivo mínimo (sandbox de negociación bajo políticas preconfiguradas) | Clases 01 y 03 | Aplicación de la Paradoja de la Maleta (integrar piezas existentes) y JTBD en §3.1–3.4 |
-| Justificación explícita de frontera con la lista negra de la cátedra (no es ABM de expensas ni reserva) | Clase 01 | Defensa del producto frente a los ítems prohibidos por la cátedra en §3.3 |
-| Construcción de User Persona y Mapa de Empatía desde el estrés operativo y el miedo al conflicto | Clase 04 | Mapeo de frustraciones y motivaciones del usuario que cobra en §4.3 y §4.4 |
-| Adopción de proceso iterativo no lineal ("Falla barato; el código es caro, el diseño es barato") | Clase 06 | Priorización del prototipo/sandbox web antes de incurrir en desarrollo complejo en §4.1 |
-| Pitch de 20 segundos enfocado en dolor, empatía y alivio (Método Tony Robbins) | Clase 05 | Estructuración del elevator pitch en §6.3 sin tecnicismos de infraestructura |
-| Dinámica de pensamiento divergente ("Osos, helicópteros y miel") y priorización impacto/esfuerzo | Clase 06 | Reglas de ideación y selección de quick wins frente a proyectos complejos en §7.1 y §7.2 |
-| Planificación evolutiva en Releases sucesivos y Timeline Roadmap de producto | Clase 06 | Desglose de Releases 1, 2 y 3 y contraste con el caso histórico de Uber en §7.3 y §7.4 |
-| Salto de Océano Rojo a Océano Azul en cobranzas mediante Innovación de Valor (Diferenciación + Bajo Costo) | Clase 06 y Cap. 1 INSEAD | Diagnóstico de saturación y superación del trade-off convencional en §8.1 y §8.2 |
-| Aplicación del esquema de las Cuatro Acciones (Matriz ERIC) | Clase 06 y Cap. 2 INSEAD | Eliminación de llamadas y hostigamiento; creación de negociación asistida en §8.5 |
-| Lienzo Estratégico y detección del "Espacio Blanco" frente a 3 competidores | Clase 06 y Cap. 2 INSEAD | Curva de valor comparada frente a Gestión Manual, Agencias y ERPs en §8.4 |
+| Redactar el problema como impacto negativo objetivo (mora, liquidez, desgaste), sin nombrar la solución | Marco Teórico | Cumplimiento estricto de sintaxis de problema y eliminación de antipatrones en §1.2 |
+| Segmentación en cuatro variables y target market primario estrecho (administradores 5+ consorcios / colegios) | el marco teórico | Superación del sesgo demográfico puro; priorización psicográfica en §2.2 y §2.4 |
+| Prototipo web interactivo mínimo (sandbox de negociación bajo políticas preconfiguradas) | Marco Teórico | Aplicación de la Paradoja de la Maleta (integrar piezas existentes) y JTBD en §3.1–3.4 |
+| Justificación explícita de frontera con la lista negra de la metodología adoptada (no es ABM de expensas ni reserva) | el marco teórico | Defensa del producto frente a los ítems prohibidos por la metodología adoptada en §3.3 |
+| Construcción de User Persona y Mapa de Empatía desde el estrés operativo y el miedo al conflicto | el marco teórico | Mapeo de frustraciones y motivaciones del usuario que cobra en §4.3 y §4.4 |
+| Adopción de proceso iterativo no lineal ("Falla barato; el código es caro, el diseño es barato") | el marco teórico | Priorización del prototipo/sandbox web antes de incurrir en desarrollo complejo en §4.1 |
+| Pitch de 20 segundos enfocado en dolor, empatía y alivio (Método Tony Robbins) | el marco teórico | Estructuración del elevator pitch en §6.3 sin tecnicismos de infraestructura |
+| Dinámica de pensamiento divergente ("Osos, helicópteros y miel") y priorización impacto/esfuerzo | el marco teórico | Reglas de ideación y selección de quick wins frente a proyectos complejos en §7.1 y §7.2 |
+| Planificación evolutiva en Releases sucesivos y Timeline Roadmap de producto | el marco teórico | Desglose de Releases 1, 2 y 3 y contraste con el caso histórico de Uber en §7.3 y §7.4 |
+| Salto de Océano Rojo a Océano Azul en cobranzas mediante Innovación de Valor (Diferenciación + Bajo Costo) | el marco teórico y Cap. 1 INSEAD | Diagnóstico de saturación y superación del trade-off convencional en §8.1 y §8.2 |
+| Aplicación del esquema de las Cuatro Acciones (Matriz ERIC) | el marco teórico y Cap. 2 INSEAD | Eliminación de llamadas y hostigamiento; creación de negociación asistida en §8.5 |
+| Lienzo Estratégico y detección del "Espacio Blanco" frente a 3 competidores | el marco teórico y Cap. 2 INSEAD | Curva de valor comparada frente a Gestión Manual, Agencias y ERPs en §8.4 |
 | Superación de los 3 criterios de calidad (Enfoque, Divergencia, Lema contundente) | Cap. 2 INSEAD | Validación del tagline y el foco de producto en §8.6 |
 | Exploración de los Tres Niveles de No Clientes (Soon-to-be, Refusing, Unexplored) | Cap. 5 INSEAD | Captura de colegios y consorcios reacios a las agencias tradicionales en §8.8 |
 | Secuencia Estratégica Correcta e Índice BOI (Utilidad, Precio, Costo, Adopción) | Cap. 6 INSEAD | Chequeo metódico de viabilidad técnica, comercial y organizativa en §8.9 |
@@ -883,7 +882,7 @@ La cátedra y la obra de Kim & Mauborgne identifican **diez trampas mentales** c
 2. **Árbol de Problemas y 5 Whys:** Cerrar el árbol causal con citas textuales obtenidas de entrevistas de campo.
 3. **Segmentos explícitamente fuera de alcance:** Delimitar formalmente la exclusión de banca corporativa, utilities masivas y cobranzas retail para el alcance del cuatrimestre.
 4. **Target primario del cuatrimestre:** Decidir si el MVP se valida exclusivamente con administradores de consorcios (mayor facilidad de testeo local) dejando a los colegios privados para el Release 2.
-5. **Fieldwork de Design Thinking (Entregable Clases 04 y 06):**
+5. **Fieldwork de Design Thinking :**
    - Difundir y analizar la **encuesta cuantitativa con meta de 400 respuestas**.
    - Consolidar **3 User Personas reales** (no hipotéticas), 3 Mapas de Empatía completos (incorporando cuadrantes *ve*, *oye*, *dice y hace*) y el Customer Journey Map AS-IS.
 6. **Confirmación con docentes sobre frontera de lista negra:** Presentar y convalidar la defensa de no pertenencia a sistemas de reservas ni plataformas genéricas de pago de expensas.
@@ -891,9 +890,9 @@ La cátedra y la obra de Kim & Mauborgne identifican **diez trampas mentales** c
 8. **Políticas y Guardrails anti-alucinación:** Implementar validadores a nivel prompt y runtime para asegurar que el agente no prometa quitas ni cuotas fuera de los rangos autorizados.
 9. **Definición de unidad de créditos y modelo de costos:** Detallar la métrica de cobro por uso y proyectar la estructura P&L (costos de inferencia vs. ingresos por comisión de éxito).
 10. **Seguridad:** Rotar y suprimir la API key en texto plano que figuraba en la propuesta original, asegurando variables de entorno seguras.
-11. **Oratoria y Elevator Pitch:** Ensayar el pitch de 20 segundos cronometrados y completar la estructura del Pitch Deck de 10 diapositivas según Clase 05.
-12. **Grilla de Priorización formalizada (Entregable Clase 06):** Validar con todo el equipo de desarrollo las ponderaciones de esfuerzo e impacto de cada funcionalidad.
-13. **Curva de Valor empírica (Entregable Clase 06):** Contrastar las calificaciones de los factores del lienzo estratégico con administradores reales para validar el distanciamiento de la curva.
+11. **Oratoria y Elevator Pitch:** Ensayar el pitch de 20 segundos cronometrados y completar la estructura del Pitch Deck de 10 diapositivas según el marco teórico.
+12. **Grilla de Priorización formalizada (Entregable):** Validar con todo el equipo de desarrollo las ponderaciones de esfuerzo e impacto de cada funcionalidad.
+13. **Curva de Valor empírica (Entregable):** Contrastar las calificaciones de los factores del lienzo estratégico con administradores reales para validar el distanciamiento de la curva.
 14. **Narrativa de Solución pulida:** Ajustar el texto descriptivo de la propuesta de solución para su incorporación formal en presentaciones y memorias técnicas.
 
 ---
