@@ -6,7 +6,7 @@
 * **Nombre del Grupo:** [A definir]
 * **Nombre de Fantasía (MVP):** [A definir]
 * **Integrantes:**
-  * Juan Cruz Elliff - Legajo: 1072417
+  * Juan Cruz Elliff - Legajo: 1140086
   * Santiago Garbini - Legajo: 1188868
   * Tomas Maximo Hokama - Legajo: 1195217
   * Maximiliano Ivan Huertas - Legajo: 1072417
