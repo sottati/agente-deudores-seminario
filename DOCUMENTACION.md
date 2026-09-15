@@ -4,6 +4,14 @@
 > **Materia:** Seminario de Integración Profesional (TIF / SIP)  
 > **Fuentes:** propuesta técnica-comercial (`TPO - AI Chatbot`), teoría de Clases 01–06 (UADE - Seminario de Integración Profesional) y presentación académica *La Estrategia del Océano Azul* (W. Chan Kim & Renée Mauborgne, INSEAD).
 > **Regla de trabajo:** este documento **no inventa** evidencia. Donde la propuesta no cubre un requisito de la teoría, hay un bloque `TODO`.
+> 
+> ---
+> 
+> ### Estado Actual de la Implementación
+> * **Estructura base:** Se ha configurado el repositorio bajo un esquema *monorepo* (usando `pnpm`).
+> * **Frontend (MVP Mock):** Iniciado en `apps/platform` con React 19, Vite, TanStack Router y shadcn/ui. Incluye identidad visual (logo y tema dark/light).
+> * **Inteligencia Artificial:** *Pendiente.* (La capa del agente se alojará en `apps/agent`).
+> * **Gestión Documental:** Documentos como el listado de stakeholders, tablero Kanban, encuestas y entrevistas están en fase de desarrollo.
 
 ---
 
@@ -362,31 +370,24 @@ La Clase 04 divide el mapa en **seis** cuadrantes. Aquí se desarrollan los tres
 
 ### 5.2 Monorepo propuesto
 
-La propuesta dibuja dos apps bajo `apps/`. Estructura de trabajo alineada a ese corte:
+La arquitectura está estructurada como un monorepo gestionado por `pnpm`. Se dividió en dos aplicaciones bajo `apps/`:
 
 ```text
 .
 ├── apps/
-│   ├── platform/                 # SaaS: landing, auth, dashboard, config del agente
-│   │   ├── app/
-│   │   │   ├── routes/
-│   │   │   │   ├── _index.tsx    # Landing  →  /
-│   │   │   │   ├── app.tsx       # Dashboard →  /app
-│   │   │   │   ├── profile.tsx   #           →  /app/profile
-│   │   │   │   └── agente.tsx    #           →  /app/agente
-│   │   │   └── components/       # shadcn
+│   ├── platform/                 # SaaS (React, Vite, TanStack Router, shadcn)
+│   │   ├── src/
+│   │   ├── public/
+│   │   ├── components.json
 │   │   └── package.json
-│   └── agent/                    # IA, estado de conversación, sandbox
-│       ├── src/
-│       │   ├── policies/         # reglas de negociación por organización
-│       │   ├── runtime/          # CF Agents / AI SDK / Mastra / Pi (a elegir)
-│       │   └── sandbox/          # simulación de chat (MVP)
-│       └── package.json
-├── packages/                     # (opcional) tipos compartidos deuda/acuerdo
+│   └── agent/                    # IA, estado de conversación, sandbox (A definir)
+│       └── README.md
+├── pnpm-workspace.yaml
+├── package.json
 └── DOCUMENTACION.md
 ```
 
-Separar **plataforma** y **agente** no es capricho de carpetas: es el mecanismo para que dos frentes del equipo avancen sin acoplar el dashboard al runtime de IA.
+Separar **plataforma** y **agente** es el mecanismo para que dos frentes del equipo avancen sin acoplar el dashboard al runtime de IA.
 
 ### 5.3 Relación arquitectura ↔ JTBD
 
