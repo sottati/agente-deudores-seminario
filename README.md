@@ -6,11 +6,14 @@
 * **Nombre del Grupo:** [A definir]
 * **Nombre de Fantasía (MVP):** [A definir]
 * **Integrantes:**
-  * [Nombre 1] - Legajo: [X] - Rol: [X]
-  * [Nombre 2] - Legajo: [X] - Rol: [X]
+  * Juan Cruz Elliff - Legajo: 1072417
+  * Santiago Garbini - Legajo: 1188868
+  * Tomas Maximo Hokama - Legajo: 1195217
+  * Maximiliano Ivan Huertas - Legajo: 1072417
+  * Simon Ottati - Legajo: 1155931
 
 ## Organización y Seguimiento
-* **Tablero Kanban:** [Link al tablero]
+* **Tablero Kanban:** [Linear Kanban Board](https://linear.app/santiago-garbini/project/seminario-de-gestion-de-tecnologia-3bd4add3a15a/view/kanban-5f46e4e8019c)
 * **Documentación Principal:** [DOCUMENTACION.md](./DOCUMENTACION.md)
 * **Uso de IA:** [USO_IA.md](./USO_IA.md) *(Pendiente)*
 
