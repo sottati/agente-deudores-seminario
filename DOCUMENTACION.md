@@ -353,12 +353,14 @@ La Clase 04 divide el mapa en **seis** cuadrantes. Aquí se desarrollan los tres
 
 **Stack candidato (no cerrado):**
 
-| Capa | Opciones en la propuesta |
+| Capa | Definición para el MVP |
 | --- | --- |
-| Plataforma (front / routing) | React Router **/** Next.js **/** TanStack Router |
-| Agente (IA y estado) | AI SDK / Mastra / Pi / Cloudflare Agents |
-| Backend de plataforma | *“Algo para el backend”* — no elegido |
-| UI | shadcn ([documentación de create](https://ui.shadcn.com/create)) |
+| Plataforma (front / routing) | React 19 + TanStack Router + Vite |
+| Agente (IA y estado) | Vercel AI SDK (a confirmar) con **GPT-5.6 Luna** |
+| Backend / Base de Datos | (A definir, posible BaaS como Supabase) |
+| UI | shadcn/ui y Tailwind CSS |
+
+> **Decisión Técnica - Modelo de IA:** Se seleccionó **GPT-5.6 Luna** como modelo fundacional. Se priorizó su robustez en el cumplimiento estricto de system prompts (guardrails) para evitar "alucinaciones" (como otorgar descuentos no permitidos por la administración), además de contar con excelentes capacidades de *Function Calling* y un balance ideal de costo/velocidad.
 
 > **TODO:** La consigna interna del equipo mencionaba **Supabase**. **No figura** en `TPO - AI Chatbot`. Decidir si Supabase es auth + Postgres + storage del multi-tenant, u otra pieza, y documentarlo.  
 > **TODO:** Elegir **una** opción de router (React Router vs Next.js vs TanStack Router) y **una** de runtime de agente.  
@@ -405,37 +407,19 @@ Separar **plataforma** y **agente** es el mecanismo para que dos frentes del equ
 
 La propuesta no vende instalación on-prem: vende **cuenta** en la plataforma web. El cliente carga deudores; el sistema opera el resto (visión). Eso es coherente con SaaS B2B de nicho (Clase 02).
 
-### 6.2 Tres modelos de facturación (propuesta)
+### 6.2 Modelo de Facturación (Pricing)
 
-La propuesta **plantea** tres modelos. No elige uno solo ni publica una lista de precios.
+Tras analizar distintas alternativas, el equipo se decantó por un **Modelo Mixto (Suscripción Base + Comisión por Éxito)**, dado que es el estándar más sólido para productos B2B de cobranzas y alinea los incentivos del proveedor con los del cliente.
 
-#### A. Suscripción base
+#### Modelo Mixto
+1. **Suscripción Base Accesible (Ej. $15 USD/mes):**
+   - **Qué cubre:** Mantenimiento de la infraestructura, acceso permanente al *dashboard* de métricas web, y los costos fijos de la línea de WhatsApp Business.
+   - **Por qué:** Permite cubrir los costos operativos (servidores, tokens básicos del LLM GPT-5.6 Luna) y da previsibilidad financiera básica al vendor.
+2. **Comisión por Éxito (Ej. 1.5% - 3%):**
+   - **Qué cubre:** Se cobra un porcentaje *solo* sobre el capital de mora efectivamente recuperado a través de la intervención del agente.
+   - **Por qué:** Elimina la barrera de entrada y el riesgo principal para el cliente ("¿y si pago el software y el bot no cobra nada?"). Alinea el éxito del producto con el éxito financiero de la institución.
 
-- Abono **mensual fijo y accesible**.  
-- Cubre: uso de la plataforma, **panel de métricas**, mantenimiento del **número de WhatsApp corporativo**.
-
-| Pros (derivados de lo escrito) | Contras (huecos / tensiones) |
-| --- | --- |
-| Ingreso predecible para el vendor. | Si el bot “no recupera”, el cliente paga igual → más fricción de venta que la comisión. |
-| Encaja con un dashboard permanente. | El WhatsApp corporativo **no está** en el MVP simulado: la suscripción “completa” es visión, no el prototipo. |
-| “Accesible” baja la barrera. | No hay monto. |
-
-#### B. Comisión por éxito
-
-- **3% o 5%** (ejemplo de la propuesta) **solo** sobre el dinero que la IA **recupera**.  
-- La propuesta lo llama **verdadera ventaja competitiva**: el cliente asume **riesgo bajísimo** porque paga si hay capital recuperado.
-
-| Pros | Contras |
-| --- | --- |
-| Alineado al job (caja recuperada). | Ingreso variable; depende de mora, mix de deudores y calidad del agente. |
-| Facilita el pitch comercial. | Hay que definir qué cuenta como “recuperado” (promesa vs. pago efectivo). |
-| | Riesgo de disputa si el acuerdo se cierra y el dinero no entra. |
-
-#### C. Pago por uso mediante créditos
-
-- Solo el título está en la propuesta.
-
-> **TODO:** Especificar unidad de crédito (mensaje, conversación, deudor contactado, token de modelo), pack, vencimiento y si convive con A+B o es alternativa.
+> **Nota sobre Costos de IA:** La elección del modelo fundacional **GPT-5.6 Luna** favorece la viabilidad de este modelo de *pricing*, ya que los costos por token (API) de esta versión son lo suficientemente bajos como para ser absorbidos cómodamente por la suscripción base, dejando la comisión por éxito como margen de ganancia puro.
 
 #### Lectura de producto (pros/contras **del sistema**, no del pricing)
 
