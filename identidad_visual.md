@@ -1,8 +1,19 @@
 # Identidad Visual y Sistema de Diseño
 
-> Documento de referencia de branding para el proyecto **Asistente Autónomo de Cobranzas B2B**.
+> Documento de referencia de branding para **Pacta.ai** (Asistente Autónomo de Cobranzas B2B).
 
-![Landing page – modo oscuro](C:/Users/santi/.gemini/antigravity/brain/85bd2881-a200-4a6b-ae5b-e554703c3065/landing_screenshot.png)
+![Landing page – modo oscuro](./assets/landing_screenshot.png)
+
+---
+
+## Naming de Marca: Pacta.ai
+
+El nombre elegido para el producto es **Pacta.ai**. Esta decisión verbal es el núcleo de la estrategia de Océano Azul y define el tono de toda la comunicación de la empresa.
+
+| Elemento | Transmite y Justifica |
+| :--- | :--- |
+| **"Pacta"** | Proviene de la acción de *pactar*. Desplaza el foco del dolor de la "deuda" hacia la positividad del **acuerdo mutuo**. Transmite diplomacia, empatía y resolución pacífica, alejándose radicalmente del tono agresivo o punitivo de las cobranzas tradicionales. Le asegura al cliente que su vínculo institucional (con vecinos o familias de colegios) será cuidado. |
+| **".ai"** | Posiciona al producto instantáneamente como una **herramienta tecnológica moderna**. Comunica que la negociación no requiere fricción humana manual, sino que es impulsada por Inteligencia Artificial autónoma, otorgándole un perfil de startup SaaS innovadora. |
 
 ---
 
@@ -117,7 +128,7 @@ La fuente elegida para todo el producto es **Geist Variable**, la familia tipogr
 | Uso | Peso | Tracking | Ejemplo |
 | :--- | :--- | :--- | :--- |
 | **Título principal (hero)** | Semibold (600) | Compacto (negativo) | "Recuperá deuda sin convertir cada cobro en una pelea." |
-| **Nombre de marca** | Semibold (600) | Compacto | "Cobro" |
+| **Nombre de marca** | Semibold (600) | Compacto | "pacta.ia" |
 | **Cuerpo de texto** | Regular (400) | Normal | Párrafos, descripciones, labels |
 | **Datos numéricos** | Variable | Normal | "$8,4M", "42", "18" |
 
@@ -133,40 +144,42 @@ La fuente elegida para todo el producto es **Geist Variable**, la familia tipogr
 
 ---
 
-## 4. Logo e Isotipo
+## 4. Logo e Isotipo Oficial
+
+![Logo Oficial Pacta.ai](./assets/pacta_logo.jpg)
 
 ### 4.1 Composición
 
-El logo se compone de dos elementos:
+El logo oficial se compone de dos elementos centrales:
 
 ```
-[ 🏢 ]  Cobro
-  ↑         ↑
-isotipo   logotipo
+[ 🤝🏢 ]   pacta.ia
+   ↑          ↑
+isotipo    wordmark
 ```
 
-| Elemento | Descripción |
+| Elemento | Implementación y Descripción |
 | :--- | :--- |
-| **Isotipo** | Un cuadrado con bordes redondeados en color rosa primario, conteniendo un ícono lineal de edificio en blanco. |
-| **Logotipo** | La palabra "Cobro" en Geist Semibold con tracking compacto, posicionada a la derecha del isotipo. |
+| **Isotipo (App Icon)** | Contenedor de bordes redondeados (`rounded-lg`) en color primario magenta (`#C31952`), en cuyo interior se integra una silueta lineal blanca que fusiona dos conceptos clave: el **apretón de manos** (el pacto / acuerdo alcanzado) y los **edificios institucionales** (consorcios, colegios y comunidades administradas). |
+| **Logotipo / Wordmark** | La denominación **"pacta.ia"** en minúsculas, con tipografía geométrica sans-serif limpia en blanco puro sobre fondo oscuro. |
 
-### 4.2 Comportamiento
+### 4.2 Comportamiento según el Contexto
 
 | Contexto | Qué se muestra |
 | :--- | :--- |
-| **Navbar completa** | Isotipo + logotipo (composición horizontal) |
-| **Favicon / pestañas del navegador** | Solo isotipo (cuadrado rosa con edificio) |
-| **Sidebar del dashboard** | Isotipo + nombre de la organización del cliente |
+| **Navbar y Cabeceras Web** | Isotipo + logotipo en disposición horizontal completa. |
+| **Favicon y Pestañas del Navegador** | Solo isotipo (el contenedor magenta con el apretón de manos y edificios). |
+| **Avatar de Canales de Chat (WhatsApp)** | Isotipo en formato circular/cuadrado redondeado para máxima legibilidad en avatar de 64px. |
+| **Documentos y Actas de Acuerdo de Pago** | Composición horizontal completa en cabecera de las constancias emitidas al deudor. |
 
-### ¿Por qué este diseño?
+### 4.3 Justificación Semiótica y de Diseño
 
-| Aspecto | Justificación |
+| Aspecto | Justificación Estratégica |
 | :--- | :--- |
-| **Ícono de edificio** | Referencia directa al **dominio principal**: administración de consorcios y comunidades. Comunica inmediatamente "gestión institucional" sin necesidad de texto explicativo. |
-| **Forma cuadrada redondeada** | Sigue la convención de íconos de app (iOS, Android, macOS). Genera **familiaridad instantánea** y sugiere que el producto puede evolucionar hacia una app nativa o PWA. |
-| **Color del isotipo** | El fondo rosa primario garantiza que el logo sea **reconocible instantáneamente** incluso en tamaños mínimos (16px en favicon). La marca se identifica por color antes que por forma. |
-| **Simplicidad del ícono** | El edificio está representado con trazos lineales simples, sin detalles finos que se pierdan en tamaños reducidos. Funciona desde un favicon de 16px hasta una diapositiva de presentación. |
-| **Nombre "Cobro"** | Es directo, honesto, y brutalmente minimalista. No esconde lo que el producto hace. Sigue la tendencia de nombres de una sola palabra en SaaS (Stripe, Linear, Notion, Figma). |
+| **Fusión Handshake + Edificio** | Comunica la doble propuesta de valor al instante: la **solución de fondo** (el acuerdo pacífico, la mediación no confrontativa) aplicada al **sector objetivo** (propiedad horizontal, instituciones y comunidades). Rompe de inmediato con la iconografía punitiva de las cobranzas tradicionales. |
+| **Formato App Icon** | El cuadrado redondeado otorga solidez, delimita el isotipo en cualquier plataforma (web, móvil, avatar de WhatsApp Business) y transmite una experiencia de producto digital nativo y moderno. |
+| **Minúsculas ("pacta.ia")** | El uso de caja baja en el wordmark aporta **cercanía, amabilidad y accesibilidad psicológica**, reforzando que no se trata de una corporación intimidante, sino de un facilitador de diálogo asistido por IA. |
+| **Sufijo ".ia"** | Manifiesta explícitamente la base tecnológica de automatización inteligente y posiciona a la empresa en el estándar de startups globales de software. |
 
 ---
 
@@ -251,12 +264,13 @@ Todos los elementos de la interfaz usan esquinas redondeadas con una escala prog
 
 | Pilar | Decisión | Intención |
 | :--- | :--- | :--- |
+| **Naming** | Pacta.ai | Enfoque en el pacto y resolución vs. dolor de la deuda |
 | **Color primario** | Rosa / Magenta (`#C31952` / `#A21245`) | Empatía, modernidad, diferenciación vs. competidores |
 | **Colores neutros** | Escala de grises sin saturación | Legibilidad, jerarquía, protagonismo de los datos |
 | **Tema por defecto** | Oscuro (con light automático) | Premium, anti-fatiga, contraste del rosa |
 | **Gradientes** | Shader animado rosa-slate / rosa-lavanda | Inmersión, identidad, transición narrativa |
 | **Tipografía** | Geist Variable (Vercel) | Claridad técnica, datos financieros, coherencia tech |
-| **Logo** | Edificio rosa + "Cobro" | Dominio inmobiliario/institucional + nombre directo |
+| **Logo** | App Icon (Handshake + Edificios) + "pacta.ia" | Mediación y acuerdo en comunidades + identidad tecnológica |
 | **Bordes** | Redondeados progresivos (6-22px) | Suavidad, accesibilidad, coherencia con el isotipo |
 | **Responsividad** | 3 breakpoints (mobile, tablet, desktop) | Cobertura total de dispositivos del target |
 | **Tema adaptativo** | Detección automática del SO | Respeto al usuario, coherencia con la filosofía empática |
