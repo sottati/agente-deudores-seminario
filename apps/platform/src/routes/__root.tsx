@@ -24,6 +24,15 @@ export const Route = createRootRoute({
         rel: "stylesheet",
         href: appCss,
       },
+      {
+        rel: "icon",
+        href: "/pacta-isotipo.png",
+        type: "image/png",
+      },
+      {
+        rel: "manifest",
+        href: "/manifest.json",
+      },
     ],
   }),
   notFoundComponent: () => (

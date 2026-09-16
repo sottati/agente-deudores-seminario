@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router"
-import { Building02Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
 
+import { BrandLogo } from "@/components/brand-logo"
 import { Button } from "@/components/ui/button"
 import { useResolvedDark } from "@/hooks/use-resolved-dark"
 import { cn } from "@/lib/utils"
@@ -20,19 +19,10 @@ export function Navigation() {
             : "border-border/70 bg-background/80 text-foreground shadow-foreground/8"
         )}
       >
-        <Link
-          to="/"
-          className={cn(
-            "flex shrink-0 items-center gap-2 rounded-lg py-1.5 outline-none focus-visible:ring-2 focus-visible:ring-ring",
-            isDark ? "text-white" : "text-foreground"
-          )}
-          aria-label="pacta.ia, inicio"
-        >
-          <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm sm:size-8">
-            <HugeiconsIcon icon={Building02Icon} strokeWidth={2} />
-          </span>
-          <span className="text-sm font-semibold tracking-tight">pacta.ia</span>
-        </Link>
+        <BrandLogo
+          asLink
+          wordmarkClassName={isDark ? "text-white" : "text-foreground"}
+        />
 
         <div className="ml-auto flex items-center">
           <Button

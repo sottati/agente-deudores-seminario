@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router"
+import { BrandIsotipo } from "@/components/brand-logo"
 import {
   BotIcon,
-  Building02Icon,
   DashboardSquare02Icon,
   MessageMultiple02Icon,
   Settings02Icon,
@@ -44,11 +44,11 @@ export function AppSidebar() {
               tooltip="pacta.ia"
               render={<Link to="/dashboard" />}
             >
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <HugeiconsIcon icon={Building02Icon} strokeWidth={2} />
-              </span>
+              <BrandIsotipo />
               <span className="min-w-0 leading-tight">
-                <span className="block truncate font-semibold">pacta.ia</span>
+                <span className="block truncate font-semibold lowercase">
+                  pacta.ia
+                </span>
                 <span className="block truncate text-xs text-muted-foreground">
                   Consorcios del Sur
                 </span>

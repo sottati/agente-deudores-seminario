@@ -45,7 +45,7 @@ function LoginPage() {
                 type="email"
                 placeholder="nombre@empresa.com"
                 autoComplete="email"
-                defaultValue="demo@cobro.app"
+                defaultValue="demo@pacta.ai"
               />
             </div>
 

@@ -6,10 +6,15 @@ const LIGHT_COLORS = ["#e7b5bf", "#edcddb", "#f5f5f8", "#e3e3f2"]
 /** Deeper rose and slate tones for dark mode. */
 const DARK_COLORS = ["#792440", "#501f38", "#322523", "#2c2b41"]
 
-export function HeroShaderGradient() {
+export function HeroShaderGradient({ className }: { className?: string }) {
   const isDark = useResolvedDark()
 
   return (
-    <ShaderGradient colors={isDark ? DARK_COLORS : LIGHT_COLORS} theme="auto" />
+    <ShaderGradient
+      className={className}
+      colors={isDark ? DARK_COLORS : LIGHT_COLORS}
+      speed={0.2}
+      theme="auto"
+    />
   )
 }

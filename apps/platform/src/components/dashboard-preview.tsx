@@ -1,6 +1,6 @@
+import { BrandIsotipo } from "@/components/brand-logo"
 import {
   BotIcon,
-  Building02Icon,
   DashboardSquare02Icon,
   MessageMultiple02Icon,
   Notification02Icon,
@@ -34,11 +34,11 @@ function PreviewSidebar() {
     >
       <div className="border-b p-2">
         <div className="flex items-center gap-2 rounded-lg px-2 py-2">
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <HugeiconsIcon icon={Building02Icon} strokeWidth={2} />
-          </span>
+          <BrandIsotipo />
           <span className="min-w-0 leading-tight">
-            <span className="block truncate text-sm font-semibold">pacta.ia</span>
+            <span className="block truncate text-sm font-semibold lowercase">
+              pacta.ia
+            </span>
             <span className="block truncate text-xs text-muted-foreground">
               Consorcios del Sur
             </span>
