@@ -13,7 +13,7 @@ export const Route = createFileRoute("/")({
   component: HomePage,
   head: () => ({
     meta: [
-      { title: "Cobro | Cobranzas B2B con IA" },
+      { title: "pacta.ia | Cobranzas B2B con IA" },
       {
         name: "description",
         content:
@@ -48,7 +48,7 @@ function HomePage() {
               isDark ? "text-white/80" : "text-muted-foreground"
             )}
           >
-            Cobro conversa con cada deudor, propone planes dentro de tu política
+            pacta.ia conversa con cada deudor, propone planes dentro de tu política
             y registra el acuerdo. Vos intervenís cuando hace falta.
           </p>
 

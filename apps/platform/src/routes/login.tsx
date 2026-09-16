@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
-  head: () => ({ meta: [{ title: "Ingresar | Cobro" }] }),
+  head: () => ({ meta: [{ title: "Ingresar | pacta.ia" }] }),
 })
 
 function LoginPage() {

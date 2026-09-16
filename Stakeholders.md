@@ -1,6 +1,6 @@
 ## **Stakeholders seleccionados**
 
-Para validar el MVP del **Asistente Autónomo de Negociación y Cobranzas**, identificamos distintos grupos de stakeholders según su relación con el problema, su participación en el proceso de cobranza y su capacidad para aportar conocimiento relevante al desarrollo de la solución.
+Para validar el MVP del **pacta.ia**, identificamos distintos grupos de stakeholders según su relación con el problema, su participación en el proceso de cobranza y su capacidad para aportar conocimiento relevante al desarrollo de la solución.
 
 ### **1\. Administradores de consorcios**
 

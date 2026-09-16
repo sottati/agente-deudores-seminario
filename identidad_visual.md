@@ -1,18 +1,18 @@
 # Identidad Visual y Sistema de Diseño
 
-> Documento de referencia de branding para **Pacta.ai** (Asistente Autónomo de Cobranzas B2B).
+> Documento de referencia de branding para **pacta.ia** (Asistente Autónomo de Cobranzas B2B).
 
 ![Landing page – modo oscuro](./assets/landing_screenshot.png)
 
 ---
 
-## Naming de Marca: Pacta.ai
+## Naming de Marca: pacta.ia
 
-El nombre elegido para el producto es **Pacta.ai**. Esta decisión verbal es el núcleo de la estrategia de Océano Azul y define el tono de toda la comunicación de la empresa.
+El nombre elegido para el producto es **pacta.ia**. Esta decisión verbal es el núcleo de la estrategia de Océano Azul y define el tono de toda la comunicación de la empresa.
 
 | Elemento | Transmite y Justifica |
 | :--- | :--- |
-| **"Pacta"** | Proviene de la acción de *pactar*. Desplaza el foco del dolor de la "deuda" hacia la positividad del **acuerdo mutuo**. Transmite diplomacia, empatía y resolución pacífica, alejándose radicalmente del tono agresivo o punitivo de las cobranzas tradicionales. Le asegura al cliente que su vínculo institucional (con vecinos o familias de colegios) será cuidado. |
+| **"pacta"** | Proviene de la acción de *pactar*. Desplaza el foco del dolor de la "deuda" hacia la positividad del **acuerdo mutuo**. Transmite diplomacia, empatía y resolución pacífica, alejándose radicalmente del tono agresivo o punitivo de las cobranzas tradicionales. Le asegura al cliente que su vínculo institucional (con vecinos o familias de colegios) será cuidado. |
 | **".ai"** | Posiciona al producto instantáneamente como una **herramienta tecnológica moderna**. Comunica que la negociación no requiere fricción humana manual, sino que es impulsada por Inteligencia Artificial autónoma, otorgándole un perfil de startup SaaS innovadora. |
 
 ---
@@ -146,7 +146,7 @@ La fuente elegida para todo el producto es **Geist Variable**, la familia tipogr
 
 ## 4. Logo e Isotipo Oficial
 
-![Logo Oficial Pacta.ai](./assets/pacta_logo.jpg)
+![Logo Oficial pacta.ia](./assets/pacta_logo.jpg)
 
 ### 4.1 Composición
 
@@ -264,7 +264,7 @@ Todos los elementos de la interfaz usan esquinas redondeadas con una escala prog
 
 | Pilar | Decisión | Intención |
 | :--- | :--- | :--- |
-| **Naming** | Pacta.ai | Enfoque en el pacto y resolución vs. dolor de la deuda |
+| **Naming** | pacta.ia | Enfoque en el pacto y resolución vs. dolor de la deuda |
 | **Color primario** | Rosa / Magenta (`#C31952` / `#A21245`) | Empatía, modernidad, diferenciación vs. competidores |
 | **Colores neutros** | Escala de grises sin saturación | Legibilidad, jerarquía, protagonismo de los datos |
 | **Tema por defecto** | Oscuro (con light automático) | Premium, anti-fatiga, contraste del rosa |

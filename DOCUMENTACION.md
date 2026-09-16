@@ -1,6 +1,6 @@
-# Documentación del Proyecto: Asistente Autónomo de Cobranzas B2B
+# Documentación del Proyecto: pacta.ia
 
-> **Producto (placeholder):** Asistente Autónomo de Cobranzas B2B
+> **Producto:** pacta.ia (Asistente Autónomo de Cobranzas B2B)
 > **Estado:** Fase de Prototipado (MVP)
 
 ---

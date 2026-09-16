@@ -1,10 +1,10 @@
-# Agente Autónomo de Cobranzas B2B (MVP)
+# pacta.ia - Asistente Autónomo de Cobranzas B2B
 
 > Proyecto de Seminario de Integración Profesional (TIF / SIP) - UADE
 
 ## Datos del Equipo
-* **Nombre del Grupo:** [A definir]
-* **Nombre de Fantasía (MVP):** [A definir]
+* **Nombre del Grupo:** pacta.ia
+* **Nombre de Fantasía (MVP):** pacta.ia
 * **Integrantes:**
   * Juan Cruz Elliff - Legajo: 1140086
   * Santiago Garbini - Legajo: 1188868
@@ -15,9 +15,15 @@
 ## Organización y Seguimiento
 * **Tablero Kanban:** [Linear Kanban Board](https://linear.app/santiago-garbini/project/seminario-de-gestion-de-tecnologia-3bd4add3a15a/view/kanban-5f46e4e8019c)
 * **Documentación Principal:** [DOCUMENTACION.md](./DOCUMENTACION.md)
-* **Uso de IA:** [USO_IA.md](./USO_IA.md) *(Pendiente)*
+* **Análisis de Stakeholders:** [Stakeholders.md](./Stakeholders.md)
+* **Marco Legal:** [MARCO_LEGAL.md](./MARCO_LEGAL.md)
+* **Identidad Visual:** [identidad_visual.md](./identidad_visual.md)
+* **Entrevistas y Trabajo de Campo:** [ENTREVISTAS.md](./ENTREVISTAS.md)
+* **Uso de IA:** [USO_IA.md](./USO_IA.md)
 
 ## Estructura del Repositorio (Monorepo)
 Este proyecto utiliza un esquema de monorepo gestionado con `pnpm`:
 * `/apps/platform`: Aplicación web principal (React/Vite/TanStack).
 * `/apps/agent`: Lógica del agente conversacional IA.
+
+

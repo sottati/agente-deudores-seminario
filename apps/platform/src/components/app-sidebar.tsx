@@ -41,14 +41,14 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
-              tooltip="Cobro"
+              tooltip="pacta.ia"
               render={<Link to="/dashboard" />}
             >
               <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                 <HugeiconsIcon icon={Building02Icon} strokeWidth={2} />
               </span>
               <span className="min-w-0 leading-tight">
-                <span className="block truncate font-semibold">Cobro</span>
+                <span className="block truncate font-semibold">pacta.ia</span>
                 <span className="block truncate text-xs text-muted-foreground">
                   Consorcios del Sur
                 </span>

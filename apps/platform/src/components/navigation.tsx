@@ -26,12 +26,12 @@ export function Navigation() {
             "flex shrink-0 items-center gap-2 rounded-lg py-1.5 outline-none focus-visible:ring-2 focus-visible:ring-ring",
             isDark ? "text-white" : "text-foreground"
           )}
-          aria-label="Cobro, inicio"
+          aria-label="pacta.ia, inicio"
         >
           <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm sm:size-8">
             <HugeiconsIcon icon={Building02Icon} strokeWidth={2} />
           </span>
-          <span className="text-sm font-semibold tracking-tight">Cobro</span>
+          <span className="text-sm font-semibold tracking-tight">pacta.ia</span>
         </Link>
 
         <div className="ml-auto flex items-center">

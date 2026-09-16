@@ -16,7 +16,7 @@ import {
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
-  head: () => ({ meta: [{ title: "Dashboard | Cobro" }] }),
+  head: () => ({ meta: [{ title: "Dashboard | pacta.ia" }] }),
 })
 
 function DashboardPage() {

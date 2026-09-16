@@ -38,7 +38,7 @@ function PreviewSidebar() {
             <HugeiconsIcon icon={Building02Icon} strokeWidth={2} />
           </span>
           <span className="min-w-0 leading-tight">
-            <span className="block truncate text-sm font-semibold">Cobro</span>
+            <span className="block truncate text-sm font-semibold">pacta.ia</span>
             <span className="block truncate text-xs text-muted-foreground">
               Consorcios del Sur
             </span>
