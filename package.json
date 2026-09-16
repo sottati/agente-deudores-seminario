@@ -1,0 +1,13 @@
+{
+  "name": "agente-deudores-seminario",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",
+    "check": "prettier --check \"**/*.{ts,tsx,js,jsx,md,json}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.9.6",
+    "prettier-plugin-tailwindcss": "^0.8.1"
+  }
+}
