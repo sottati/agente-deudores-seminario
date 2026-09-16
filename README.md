@@ -23,7 +23,7 @@
 
 ## Estructura del Repositorio (Monorepo)
 Este proyecto utiliza un esquema de monorepo gestionado con `pnpm`:
-* `/apps/platform`: Aplicación web principal (React/Vite/TanStack).
+* `/apps/platform`: Aplicación web principal (React/Vite/TanStack Start).
 * `/apps/agent`: Lógica del agente conversacional IA.
 
 

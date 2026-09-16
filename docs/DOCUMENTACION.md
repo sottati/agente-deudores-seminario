@@ -7,9 +7,9 @@
 
 ### Estado Actual de la Implementación
 * **Estructura base:** Se ha configurado el repositorio bajo un esquema *monorepo* (usando `pnpm`).
-* **Frontend (MVP Mock):** Iniciado en `apps/platform` con React 19, Vite, TanStack Router y shadcn/ui. Incluye identidad visual (logo y tema dark/light).
+* **Frontend (MVP Mock):** Iniciado en `apps/platform` con React 19, Vite, TanStack Start (SSR) y shadcn/ui (Tailwind v4). Incluye Landing Page y la identidad visual (logo, colores y tema dark/light dinámico).
 * **Inteligencia Artificial:** *Pendiente.* (La capa del agente se alojará en `apps/agent`).
-* **Gestión Documental:** Documentos como el listado de stakeholders, tablero Kanban, encuestas y entrevistas están en fase de desarrollo.
+* **Gestión Documental:** Relevamiento inicial completado. Documentos como el Marco Legal, Stakeholders, Uso de IA, Entrevistas e Identidad Visual ya están definidos y consolidados en el directorio `/docs`.
 
 ---
 
@@ -102,10 +102,10 @@ Resolver la siguiente premisa: *¿Cómo podríamos ayudar a un administrador de 
 *   **Agente Conversacional:** Motor de IA (Sandbox en etapa MVP) que gestiona el estado de la conversación y negocia mediante lenguaje natural.
 
 ### 5.2 Stack Tecnológico
-*   **Frontend / Plataforma:** React 19 + TanStack Router + Vite.
-*   **UI Components:** shadcn/ui y Tailwind CSS para el diseño de componentes y estilos estandarizados.
-*   **IA y Agente:** Vercel AI SDK implementando **GPT-5.6 Luna**.
-*   **Backend / Auth:** Supabase (Auth + Base de datos relacional PostgreSQL).
+*   **Frontend / Plataforma:** React 19 + TanStack Start (Router + SSR) + Vite.
+*   **UI Components:** shadcn/ui, Base UI y Tailwind CSS v4 para el diseño de componentes, efectos (como `hero-shader-gradient`) y estilos estandarizados.
+*   **IA y Agente:** Vercel AI SDK implementando **GPT-5.6 Luna** *(Pendiente)*.
+*   **Backend / Auth:** Supabase (Auth + Base de datos relacional PostgreSQL) *(Pendiente)*.
 
 > **Decisión Técnica - Modelo de IA:** Se seleccionó **GPT-5.6 Luna** como modelo fundacional priorizando su robustez en el cumplimiento estricto de system prompts (guardrails) para evitar "alucinaciones" (como otorgar descuentos no permitidos por la administración), además de contar con excelentes capacidades de *Function Calling* y un balance ideal de costo/velocidad.
 
