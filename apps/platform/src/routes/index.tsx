@@ -1,7 +1,8 @@
-import { Link, createFileRoute } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
+import { ButtonLink } from "@/components/button-link"
 import { DashboardPreview } from "@/components/dashboard-preview"
 import { Faq } from "@/components/faq"
 import { Footer } from "@/components/footer"
@@ -58,14 +59,14 @@ function HomePage() {
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button
+            <ButtonLink
               size="lg"
               className="h-11 px-4"
-              render={<Link to="/dashboard" />}
-            >
+              to="/dashboard"
+>
               Probar el dashboard
               <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
-            </Button>
+            </ButtonLink>
             <Button
               size="lg"
               variant="outline"

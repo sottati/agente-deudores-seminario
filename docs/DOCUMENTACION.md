@@ -8,7 +8,7 @@
 ### Estado Actual de la Implementación
 * **Estructura base:** Se ha configurado el repositorio bajo un esquema *monorepo* (usando `pnpm`).
 * **Frontend (MVP Mock):** Iniciado en `apps/platform` con React 19, Vite, TanStack Start (SSR) y shadcn/ui (Tailwind v4). Incluye Landing Page y la identidad visual (logo, colores y tema dark/light dinámico).
-* **Inteligencia Artificial:** *Pendiente.* (La capa del agente se alojará en `apps/agent`).
+* **Backend e Inteligencia Artificial:** *En implementación* según [PLAN_BACKEND.md](./PLAN_BACKEND.md). Sprint 0 en curso: paquetes `packages/agent` y `packages/negotiation-engine` creados, Supabase CLI inicializado y CI configurado. Decisiones de arquitectura registradas en [§5.4](#54-decisiones-de-arquitectura-del-backend).
 * **Gestión Documental:** Relevamiento inicial completado. Documentos como el Marco Legal, Stakeholders, Uso de IA, Entrevistas e Identidad Visual ya están definidos y consolidados en el directorio `/docs`.
 
 ---
@@ -110,19 +110,33 @@ Resolver la siguiente premisa: *¿Cómo podríamos ayudar a un administrador de 
 > **Decisión Técnica - Modelo de IA:** Se seleccionó **GPT-5.6 Luna** como modelo fundacional priorizando su robustez en el cumplimiento estricto de system prompts (guardrails) para evitar "alucinaciones" (como otorgar descuentos no permitidos por la administración), además de contar con excelentes capacidades de *Function Calling* y un balance ideal de costo/velocidad.
 
 ### 5.3 Arquitectura de Monorepo
-El código se organiza para separar las responsabilidades lógicas entre la interfaz de usuario y el motor de IA, utilizando `pnpm` como gestor de paquetes de monorepo:
+El código se organiza para separar las responsabilidades lógicas entre la aplicación web (UI + servidor), el agente de IA y el motor de reglas, utilizando `pnpm` como gestor de paquetes de monorepo:
 ```text
 ├── apps/
-│   ├── platform/                 # Dashboard, configuración, landing (React, Vite)
-│   │   ├── src/
-│   │   ├── public/
-│   │   └── package.json
-│   └── agent/                    # Lógica del Agente e IA
+│   └── platform/                 # Landing, panel admin, chat del deudor y backend (server functions/routes de TanStack Start)
+│       ├── src/
+│       ├── public/
 │       └── package.json
+├── packages/
+│   ├── agent/                    # Agente conversacional: prompt, tools y orquestación (Vercel AI SDK)
+│   └── negotiation-engine/       # Motor de reglas determinístico (puro, sin IO)
+├── supabase/                     # Configuración, migraciones SQL y seed
+├── docs/                         # Documentación del proyecto
+├── tsconfig.base.json
 ├── pnpm-workspace.yaml
-├── package.json
-└── DOCUMENTACION.md
+└── package.json
 ```
+
+### 5.4 Decisiones de Arquitectura del Backend
+Detalle y alternativas evaluadas en [PLAN_BACKEND.md §1](./PLAN_BACKEND.md#1-decisiones-arquitectónicas).
+
+| # | Decisión | Justificación |
+| :--- | :--- | :--- |
+| D1 | El backend vive dentro de `apps/platform` (server functions y server routes de TanStack Start). El agente es una librería (`packages/agent`) en lugar de un servicio separado (`apps/agent`). | Un solo deploy, sesión compartida y tipos end‑to‑end para un equipo de 5. Al ser librería, en R2 se monta detrás de un webhook de WhatsApp sin reescribirse. |
+| D2 | Acceso a datos con supabase-js + `@supabase/ssr`, migraciones SQL con Supabase CLI y tipos generados. | El RLS se aplica con la sesión del usuario, cumpliendo el aislamiento de carteras exigido por el [Marco Legal](./MARCO_LEGAL.md). |
+| D3 | `organization_id` + Row Level Security desde el MVP, sin registro público (alta por seed o invitación) y un único rol de usuario. | Costo bajo ahora y migración cara después; requisito de la LPDP. |
+| D4 | El deudor accede por un link único tokenizado y debe verificar su identidad antes de ver montos; luego recibe una cookie firmada de corta duración. | Evita exponer la deuda a terceros (Ley 6.171 CABA, Art. 26 LPDP). Es el mismo flujo que tendrá WhatsApp en R2. |
+| D8 | El LLM se consume en la nube vía Vercel AI Gateway; el modelo se configura por variable de entorno. | Function calling confiable, deploy sin infraestructura de GPU y posibilidad de cambiar de modelo sin tocar código. La privacidad se mitiga minimizando datos personales en los prompts. |
 
 ---
 

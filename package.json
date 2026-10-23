@@ -2,12 +2,27 @@
   "name": "agente-deudores-seminario",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@12.4.2",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
+    "dev": "pnpm --filter @agente/platform dev",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r --if-present lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",
-    "check": "prettier --check \"**/*.{ts,tsx,js,jsx,md,json}\""
+    "check": "prettier --check \"**/*.{ts,tsx,js,jsx,md,json}\"",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:test": "supabase test db",
+    "db:types": "supabase gen types typescript --local > apps/platform/src/server/db/types.gen.ts",
+    "smoke:llm": "pnpm --filter @agente/agent smoke"
   },
   "devDependencies": {
     "prettier": "^3.9.6",
-    "prettier-plugin-tailwindcss": "^0.8.1"
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "supabase": "^2.121.0"
   }
 }

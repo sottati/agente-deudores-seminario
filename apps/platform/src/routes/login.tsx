@@ -1,20 +1,48 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { createFileRoute, redirect, useNavigate, useRouter } from "@tanstack/react-router"
+import { useState } from "react"
+import { useServerFn } from "@tanstack/react-start"
+import { z } from "zod"
 
+import { FormError } from "@/components/form-field"
 import { HeroShaderGradient } from "@/components/hero-shader-gradient"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { formValues, useAction } from "@/hooks/use-action"
+import { getSessionContext, signIn } from "@/server/auth"
+
+// Solo rutas internas: evita redirecciones abiertas a otros dominios.
+const safeRedirect = (value: string | undefined) =>
+  value && value.startsWith("/") && !value.startsWith("//") ? value : "/dashboard"
 
 export const Route = createFileRoute("/login")({
+  validateSearch: z.object({ redirect: z.string().optional() }),
+  beforeLoad: async ({ search }) => {
+    const session = await getSessionContext()
+    if (session) throw redirect({ href: safeRedirect(search.redirect) })
+  },
   component: LoginPage,
   head: () => ({ meta: [{ title: "Ingresar | pacta.ia" }] }),
 })
 
 function LoginPage() {
+  const router = useRouter()
   const navigate = useNavigate()
+  const search = Route.useSearch()
+  const signInAction = useAction(useServerFn(signIn))
+  const [credentialsError, setCredentialsError] = useState<string | null>(null)
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    navigate({ to: "/dashboard" })
+    setCredentialsError(null)
+    const { email, password } = formValues(event.currentTarget)
+    const result = await signInAction.run({ data: { email, password } })
+    if (!result.ok) return
+    if (result.data.error) {
+      setCredentialsError(result.data.error)
+      return
+    }
+    await router.invalidate()
+    await navigate({ href: safeRedirect(search.redirect) })
   }
 
   return (
@@ -34,7 +62,8 @@ function LoginPage() {
             </p>
           </div>
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
+          {/* method="post": si se envía antes de hidratar, la contraseña no queda en la URL. */}
+          <form method="post" className="space-y-5" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium">
                 Correo electrónico
@@ -45,7 +74,8 @@ function LoginPage() {
                 type="email"
                 placeholder="nombre@empresa.com"
                 autoComplete="email"
-                defaultValue="demo@pacta.ai"
+                required
+                defaultValue={import.meta.env.DEV ? "demo@pacta.ai" : undefined}
               />
             </div>
 
@@ -67,12 +97,20 @@ function LoginPage() {
                 type="password"
                 placeholder="••••••••"
                 autoComplete="current-password"
-                defaultValue="demo1234"
+                required
+                defaultValue={import.meta.env.DEV ? "demo1234" : undefined}
               />
             </div>
 
-            <Button type="submit" className="h-10 w-full" size="lg">
-              Ingresar
+            <FormError message={credentialsError ?? signInAction.error} />
+
+            <Button
+              type="submit"
+              className="h-10 w-full"
+              size="lg"
+              disabled={signInAction.pending}
+            >
+              {signInAction.pending ? "Ingresando…" : "Ingresar"}
             </Button>
           </form>
 

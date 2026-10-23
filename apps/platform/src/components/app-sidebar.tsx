@@ -1,14 +1,25 @@
-import { Link } from "@tanstack/react-router"
+import { Link, useNavigate, useRouter, useRouterState } from "@tanstack/react-router"
+import { useServerFn } from "@tanstack/react-start"
 import { BrandIsotipo } from "@/components/brand-logo"
 import {
   BotIcon,
   DashboardSquare02Icon,
+  Logout01Icon,
   MessageMultiple02Icon,
   Settings02Icon,
   UserMultipleIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Sidebar,
   SidebarContent,
@@ -22,20 +33,25 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { signOut, type SessionContext } from "@/server/auth"
 
 const navItems = [
-  { title: "Conversaciones", icon: MessageMultiple02Icon },
-  { title: "Deudores", icon: UserMultipleIcon },
-]
+  { title: "Dashboard", to: "/dashboard", icon: DashboardSquare02Icon },
+  { title: "Conversaciones", to: "/conversaciones", icon: MessageMultiple02Icon },
+  { title: "Deudores", to: "/deudores", icon: UserMultipleIcon },
+] as const
 
 const footerNavItems = [
-  { title: "Reglas del agente", icon: BotIcon },
-  { title: "Configuración", icon: Settings02Icon },
-]
+  { title: "Reglas del agente", to: "/reglas", icon: BotIcon },
+  { title: "Configuración", to: "/configuracion", icon: Settings02Icon },
+] as const
 
-export function AppSidebar() {
+export function AppSidebar({ session }: { session: SessionContext }) {
+  const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const isActive = (to: string) => pathname === to || pathname.startsWith(`${to}/`)
+
   return (
-    <Sidebar variant="sidebar" collapsible="icon">
+    <Sidebar variant="sidebar" collapsible="icon" className="print:hidden">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -50,7 +66,7 @@ export function AppSidebar() {
                   pacta.ia
                 </span>
                 <span className="block truncate text-xs text-muted-foreground">
-                  Consorcios del Sur
+                  {session.organization.name}
                 </span>
               </span>
             </SidebarMenuButton>
@@ -63,19 +79,13 @@ export function AppSidebar() {
           <SidebarGroupLabel>Principal</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive
-                  tooltip="Dashboard"
-                  render={<Link to="/dashboard" />}
-                >
-                  <HugeiconsIcon icon={DashboardSquare02Icon} strokeWidth={2} />
-                  <span>Dashboard</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
               {navItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton disabled tooltip={item.title}>
+                <SidebarMenuItem key={item.to}>
+                  <SidebarMenuButton
+                    isActive={isActive(item.to)}
+                    tooltip={item.title}
+                    render={<Link to={item.to} />}
+                  >
                     <HugeiconsIcon icon={item.icon} strokeWidth={2} />
                     <span>{item.title}</span>
                   </SidebarMenuButton>
@@ -89,31 +99,66 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           {footerNavItems.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton disabled tooltip={item.title}>
+            <SidebarMenuItem key={item.to}>
+              <SidebarMenuButton
+                isActive={isActive(item.to)}
+                tooltip={item.title}
+                render={<Link to={item.to} />}
+              >
                 <HugeiconsIcon icon={item.icon} strokeWidth={2} />
                 <span>{item.title}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" tooltip="Simon">
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-sidebar-accent text-xs font-semibold">
-                S
-              </span>
-              <span className="min-w-0 leading-tight">
-                <span className="block truncate text-sm font-medium">
-                  Simon
-                </span>
-                <span className="block truncate text-xs text-muted-foreground">
-                  Administradora
-                </span>
-              </span>
-            </SidebarMenuButton>
+            <UserMenu session={session} />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
+  )
+}
+
+function UserMenu({ session }: { session: SessionContext }) {
+  const router = useRouter()
+  const navigate = useNavigate()
+  const signOutFn = useServerFn(signOut)
+  const initial = session.user.fullName.charAt(0).toUpperCase()
+
+  async function handleSignOut() {
+    await signOutFn()
+    await router.invalidate()
+    await navigate({ to: "/login" })
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={<SidebarMenuButton size="lg" tooltip={session.user.fullName} />}
+      >
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-sidebar-accent text-xs font-semibold">
+          {initial}
+        </span>
+        <span className="min-w-0 leading-tight">
+          <span className="block truncate text-sm font-medium">
+            {session.user.fullName}
+          </span>
+          <span className="block truncate text-xs text-muted-foreground">
+            {session.user.email}
+          </span>
+        </span>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent side="top" className="min-w-56">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>{session.organization.name}</DropdownMenuLabel>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleSignOut}>
+          <HugeiconsIcon icon={Logout01Icon} strokeWidth={2} />
+          Cerrar sesión
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

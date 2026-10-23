@@ -1,7 +1,6 @@
-import { Link } from "@tanstack/react-router"
 
+import { ButtonLink } from "@/components/button-link"
 import { BrandLogo } from "@/components/brand-logo"
-import { Button } from "@/components/ui/button"
 import { useResolvedDark } from "@/hooks/use-resolved-dark"
 import { cn } from "@/lib/utils"
 
@@ -25,7 +24,7 @@ export function Navigation() {
         />
 
         <div className="ml-auto flex items-center">
-          <Button
+          <ButtonLink
             variant="ghost"
             size="sm"
             className={cn(
@@ -33,10 +32,10 @@ export function Navigation() {
                 ? "text-white/90 hover:bg-white/10 hover:text-white aria-expanded:bg-white/10 aria-expanded:text-white"
                 : "text-foreground"
             )}
-            render={<Link to="/login" />}
-          >
+            to="/login"
+>
             Ingresar
-          </Button>
+          </ButtonLink>
         </div>
       </nav>
     </header>

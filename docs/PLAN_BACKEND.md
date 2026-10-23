@@ -2,6 +2,13 @@
 
 > **Alcance:** todo lo necesario del lado servidor para cumplir el **Release 1 (MVP – Sandbox)** definido en [DOCUMENTACION.md](./DOCUMENTACION.md#L56-L76) y [§7.2](./DOCUMENTACION.md#L158-L161), más la conexión con el prototipo de `apps/platform`.
 
+> **Versión 2.** Cambios respecto de la versión anterior:
+>
+> 1. **Fases verticales en vez de horizontales:** el núcleo de valor (agente negociando dentro de la política) se construye y valida en el Sprint 1, antes que auth y CRUD (§6).
+> 2. **Recorte de alcance:** 2 paquetes en lugar de 4, polling en lugar de Realtime, política única por organización sin versionado (alcanza con el *snapshot*), un solo rol de usuario.
+> 3. **Huecos de seguridad cubiertos:** sesión del deudor post‑verificación (cookie firmada), historial del chat reconstruido desde la DB (nunca desde el cliente), acceso *service role* encapsulado en un único módulo, URLs públicas solo por token.
+> 4. **Orden de recorte explícito** si no alcanza el tiempo (§8.1).
+
 ---
 
 ## 0. Diagnóstico del repositorio
@@ -14,24 +21,30 @@
 | Dashboard | Todos los datos están hardcodeados: [dashboard-overview.tsx](../apps/platform/src/components/dashboard/dashboard-overview.tsx#L24-L67), [recovery-trend-chart.tsx](../apps/platform/src/components/dashboard/recovery-trend-chart.tsx#L18-L25), [agreement-plans-chart.tsx](../apps/platform/src/components/dashboard/agreement-plans-chart.tsx#L20-L24). | Define el contrato de métricas que el backend debe exponer. |
 | Navegación | [app-sidebar.tsx](../apps/platform/src/components/app-sidebar.tsx#L26-L34): "Conversaciones", "Deudores", "Reglas del agente", "Configuración" deshabilitados; org ("Consorcios del Sur") y usuario ("Simon") hardcodeados. Botón "Nueva negociación" sin acción. | Mapa directo de las pantallas/endpoints que faltan. |
 | `apps/agent` | Solo un [README](../apps/agent/README.md) ("Stack and tools are TBD"). | Decisión pendiente (ver D1). |
+| Documentación | [DOCUMENTACION.md §5.3](./DOCUMENTACION.md#L112-L127) ubica el agente en `apps/agent`. | Si se adopta D1‑A hay que actualizar la doc (tarea del Sprint 0). |
 | Stack declarado | Supabase (Auth + Postgres) y Vercel AI SDK con GPT‑5.6 Luna, ambos *pendientes*. | Se respeta como base. |
 | Requisitos legales | [MARCO_LEGAL.md](./MARCO_LEGAL.md) exige: RLS multi-tenant, bot disclosure, LLM sin cálculo libre de montos (function calling + validación determinística), human‑in‑the‑loop, verificación de identidad, evidencia del acuerdo (timestamp, IP, aceptación explícita, hash), minimización de PII en prompts. | Son requisitos **funcionales** del backend, no "nice to have". |
-| Higiene | Dependencias `"latest"` en `package.json`; `.env*` ya ignorado. | Fijar versiones antes de empezar (evita roturas de TanStack Start entre releases). |
+| Higiene | Dependencias `@tanstack/*` en `"latest"` en [package.json](../apps/platform/package.json); `.env*` ya ignorado. | Fijar versiones antes de empezar (evita roturas de TanStack Start entre releases). |
 
 ---
 
-## 1. Decisiones arquitectónicas pendientes
+## 1. Decisiones arquitectónicas
 
-Cada decisión tiene una **recomendación** (⭐). Las marcadas con 🔴 bloquean el inicio de la Fase 1.
+Cada decisión tiene una **recomendación** (⭐). Las marcadas con 🔴 bloquean el inicio del Sprint 1.
 
 ### D1 🔴 — ¿Dónde vive el backend?
 
 | Opción | Pros | Contras |
 | :--- | :--- | :--- |
-| ⭐ **A. Backend dentro de `apps/platform`** (server functions + server routes de TanStack Start) y lógica de dominio en **paquetes** (`packages/*`) | Un solo deploy, sesión/cookies compartidas, tipos end‑to‑end, sin CORS. Ideal para un equipo de 5 y un MVP. | Acopla el ciclo de deploy de UI y agente. |
+| ⭐ **A. Backend dentro de `apps/platform`** (server functions + server routes de TanStack Start) y la lógica de dominio en **paquetes** (`packages/*`) | Un solo deploy, sesión/cookies compartidas, tipos end‑to‑end, sin CORS. Ideal para un equipo de 5 y un MVP. | Acopla el ciclo de deploy de UI y agente. |
 | B. Servicio separado en `apps/agent` (Hono/Fastify) | Escala/deploy independiente; listo para webhooks de WhatsApp (R2). | Duplica auth, CORS, dos deploys, más infra para un sandbox. |
 
-**Recomendación:** A. `apps/agent` se convierte en **`packages/agent`** (librería pura: prompt, tools, orquestación) para que en R2 pueda montarse detrás de un webhook sin reescribir nada.
+**Recomendación:** A, con **solo dos paquetes**:
+
+- `packages/negotiation-engine` — reglas puras, sin IO.
+- `packages/agent` — prompt, tools y orquestación (reemplaza a `apps/agent`). Es una librería, así en R2 se monta detrás de un webhook de WhatsApp sin reescribir.
+
+El acceso a datos (clientes Supabase, tipos generados, queries) y los schemas Zod viven en `apps/platform/src/server/` mientras sea el único consumidor. Se extraen a un paquete recién cuando un segundo paquete los necesite.
 
 ### D2 🔴 — Acceso a datos
 
@@ -42,16 +55,18 @@ Cada decisión tiene una **recomendación** (⭐). Las marcadas con 🔴 bloquea
 
 ### D3 🔴 — Multi‑tenancy en el MVP
 
-La doc ubica "arquitectura multi‑tenant" en R2, pero el dashboard ya muestra una organización. **Recomendación:** modelar `organization_id` + RLS **desde el día 1** (costo bajo ahora, migración cara después), sin UI de gestión de organizaciones: alta por seed/invitación manual.
+La doc ubica "arquitectura multi‑tenant" en R2, pero el marco legal exige aislamiento de carteras y el dashboard ya muestra una organización. **Recomendación:** modelar `organization_id` + RLS **desde el día 1** (costo bajo ahora, migración cara después), sin UI de gestión de organizaciones: alta por seed/invitación manual. **Un solo rol** de usuario en el MVP (todo miembro puede todo); roles diferenciados quedan para R2.
 
 ### D4 🔴 — ¿Cómo accede el deudor al chat simulado?
 
 | Opción | Detalle |
 | :--- | :--- |
-| ⭐ **Link único tokenizado** `/n/$token` + **verificación de identidad** (ej. últimos 3 dígitos del DNI o código enviado) antes de mostrar montos | Cumple Ley 6.171 / LPDP (no exponer deuda a terceros). Es exactamente el flujo que tendrá WhatsApp en R2. |
+| ⭐ **Link único tokenizado** `/n/$token` + **verificación de identidad** (ej. últimos 3 dígitos del DNI) antes de mostrar montos | Cumple Ley 6.171 / LPDP (no exponer deuda a terceros). Es exactamente el flujo que tendrá WhatsApp en R2. |
 | Solo "modo simulación" dentro del dashboard (el admin juega de deudor) | Más simple, pero no valida la experiencia del deudor ni la verificación. |
 
-**Recomendación:** ambos. El link público es el flujo real; el modo simulación es un botón "Probar como deudor" que reutiliza el mismo endpoint (útil para demo y para que el admin pruebe sus reglas).
+**Recomendación:** ambos. El link público es el flujo real; "Probar como deudor" en el panel abre el mismo link.
+
+**Sesión del deudor post‑verificación:** al verificar, el servidor emite una **cookie `httpOnly` firmada** (HMAC con `NEGOTIATION_TOKEN_SECRET`) que contiene `negotiation_id` + `exp` (ej. 2 h). Todos los endpoints del deudor exigen token válido **y** esa cookie; sin ella solo se ve la pantalla de verificación. Así no se reverifica en cada mensaje y un link reenviado a un tercero no expone montos.
 
 ### D5 — Modelo de reglas de negociación (qué parámetros configura el admin)
 
@@ -70,7 +85,7 @@ Propuesta mínima, validada contra [ENTREVISTAS.md](./ENTREVISTAS.md) y el dashb
 | `escalate_above_amount` | moneda | $ 1.000.000 → requiere humano |
 | `tone` / `custom_instructions` | enum / texto acotado | "empático‑formal" |
 
-Decisiones derivadas: **política por organización con override por deuda** (⭐) y **versionado inmutable** (cada negociación guarda un *snapshot* de la política usada → trazabilidad).
+⭐ **Una política por organización**, editable en el lugar. La trazabilidad la da el **snapshot** que cada negociación guarda al crearse (`policy_snapshot`): editar la política no afecta negociaciones en curso. Versionado de políticas y override por deuda quedan para R2.
 
 ### D6 — Representación monetaria e intereses
 
@@ -84,21 +99,23 @@ Decisiones derivadas: **política por organización con override por deuda** (�
 
 Docs fijan GPT‑5.6 Luna vía Vercel AI SDK. Decidir: provider directo (`@ai-sdk/openai`) vs **Vercel AI Gateway** (⭐ si se deploya en Vercel: fallback de modelos, observabilidad y control de costos sin código extra). En ambos casos el modelo se inyecta por config para poder testear con `MockLanguageModel`.
 
-### D9 — Handoff humano y tiempo real
+### D9 — Handoff humano
 
-Cuando el deudor pide "hablar con una persona" o el motor escala, la negociación pasa a `escalated` y el admin puede escribir desde el panel. ¿Cómo le llegan esos mensajes al deudor?
-- ⭐ **Supabase Realtime** sobre la tabla `messages` (canal por negociación, autorizado por token).
-- Alternativa más simple: polling cada 5 s en estado `escalated`.
+Cuando el deudor pide "hablar con una persona" o el motor escala, la negociación pasa a `escalated` y el admin puede escribir desde el panel.
+
+- ⭐ **Polling** cada ~5 s del lado del deudor (y del panel) mientras la negociación está en `escalated`. Cero infraestructura extra y suficiente para un sandbox.
+- Supabase Realtime queda como mejora opcional (requiere autorizar canales para un usuario sin cuenta, que es justamente el deudor).
 
 ### D10 — Métrica "Monto recuperado"
 
 El dashboard muestra "Monto recuperado", pero **el MVP no procesa pagos** (links de pago son R2). Opciones:
+
 - ⭐ Mostrar **"Monto acordado"** (comprometido en actas) + permitir al admin **marcar cuotas como pagadas** manualmente → "Monto recuperado" real y base para la comisión por éxito.
 - Renombrar la tarjeta a "Monto acordado" y posponer el seguimiento de cuotas.
 
 ### D11 — Documento del acuerdo
 
-⭐ Acta en **HTML imprimible / "Guardar como PDF"** generada desde una plantilla versionada, con: partes, plan, cronograma, `accepted_at`, IP, user‑agent, **SHA‑256 del transcript** y versión de política. PDF server‑side (`@react-pdf/renderer`) y envío por mail quedan como opcionales.
+⭐ Acta en **HTML imprimible / "Guardar como PDF"** generada desde una plantilla versionada, con: partes, plan, cronograma, `accepted_at`, IP, user‑agent, **SHA‑256 del transcript** y snapshot de política. PDF server‑side (`@react-pdf/renderer`) y envío por mail quedan para R2.
 
 ### D12 — Deploy y entornos
 
@@ -115,30 +132,32 @@ flowchart LR
     D["Chat deudor (/n/token)"]
   end
   subgraph Platform["apps/platform (TanStack Start server)"]
-    SF["Server functions (CRUD, métricas)"]
-    CR["Server route POST /api/negotiations/:id/chat (streaming)"]
-    AR["Server route POST /api/negotiations/:id/accept"]
+    SF["Server functions (CRUD, métricas) — cliente con sesión, RLS"]
+    CR["POST /api/n/:token/chat (streaming)"]
+    AR["POST /api/n/:token/accept"]
+    DA["server/db/debtor-access.ts — único uso de service role"]
   end
   subgraph Packages
     AG["packages/agent (prompt, tools, orquestación AI SDK)"]
     EN["packages/negotiation-engine (reglas puras, sin IO)"]
-    DB["packages/db (cliente Supabase, tipos generados, queries)"]
   end
-  SUPA[("Supabase: Auth + Postgres + RLS + Realtime")]
+  SUPA[("Supabase: Auth + Postgres + RLS")]
   LLM["LLM (GPT-5.6 Luna vía AI SDK)"]
 
   A --> SF
   D --> CR
   D --> AR
-  SF --> DB
+  SF --> SUPA
   CR --> AG
-  AG --> EN
-  AG --> DB
-  AG --> LLM
+  CR --> DA
   AR --> EN
-  AR --> DB
-  DB --> SUPA
+  AR --> DA
+  AG --> EN
+  AG --> LLM
+  DA --> SUPA
 ```
+
+`packages/agent` **no accede a la base**: recibe por parámetro los datos de la negociación y funciones de persistencia (`saveOffer`, `escalate`, `logEvent`) que le inyecta el endpoint. Así se testea sin Supabase y la regla "solo `debtor-access.ts` usa service role" se cumple por construcción.
 
 ### Estructura de carpetas objetivo
 
@@ -154,15 +173,19 @@ apps/
         _authed/reglas.tsx
         _authed/acuerdos/$agreementId.tsx
         n/$token.tsx                # chat público del deudor
-        api/negotiations/$id/chat.ts
-        api/negotiations/$id/accept.ts
-      server/                       # server functions por dominio
+        api/n/$token/chat.ts
+        api/n/$token/accept.ts
+      server/
+        db/
+          supabase-server.ts        # cliente con sesión del admin (RLS)
+          debtor-access.ts          # ÚNICO módulo con service role, siempre acotado a una negociación
+          types.gen.ts              # supabase gen types
+        schemas/                    # Zod (inputs de server fns y DTOs)
+        debtor-session.ts           # firma/verificación de la cookie del deudor
         auth.ts  debtors.ts  policies.ts  negotiations.ts  metrics.ts
 packages/
-  db/                 # supabase client factories (user / service), types.gen.ts, queries
-  negotiation-engine/ # validatePlan, buildOffer, schedule, money utils + tests
-  agent/              # systemPrompt, tools, runNegotiationTurn()
-  shared/             # Zod schemas y tipos DTO compartidos front/back
+  negotiation-engine/ # money utils, getNegotiationBounds, evaluateRequest, buildSchedule, requiresHuman + tests
+  agent/              # systemPrompt, tools, runNegotiationTurn() + evals
 supabase/
   migrations/  seed.sql  config.toml
 ```
@@ -182,19 +205,21 @@ supabase/
 
 | Tool | Efecto | Notas |
 | :--- | :--- | :--- |
-| `get_debt_summary` | Lee deuda (capital, interés, vencimiento, concepto) | Solo después de verificación. Usa alias, no DNI/nombre completo (minimización PII). |
+| `get_debt_summary` | Lee deuda (capital, interés, vencimiento, concepto) | Solo disponible con la sesión del deudor verificada. Usa alias ("Unidad 4B"), no DNI/nombre completo (minimización PII). |
 | `get_negotiation_options` | Devuelve los límites de la política en lenguaje entendible | Para que el agente explique opciones sin inventar. |
 | `simulate_plan({ installments, downPayment? })` | Llama a `evaluateRequest` | Si está fuera de política, devuelve la alternativa más cercana y **registra un evento `out_of_policy_request`** (alimenta "Requieren atención"). |
-| `propose_offer({ installments, downPayment? })` | Persiste una `offer` en estado `proposed` (supersede la anterior) | Devuelve `offerId`; el front muestra la tarjeta con botón **Aceptar**. |
+| `propose_offer({ installments, downPayment? })` | Revalida con el motor y persiste una `offer` en estado `proposed` (supersede la anterior) | Devuelve `offerId`; el front muestra la tarjeta con botón **Aceptar**. |
 | `escalate_to_human({ reason })` | Pasa la negociación a `escalated`, el agente deja de responder | También se dispara por palabra clave del deudor ("hablar con una persona") sin pasar por el LLM. |
 
 ### 3.3 Guardrails
 
-1. **System prompt** con: bot disclosure obligatorio en el primer mensaje, nombre de la administración, prohibición de amenazas judiciales/embargos, tono empático, no revelar datos a terceros, no prometer nada fuera de tools.
-2. **Validación post‑generación:** si el texto del modelo contiene montos/porcentajes que no coinciden con la última respuesta de tool → se reemplaza por un mensaje seguro y se loguea (`guardrail_violation`).
-3. **Límite de pasos** de tools por turno (`stopWhen: stepCountIs(5)`) y límite de turnos por negociación.
-4. **Rate limiting** por token/IP en el endpoint de chat.
-5. **Aceptación fuera del LLM:** `POST /accept` revalida la oferta contra el *snapshot* de política, verifica vigencia, y crea el acuerdo en una transacción (RPC Postgres).
+1. **System prompt** con: prohibición de amenazas judiciales/embargos, tono empático, no revelar datos a terceros, no prometer nada fuera de tools. El **primer mensaje es determinístico** (bot disclosure + nombre de la administración + link al aviso de privacidad), no generado por el LLM.
+2. **Historial solo desde la DB.** `useChat` envía la conversación completa desde el navegador: el endpoint toma **únicamente el último mensaje del deudor** (texto, con tamaño máximo) y reconstruye el resto desde `messages`. Evita que el deudor inyecte mensajes falsos del agente o resultados de tools.
+3. **Validación post‑generación:** si el texto del modelo contiene montos/porcentajes que no coinciden con la última respuesta de tool → se reemplaza por un mensaje seguro y se loguea (`guardrail_violation`). Implementación simple: extraer cifras por regex y compararlas contra los valores devueltos por las tools en ese turno.
+4. **Límite de pasos** de tools por turno (`stopWhen: stepCountIs(5)`) y límite de turnos por negociación.
+5. **Rate limiting** simple por token en el endpoint de chat (ej. contador en DB por minuto).
+6. **Aceptación fuera del LLM:** `POST /accept` revalida la oferta contra el *snapshot* de política, verifica vigencia, y crea el acuerdo en una transacción (RPC Postgres).
+7. **Service role encapsulado:** solo `server/db/debtor-access.ts` crea ese cliente; todas sus funciones reciben el `negotiation_id` **obtenido de la cookie verificada**, nunca de un parámetro enviado por el cliente.
 
 ### 3.4 Máquina de estados de la negociación
 
@@ -222,7 +247,7 @@ stateDiagram-v2
 ```mermaid
 erDiagram
   organizations ||--o{ memberships : tiene
-  organizations ||--o{ negotiation_policies : define
+  organizations ||--|| negotiation_policies : define
   organizations ||--o{ debtors : gestiona
   debtors ||--o{ debts : adeuda
   debts ||--o{ negotiations : se_negocia_en
@@ -236,10 +261,10 @@ erDiagram
 | Tabla | Campos clave |
 | :--- | :--- |
 | `organizations` | `id`, `name`, `kind` (`consorcio`/`colegio`), `display_name_for_debtors` |
-| `memberships` | `user_id` → `auth.users`, `organization_id`, `role` (`owner`/`operator`) |
-| `negotiation_policies` | parámetros de D5, `is_default`, `version`, `archived_at` (inmutables: editar = nueva versión) |
+| `memberships` | `user_id` → `auth.users`, `organization_id` (sin roles en el MVP) |
+| `negotiation_policies` | `organization_id` (único), parámetros de D5, `updated_at` |
 | `debtors` | `organization_id`, `full_name`, `alias` (ej. "Unidad 4B"), `group_label` (edificio/curso), `email`, `phone`, `verification_hash` |
-| `debts` | `debtor_id`, `concept`, `principal_cents`, `interest_cents`, `due_date`, `status` (`open`/`in_negotiation`/`agreed`/`paid`/`written_off`), `policy_id?` |
+| `debts` | `debtor_id`, `concept`, `principal_cents`, `interest_cents`, `due_date`, `status` (`open`/`in_negotiation`/`agreed`/`paid`/`written_off`) |
 | `negotiations` | `debt_id`, `status` (§3.4), `policy_snapshot jsonb`, `token_hash`, `verified_at`, `verification_attempts`, `expires_at`, `channel` (`web_sim`) |
 | `messages` | `negotiation_id`, `role` (`debtor`/`agent`/`admin`/`system`), `parts jsonb` (formato `UIMessage` del AI SDK), `created_at` |
 | `offers` | `negotiation_id`, `installments`, `down_payment_cents`, `waived_interest_cents`, `total_cents`, `schedule jsonb`, `status`, `valid_until`, `engine_version` |
@@ -247,7 +272,7 @@ erDiagram
 | `installments` | `agreement_id`, `number`, `due_date`, `amount_cents`, `paid_at?` (D10) |
 | `audit_events` | `organization_id`, `negotiation_id?`, `type` (`out_of_policy_request`, `escalated`, `guardrail_violation`, `offer_proposed`, ...), `payload jsonb` |
 
-**RLS:** todas las tablas filtran por `organization_id IN (select organization_id from memberships where user_id = auth.uid())`. El deudor **no tiene usuario**: sus accesos pasan por endpoints del servidor que validan el token y usan el cliente *service role* acotado a esa negociación (nunca se expone la service key al navegador).
+**RLS:** todas las tablas filtran por `organization_id IN (select organization_id from memberships where user_id = auth.uid())` (función helper `is_member(org_id)`). El deudor **no tiene usuario**: sus accesos pasan por `debtor-access.ts` (§3.3‑7). Token de negociación: 32 bytes aleatorios, se guarda **solo el hash**.
 
 **Vistas/RPC para el dashboard:** `v_dashboard_kpis`, `v_monthly_recovery`, `v_agreements_by_plan`, `v_recent_agreements`, `v_attention_items` (todas con `security_invoker = true` para respetar RLS). RPC transaccional `accept_offer(offer_id, ip, ua)`.
 
@@ -257,7 +282,7 @@ erDiagram
 
 | Pantalla (existente / nueva) | Hoy | Backend que la alimenta |
 | :--- | :--- | :--- |
-| `/login` | navega sin auth | `signInWithPassword` (Supabase) vía server fn; cookies con `@supabase/ssr`. "Solicitar acceso" → mailto/form simple. "Olvidé contraseña" → reset de Supabase. |
+| `/login` | navega sin auth | `signInWithPassword` (Supabase) vía server fn; cookies con `@supabase/ssr`. "Solicitar acceso" → mailto. "Olvidé contraseña" → reset de Supabase. |
 | Layout protegido | — | `_authed.tsx` con `beforeLoad` → `getSessionFn()`; devuelve usuario + organización al contexto del router (reemplaza "Simon" / "Consorcios del Sur" en [app-sidebar.tsx](../apps/platform/src/components/app-sidebar.tsx#L48-L56)). |
 | `/dashboard` tarjetas | mock | `getDashboardKpis()` → `{ recoveredCents, agreedCents, deltaVsPrevMonthPct, agreementsCount, agreementsThisWeek, activeConversations, awaitingReply }` |
 | Gráfico evolución | mock | `getMonthlyRecovery({ months: 6 })` → `[{ month, amountCents }]` |
@@ -267,99 +292,97 @@ erDiagram
 | Botón "Nueva negociación" | sin acción | Sheet: elegir/crear deudor + deuda → `createNegotiation()` → devuelve link `/n/$token` copiable + "Probar como deudor" |
 | Deudores (sidebar) | disabled | `listDebtors`, `createDebtor`, `createDebt`, `updateDebt` |
 | Conversaciones (sidebar) | disabled | `listNegotiations({ status })`, `getNegotiation(id)` (transcript + ofertas + eventos), `sendAdminMessage`, `returnToAgent`, `closeManually` |
-| Reglas del agente (sidebar) | disabled | `getActivePolicy`, `savePolicy` (crea nueva versión) + **previsualización**: `previewPlans(policy, sampleDebt)` usando el motor |
+| Reglas del agente (sidebar) | disabled | `getPolicy`, `updatePolicy` + **previsualización**: `previewPlans(policy, sampleDebt)` usando el motor |
 | Configuración | disabled | `getOrganization`, `updateOrganization` (nombre visible al deudor, tipo) |
-| `/n/$token` (nuevo) | — | `getPublicNegotiation(token)` (sin montos hasta verificar), `verifyIdentity(token, answer)`, `POST /api/negotiations/:id/chat` (stream, `useChat`), `POST /api/negotiations/:id/accept` |
+| `/n/$token` (nuevo) | — | `getPublicNegotiation(token)` (sin montos hasta verificar), `verifyIdentity(token, answer)` → setea cookie, `getMessagesSince(token, cursor)` (polling en `escalated`), `POST /api/n/$token/chat` (stream, `useChat`), `POST /api/n/$token/accept` |
 | `/acuerdos/$id` (nuevo) | — | `getAgreement(id)` → acta imprimible; `markInstallmentPaid` |
 
-Convenciones: validación de input con **Zod** (schemas en `packages/shared`), errores tipados `{ code, message }`, datos de servidor consumidos con **TanStack Query** (ya está `@tanstack/react-router-ssr-query` en dependencias) + `loader` para SSR.
+Convenciones: validación de input con **Zod** en todas las server fns, errores tipados `{ code, message }`, datos de servidor consumidos con **TanStack Query** (ya está `@tanstack/react-router-ssr-query` en dependencias) + `loader` para SSR. Las URLs públicas usan **solo el token**; nunca se exponen ids internos al deudor.
 
 ---
 
-## 6. Fases de implementación
+## 6. Plan de implementación por sprints (vertical)
+
+Se construye primero el **núcleo de valor** (negociación dentro de la política) y después las pantallas de administración. Si el tiempo no alcanza, lo que queda afuera son pantallas, no el corazón del producto.
 
 ```mermaid
 flowchart LR
-  F0["F0 Setup y decisiones"] --> F1["F1 Esquema + RLS + seed"]
-  F1 --> F2["F2 Auth y layout protegido"]
-  F1 --> F4["F4 Motor de reglas"]
-  F2 --> F3["F3 CRUD admin"]
-  F4 --> F5["F5 Agente + streaming"]
-  F3 --> F5
-  F5 --> F6["F6 Portal deudor + aceptación"]
-  F6 --> F7["F7 Panel conversaciones + handoff + acta"]
-  F7 --> F8["F8 Métricas reales"]
-  F8 --> F9["F9 Calidad, evals y deploy"]
+  S0["Sprint 0 — Setup y decisiones"] --> S1["Sprint 1 — Núcleo de negociación"]
+  S1 --> S2["Sprint 2 — Portal del deudor completo"]
+  S2 --> S3["Sprint 3 — Panel del administrador"]
+  S3 --> S4["Sprint 4 — Métricas, calidad y deploy"]
 ```
 
-> F4 (motor puro) puede desarrollarse **en paralelo** a F2/F3 por otra persona del equipo.
+### Sprint 0 — Setup y cierre de decisiones (corto)
 
-### F0 — Setup y cierre de decisiones
-- [ ] Cerrar D1–D4 (bloqueantes) y registrar las decisiones en `docs/DOCUMENTACION.md §5`.
-- [ ] Fijar versiones de dependencias `latest` en [package.json](../apps/platform/package.json#L19-L24).
-- [ ] Crear `packages/{db,negotiation-engine,agent,shared}` con `package.json` y `tsconfig` base compartido.
-- [ ] Supabase CLI: `supabase init`, proyecto `dev` en la nube, `.env.example` documentado.
-- [ ] Script raíz `pnpm -r typecheck`, `pnpm -r test`.
+- [x] Cerrar D1–D4 (bloqueantes) y registrarlas en [DOCUMENTACION.md §5.4](./DOCUMENTACION.md#54-decisiones-de-arquitectura-del-backend) (actualizar §5.3: `apps/agent` → `packages/agent`).
+- [x] Fijar versiones de las dependencias `latest` en [package.json](../apps/platform/package.json#L19-L24).
+- [x] Crear `packages/negotiation-engine` y `packages/agent` con `package.json`, `tsconfig` base compartido ([tsconfig.base.json](../tsconfig.base.json)) y Vitest.
+- [x] Supabase CLI: `supabase init` y [.env.example](../apps/platform/.env.example) documentado.
+- [ ] Supabase: crear proyecto `dev` en la nube y `pnpm supabase link --project-ref <ref>`.
+- [x] Scripts raíz (`typecheck`, `test`, `db:*`, `smoke:llm`) y CI en [.github/workflows/ci.yml](../.github/workflows/ci.yml) (typecheck + test + build).
+- [ ] Acceso al LLM: key de AI Gateway + `AI_MODEL` en `.env.local`; `pnpm smoke:llm` responde.
+- [ ] Formatear el código existente (`pnpm format`), corregir los errores de `pnpm lint`, agregar `.gitattributes` con `eol=lf` y sumar ambos chequeos al CI.
+- [ ] Cargar los sprints como tickets en Linear; una rama + PR chico por ticket.
 
 **Criterio:** `pnpm install && pnpm -r typecheck` pasa; `supabase start` levanta local.
 
-### F1 — Esquema, RLS y seed
-- [ ] Migraciones de las tablas de §4, enums, índices (`organization_id`, `negotiation_id`, `status`).
-- [ ] Políticas RLS por tabla + función helper `is_member(org_id)`.
-- [ ] Vistas de métricas y RPC `accept_offer`.
-- [ ] `seed.sql`: org "Consorcios del Sur", usuario demo `demo@pacta.ai`, política por defecto, ~15 deudores/deudas y algunos acuerdos históricos (para que el dashboard no quede vacío en la demo).
-- [ ] Generación de tipos: `supabase gen types typescript` → `packages/db/types.gen.ts`.
-- [ ] **Tests de RLS**: un usuario de otra org no ve nada (pgTAP o test de integración con dos clientes).
+### Sprint 1 — Núcleo de negociación (sin auth ni CRUD)
 
-### F2 — Auth y contexto de organización
-- [ ] Factories `createServerSupabase()` (cookies vía utilidades de `@tanstack/react-start/server`) y `createServiceSupabase()` (solo servidor).
-- [ ] Server fns `signIn`, `signOut`, `getSession`; conectar [login.tsx](../apps/platform/src/routes/login.tsx) (manejo de errores y estado de carga).
-- [ ] Layout `_authed` con `beforeLoad` + redirect a `/login`; mover `/dashboard` debajo.
-- [ ] Sidebar con usuario/organización reales y menú de logout.
+Objetivo: **un deudor de seed negocia por chat y recibe ofertas siempre dentro de la política.**
 
-### F3 — CRUD del administrador
-- [ ] Deudores y deudas (lista con estado, alta, edición, archivado).
-- [ ] Reglas del agente: formulario de D5 con validación Zod + versión nueva al guardar.
-- [ ] "Nueva negociación": crear negociación, generar token (32 bytes aleatorios, se guarda **solo el hash**), mostrar link.
-- [ ] Habilitar items del sidebar.
+- [x] Migraciones de **todas** las tablas de §4 con enums, índices y RLS habilitado ([init_schema](../supabase/migrations/20261022000929_init_schema.sql)). Además: FKs compuestas `(id, organization_id)` para que no se puedan relacionar filas de organizaciones distintas, y privilegios explícitos por tabla para `authenticated` (ofertas y acuerdos solo los escribe el servidor).
+- [x] `seed.sql`: org "Consorcios del Sur", usuario demo `demo@pacta.ai` / `demo1234`, política, 12 deudores / 13 deudas, 6 acuerdos históricos y **negociación con token conocido** (`/n/dev-4b`). DNI de verificación de todos los deudores: terminación `123`.
+- [x] Tipos generados → `apps/platform/src/server/db/types.gen.ts` (`pnpm db:types`).
+- [ ] Motor de reglas: utilidades monetarias en centavos, `getNegotiationBounds`, `evaluateRequest`, `buildSchedule`, `requiresHuman`, con tests exhaustivos (cuota mínima, anticipo, redondeo, quita 100 % en pago único, umbral de escalado). Objetivo ≥ 95 % de cobertura del paquete.
+- [ ] `packages/agent`: system prompt versionado, tools de §3.2 con `inputSchema` Zod, `runNegotiationTurn({ negotiation, lastMessage, history, model, persistence })` sobre `streamText`.
+- [ ] `server/db/debtor-access.ts` y endpoint `POST /api/n/$token/chat`: valida token y estado, reconstruye el historial desde la DB, ejecuta el turno, persiste mensajes (`onFinish`), devuelve `toUIMessageStreamResponse()`.
+- [ ] Página `/n/$token` mínima con `useChat` (sin verificación todavía).
 
-### F4 — Motor de reglas (paralelizable)
-- [ ] Utilidades monetarias en centavos, redondeo y formato `es-AR`.
-- [ ] `getNegotiationBounds`, `evaluateRequest`, `buildSchedule`, `requiresHuman`.
-- [ ] Tests unitarios exhaustivos (bordes: cuota mínima, anticipo, redondeo, quita 100 % en pago único, deuda sobre umbral de escalado). Objetivo ≥ 95 % de cobertura del paquete.
+> **Paralelización:** motor de reglas (1 persona), agente + endpoint (2 personas), migraciones + seed (1 persona). La quinta persona puede adelantar la UI del chat del deudor.
 
-### F5 — Agente y endpoint de chat
-- [ ] `packages/agent`: system prompt versionado, tools de §3.2 con `inputSchema` Zod, `runNegotiationTurn({ negotiation, messages, model })` sobre `streamText`.
-- [ ] Server route `POST /api/negotiations/$id/chat`: valida token + estado `active|offer_pending`, carga historial, ejecuta turno, **persiste** mensajes del deudor y del agente (`onFinish`), devuelve `toUIMessageStreamResponse()`.
-- [ ] Interceptor de palabra clave de handoff (antes del LLM).
-- [ ] Validador post‑generación de cifras (§3.3‑2).
-- [ ] Mensaje inicial determinístico (bot disclosure + aviso de privacidad), no generado por el LLM.
+**Criterio:** con el token de seed se puede negociar; pedir 12 cuotas o quita total nunca genera una oferta fuera de política.
 
-### F6 — Portal del deudor
-- [ ] Ruta pública `/n/$token`: pantalla de bienvenida → verificación → chat (`useChat` del AI SDK).
-- [ ] Componente **OfferCard** renderizado desde el `tool-propose_offer` part / DB, con botón "Acepto los términos del plan de pago".
-- [ ] `POST /accept`: captura IP/UA, llama RPC `accept_offer`, calcula `transcript_sha256`, genera acta, devuelve link al acta.
-- [ ] Botón permanente "Hablar con una persona".
-- [ ] Estados terminales (acordado, escalado, vencido, bloqueado) con UI clara.
+### Sprint 2 — Portal del deudor completo
 
-### F7 — Panel de conversaciones, handoff y acta
-- [ ] Lista filtrable por estado; detalle con transcript, ofertas, eventos de auditoría.
-- [ ] Tomar control / devolver al agente / cerrar acuerdo manual (con el motor validando igual).
-- [ ] Realtime (o polling, según D9) para mensajes del admin hacia el deudor.
-- [ ] Vista `/acuerdos/$id` imprimible + marcar cuotas pagadas (D10).
+- [ ] Pantalla de bienvenida (sin montos) → verificación de identidad → cookie firmada (D4); bloqueo tras N intentos.
+- [ ] Mensaje inicial determinístico (bot disclosure + aviso de privacidad).
+- [ ] **OfferCard** renderizada desde el `tool-propose_offer` part / DB, con botón "Acepto los términos del plan de pago".
+- [ ] `POST /api/n/$token/accept`: captura IP/UA, RPC `accept_offer`, `transcript_sha256`, genera acta HTML, devuelve link al acta.
+- [ ] Botón permanente "Hablar con una persona" + interceptor de palabra clave antes del LLM.
+- [ ] Validador post‑generación de cifras (§3.3‑3) y límites de pasos/turnos.
+- [ ] Estados terminales (acordado, escalado, vencido, bloqueado) con UI clara; polling de mensajes en `escalated`.
 
-### F8 — Métricas reales en el dashboard
-- [ ] Reemplazar los arrays mock por `loader` + `useSuspenseQuery` contra las server fns de §5.
-- [ ] Estados vacíos y skeletons (ya existe [skeleton.tsx](../apps/platform/src/components/ui/skeleton.tsx)).
-- [ ] [dashboard-preview.tsx](../apps/platform/src/components/dashboard-preview.tsx) de la landing sigue usando datos mock: separar los componentes en "presentacionales" (reciben props) para reutilizarlos en ambos lados.
+**Criterio:** flujo completo deudor: link → verificación → negociación → aceptación → acta con evidencia.
 
-### F9 — Calidad, evaluación y deploy
-- [ ] **Evals del agente**: suite de ~20 escenarios (deudor cooperativo, pide 12 cuotas, pide quita total, agresivo, intenta prompt injection "ignorá tus reglas", tercero que no es el titular, pide humano). Assert: nunca se crea una oferta fuera de política, siempre hay disclosure, se escala cuando corresponde. Con `MockLanguageModel` en CI y con el modelo real on‑demand.
-- [ ] Tests de integración de endpoints críticos (`/chat`, `/accept`) con Supabase local.
+### Sprint 3 — Panel del administrador
+
+- [x] Factories `createServerSupabase()` (cookies vía `@tanstack/react-start/server`); server fns `signIn`, `signOut`, `getSessionContext`; conectar [login.tsx](../apps/platform/src/routes/login.tsx). Los server fns del panel usan `authMiddleware` ([middleware.ts](../apps/platform/src/server/middleware.ts)).
+- [x] Layout `_authed` con `beforeLoad` + redirect a `/login`; mover `/dashboard` debajo; sidebar con usuario/organización reales y logout.
+- [x] **Test de RLS** con pgTAP ([rls.test.sql](../supabase/tests/database/rls.test.sql), `pnpm db:test`): 16 asserts sobre aislamiento entre organizaciones, FKs compuestas, privilegios del panel y acceso anónimo.
+- [x] Deudores y deudas (lista con búsqueda y estado, alta con primera deuda, edición, marcar pagada / incobrable / reabrir). El DNI se guarda solo como hash de los últimos 3 dígitos.
+- [x] Reglas del agente: formulario de D5 con Zod.
+- [ ] Reglas del agente: previsualización de planes con el motor (depende del motor de reglas, Sprint 1).
+- [x] "Nueva negociación" (dashboard y ficha del deudor): crea negociación, guarda snapshot de política y hash del token, muestra el link una única vez.
+- [ ] Botón "Probar como deudor" (depende de `/n/$token`, Sprints 1–2).
+- [x] Conversaciones: lista filtrable por estado, detalle con transcript/ofertas/reglas aplicadas/actividad, tomar control / devolver al agente / cancelar link, mensajes de la administración y polling cada 10 s (D9).
+- [ ] Cerrar acuerdo manual desde el panel (depende del motor de reglas para validar la oferta).
+- [x] Vista `/acuerdos/$id` imprimible + marcar cuotas pagadas (D10); la deuda pasa a "pagada" al cobrar todas las cuotas.
+- [x] Configuración de la organización (nombre visible para el deudor y tipo).
+- [x] Habilitar items del sidebar.
+- [ ] "¿Olvidaste tu contraseña?" y "Solicitar acceso" en el login (siguen sin acción).
+
+### Sprint 4 — Métricas, calidad y deploy
+
+- [ ] Reemplazar los arrays mock del dashboard por `loader` + `useSuspenseQuery` contra las server fns de §5; estados vacíos y skeletons ([skeleton.tsx](../apps/platform/src/components/ui/skeleton.tsx)).
+- [ ] [dashboard-preview.tsx](../apps/platform/src/components/dashboard-preview.tsx) de la landing sigue con datos mock: separar componentes presentacionales (reciben props) para reutilizarlos en ambos lados.
+- [ ] **Evals del agente**: ~20 escenarios (cooperativo, pide 12 cuotas, pide quita total, agresivo, prompt injection "ignorá tus reglas", tercero que no es el titular, pide humano). Assert: nunca se crea una oferta fuera de política, siempre hay disclosure, se escala cuando corresponde. Con `MockLanguageModel` en CI y con el modelo real on‑demand.
+- [ ] Tests de integración de `/chat` y `/accept` con Supabase local.
 - [ ] Rate limit y tamaño máximo de mensaje en `/chat`.
-- [ ] Logging estructurado + registro de uso de tokens por negociación (insumo para el modelo de costos de [§6](./DOCUMENTACION.md#L129-L140)).
-- [ ] Deploy Vercel + Supabase prod; secrets por entorno; dominio.
+- [ ] Logging estructurado + registro de tokens consumidos por negociación (insumo para el modelo de costos de [§6](./DOCUMENTACION.md#L129-L140)).
+- [ ] Deploy Vercel + Supabase prod; secrets por entorno.
 - [ ] Guion de demo y seed reproducible.
+- [ ] Actualizar [USO_IA.md](./USO_IA.md) con el uso de IA durante el desarrollo del backend.
 
 ---
 
@@ -369,7 +392,7 @@ flowchart LR
 2. Puede cargar un deudor + deuda y configurar reglas de negociación.
 3. Puede generar un link de negociación y probarlo como deudor.
 4. El deudor se verifica, conversa en lenguaje natural y recibe ofertas **siempre dentro de la política** (garantizado por motor + tests + evals).
-5. El deudor acepta con un click y se genera un acta con evidencia (timestamp, IP, hash, versión de política).
+5. El deudor acepta con un click y se genera un acta con evidencia (timestamp, IP, hash, snapshot de política).
 6. El deudor puede pedir un humano y el admin puede tomar la conversación.
 7. El dashboard muestra métricas reales derivadas de la base.
 
@@ -379,9 +402,25 @@ flowchart LR
 
 | Riesgo | Mitigación |
 | :--- | :--- |
-| Inestabilidad de APIs de TanStack Start (versiones `latest`) | Fijar versiones en F0; aislar el dominio en `packages/*` para no depender del framework. |
+| Inestabilidad de APIs de TanStack Start (versiones `latest`) | Fijar versiones en Sprint 0; aislar el dominio en `packages/*` para no depender del framework. |
 | El LLM inventa montos o promete condiciones | D7 + validador post‑generación + evals en CI. |
 | Prompt injection del deudor | Las tools validan contra el *snapshot* del servidor; el modelo no tiene tools de escritura arbitraria; aceptación fuera del LLM. |
-| Fuga de la service role key | Solo en server routes/fns; lint/regla de revisión: nunca importar `createServiceSupabase` desde código cliente. |
+| Manipulación del historial desde el navegador | El servidor solo acepta el último mensaje del deudor y reconstruye el resto desde la DB (§3.3‑2). |
+| Fuga de la service role key o uso fuera de alcance | Un único módulo (`debtor-access.ts`) la usa, siempre acotado al `negotiation_id` de la cookie verificada; revisión en PR de cualquier import fuera de `server/`. |
+| Link de negociación reenviado a un tercero | Montos visibles solo tras verificación de identidad; cookie de corta duración; bloqueo tras N intentos. |
 | Costos de inferencia | Límite de turnos, modelo configurable, registro de tokens por negociación. |
-| Alcance excesivo | WhatsApp, links de pago, CSV, PDF server‑side y mails quedan explícitamente en R2. |
+| Alcance excesivo | WhatsApp, links de pago, CSV, PDF server‑side, mails, Realtime, roles y versionado de políticas quedan explícitamente en R2. |
+
+### 8.1 Orden de recorte si no alcanza el tiempo
+
+Recortar de arriba hacia abajo; nada por debajo de la línea se recorta porque es el núcleo del MVP o un requisito legal.
+
+1. Marcar cuotas como pagadas (D10 → mostrar solo "Monto acordado").
+2. Previsualización de planes en Reglas del agente.
+3. Cierre de acuerdo manual por el admin (queda: tomar control y devolver al agente).
+4. Pantalla de Configuración (se edita por seed).
+5. Validador post‑generación de cifras (queda cubierto por motor + tarjeta de oferta desde DB).
+
+**No recortable:**
+
+Motor de reglas con tests · agente con tools · verificación de identidad · tarjeta de oferta y aceptación con evidencia · bot disclosure · "Hablar con una persona" · RLS · login.
