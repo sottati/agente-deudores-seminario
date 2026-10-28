@@ -24,8 +24,8 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm --filter @agente/platform build
-      # Pendiente: sumar `pnpm lint` y `pnpm check` cuando se corrijan los errores
-      # existentes (ver ticket de formateo/lint del Sprint 0).

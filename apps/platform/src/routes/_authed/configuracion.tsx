@@ -15,7 +15,8 @@ import {
 } from "@/components/ui/card"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { formValues, useAction } from "@/hooks/use-action"
-import { organizationKindLabel, type OrganizationKind } from "@/lib/labels"
+import { organizationKindLabel } from "@/lib/labels"
+import type { OrganizationKind } from "@/lib/labels"
 import { getOrganization, updateOrganization } from "@/server/settings"
 
 export const Route = createFileRoute("/_authed/configuracion")({
@@ -59,11 +60,17 @@ function SettingsPage() {
             <CardHeader>
               <CardTitle>Organización</CardTitle>
               <CardDescription>
-                El nombre visible es el que usa el agente al presentarse ante el deudor.
+                El nombre visible es el que usa el agente al presentarse ante el
+                deudor.
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
-              <TextField label="Nombre" name="name" required defaultValue={organization.name} />
+              <TextField
+                label="Nombre"
+                name="name"
+                required
+                defaultValue={organization.name}
+              />
               <TextField
                 label="Nombre visible para los deudores"
                 name="displayNameForDebtors"
@@ -72,18 +79,28 @@ function SettingsPage() {
                 hint={`"Hola, soy el asistente virtual de pacta.ia en representación de …"`}
               />
               <Field label="Tipo de organización" htmlFor="kind">
-                <NativeSelect id="kind" name="kind" defaultValue={organization.kind}>
-                  {Object.entries(organizationKindLabel).map(([value, label]) => (
-                    <NativeSelectOption key={value} value={value}>
-                      {label}
-                    </NativeSelectOption>
-                  ))}
+                <NativeSelect
+                  id="kind"
+                  name="kind"
+                  defaultValue={organization.kind}
+                >
+                  {Object.entries(organizationKindLabel).map(
+                    ([value, label]) => (
+                      <NativeSelectOption key={value} value={value}>
+                        {label}
+                      </NativeSelectOption>
+                    )
+                  )}
                 </NativeSelect>
               </Field>
             </CardContent>
             <CardFooter className="flex-wrap justify-end gap-3">
               <FormError message={save.error} />
-              {saved ? <span className="text-sm text-muted-foreground">Cambios guardados.</span> : null}
+              {saved ? (
+                <span className="text-sm text-muted-foreground">
+                  Cambios guardados.
+                </span>
+              ) : null}
               <Button type="submit" disabled={save.pending}>
                 {save.pending ? "Guardando…" : "Guardar"}
               </Button>

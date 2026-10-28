@@ -5,26 +5,26 @@
 > **Versión 2.** Cambios respecto de la versión anterior:
 >
 > 1. **Fases verticales en vez de horizontales:** el núcleo de valor (agente negociando dentro de la política) se construye y valida en el Sprint 1, antes que auth y CRUD (§6).
-> 2. **Recorte de alcance:** 2 paquetes en lugar de 4, polling en lugar de Realtime, política única por organización sin versionado (alcanza con el *snapshot*), un solo rol de usuario.
-> 3. **Huecos de seguridad cubiertos:** sesión del deudor post‑verificación (cookie firmada), historial del chat reconstruido desde la DB (nunca desde el cliente), acceso *service role* encapsulado en un único módulo, URLs públicas solo por token.
+> 2. **Recorte de alcance:** 2 paquetes en lugar de 4, polling en lugar de Realtime, política única por organización sin versionado (alcanza con el _snapshot_), un solo rol de usuario.
+> 3. **Huecos de seguridad cubiertos:** sesión del deudor post‑verificación (cookie firmada), historial del chat reconstruido desde la DB (nunca desde el cliente), acceso _service role_ encapsulado en un único módulo, URLs públicas solo por token.
 > 4. **Orden de recorte explícito** si no alcanza el tiempo (§8.1).
 
 ---
 
 ## 0. Diagnóstico del repositorio
 
-| Área | Estado actual | Implicancia |
-| :--- | :--- | :--- |
-| Monorepo | pnpm, `apps/*` y `packages/*` declarados en [pnpm-workspace.yaml](../pnpm-workspace.yaml). `packages/` **no existe**. | Hay lugar para paquetes compartidos sin reestructurar nada. |
-| `apps/platform` | TanStack Start (SSR) + React 19 + shadcn. Rutas: `/`, `/login`, `/dashboard`. **No hay ninguna server function, server route ni dependencia de backend**. | El servidor de TanStack Start ya está disponible y es el lugar natural para el backend. |
-| Login | [login.tsx](../apps/platform/src/routes/login.tsx#L15-L18) navega a `/dashboard` sin autenticar. | Hay que reemplazarlo por Auth real y proteger rutas. |
-| Dashboard | Todos los datos están hardcodeados: [dashboard-overview.tsx](../apps/platform/src/components/dashboard/dashboard-overview.tsx#L24-L67), [recovery-trend-chart.tsx](../apps/platform/src/components/dashboard/recovery-trend-chart.tsx#L18-L25), [agreement-plans-chart.tsx](../apps/platform/src/components/dashboard/agreement-plans-chart.tsx#L20-L24). | Define el contrato de métricas que el backend debe exponer. |
-| Navegación | [app-sidebar.tsx](../apps/platform/src/components/app-sidebar.tsx#L26-L34): "Conversaciones", "Deudores", "Reglas del agente", "Configuración" deshabilitados; org ("Consorcios del Sur") y usuario ("Simon") hardcodeados. Botón "Nueva negociación" sin acción. | Mapa directo de las pantallas/endpoints que faltan. |
-| `apps/agent` | Solo un [README](../apps/agent/README.md) ("Stack and tools are TBD"). | Decisión pendiente (ver D1). |
-| Documentación | [DOCUMENTACION.md §5.3](./DOCUMENTACION.md#L112-L127) ubica el agente en `apps/agent`. | Si se adopta D1‑A hay que actualizar la doc (tarea del Sprint 0). |
-| Stack declarado | Supabase (Auth + Postgres) y Vercel AI SDK con GPT‑5.6 Luna, ambos *pendientes*. | Se respeta como base. |
-| Requisitos legales | [MARCO_LEGAL.md](./MARCO_LEGAL.md) exige: RLS multi-tenant, bot disclosure, LLM sin cálculo libre de montos (function calling + validación determinística), human‑in‑the‑loop, verificación de identidad, evidencia del acuerdo (timestamp, IP, aceptación explícita, hash), minimización de PII en prompts. | Son requisitos **funcionales** del backend, no "nice to have". |
-| Higiene | Dependencias `@tanstack/*` en `"latest"` en [package.json](../apps/platform/package.json); `.env*` ya ignorado. | Fijar versiones antes de empezar (evita roturas de TanStack Start entre releases). |
+| Área               | Estado actual                                                                                                                                                                                                                                                                                                                                             | Implicancia                                                                             |
+| :----------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| Monorepo           | pnpm, `apps/*` y `packages/*` declarados en [pnpm-workspace.yaml](../pnpm-workspace.yaml). `packages/` **no existe**.                                                                                                                                                                                                                                     | Hay lugar para paquetes compartidos sin reestructurar nada.                             |
+| `apps/platform`    | TanStack Start (SSR) + React 19 + shadcn. Rutas: `/`, `/login`, `/dashboard`. **No hay ninguna server function, server route ni dependencia de backend**.                                                                                                                                                                                                 | El servidor de TanStack Start ya está disponible y es el lugar natural para el backend. |
+| Login              | [login.tsx](../apps/platform/src/routes/login.tsx#L15-L18) navega a `/dashboard` sin autenticar.                                                                                                                                                                                                                                                          | Hay que reemplazarlo por Auth real y proteger rutas.                                    |
+| Dashboard          | Todos los datos están hardcodeados: [dashboard-overview.tsx](../apps/platform/src/components/dashboard/dashboard-overview.tsx#L24-L67), [recovery-trend-chart.tsx](../apps/platform/src/components/dashboard/recovery-trend-chart.tsx#L18-L25), [agreement-plans-chart.tsx](../apps/platform/src/components/dashboard/agreement-plans-chart.tsx#L20-L24). | Define el contrato de métricas que el backend debe exponer.                             |
+| Navegación         | [app-sidebar.tsx](../apps/platform/src/components/app-sidebar.tsx#L26-L34): "Conversaciones", "Deudores", "Reglas del agente", "Configuración" deshabilitados; org ("Consorcios del Sur") y usuario ("Simon") hardcodeados. Botón "Nueva negociación" sin acción.                                                                                         | Mapa directo de las pantallas/endpoints que faltan.                                     |
+| `apps/agent`       | Solo un [README](../apps/agent/README.md) ("Stack and tools are TBD").                                                                                                                                                                                                                                                                                    | Decisión pendiente (ver D1).                                                            |
+| Documentación      | [DOCUMENTACION.md §5.3](./DOCUMENTACION.md#L112-L127) ubica el agente en `apps/agent`.                                                                                                                                                                                                                                                                    | Si se adopta D1‑A hay que actualizar la doc (tarea del Sprint 0).                       |
+| Stack declarado    | Supabase (Auth + Postgres) y Vercel AI SDK con GPT‑5.6 Luna, ambos _pendientes_.                                                                                                                                                                                                                                                                          | Se respeta como base.                                                                   |
+| Requisitos legales | [MARCO_LEGAL.md](./MARCO_LEGAL.md) exige: RLS multi-tenant, bot disclosure, LLM sin cálculo libre de montos (function calling + validación determinística), human‑in‑the‑loop, verificación de identidad, evidencia del acuerdo (timestamp, IP, aceptación explícita, hash), minimización de PII en prompts.                                              | Son requisitos **funcionales** del backend, no "nice to have".                          |
+| Higiene            | Dependencias `@tanstack/*` en `"latest"` en [package.json](../apps/platform/package.json); `.env*` ya ignorado.                                                                                                                                                                                                                                           | Fijar versiones antes de empezar (evita roturas de TanStack Start entre releases).      |
 
 ---
 
@@ -34,10 +34,10 @@ Cada decisión tiene una **recomendación** (⭐). Las marcadas con 🔴 bloquea
 
 ### D1 🔴 — ¿Dónde vive el backend?
 
-| Opción | Pros | Contras |
-| :--- | :--- | :--- |
-| ⭐ **A. Backend dentro de `apps/platform`** (server functions + server routes de TanStack Start) y la lógica de dominio en **paquetes** (`packages/*`) | Un solo deploy, sesión/cookies compartidas, tipos end‑to‑end, sin CORS. Ideal para un equipo de 5 y un MVP. | Acopla el ciclo de deploy de UI y agente. |
-| B. Servicio separado en `apps/agent` (Hono/Fastify) | Escala/deploy independiente; listo para webhooks de WhatsApp (R2). | Duplica auth, CORS, dos deploys, más infra para un sandbox. |
+| Opción                                                                                                                                                 | Pros                                                                                                        | Contras                                                     |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------- |
+| ⭐ **A. Backend dentro de `apps/platform`** (server functions + server routes de TanStack Start) y la lógica de dominio en **paquetes** (`packages/*`) | Un solo deploy, sesión/cookies compartidas, tipos end‑to‑end, sin CORS. Ideal para un equipo de 5 y un MVP. | Acopla el ciclo de deploy de UI y agente.                   |
+| B. Servicio separado en `apps/agent` (Hono/Fastify)                                                                                                    | Escala/deploy independiente; listo para webhooks de WhatsApp (R2).                                          | Duplica auth, CORS, dos deploys, más infra para un sandbox. |
 
 **Recomendación:** A, con **solo dos paquetes**:
 
@@ -48,10 +48,10 @@ El acceso a datos (clientes Supabase, tipos generados, queries) y los schemas Zo
 
 ### D2 🔴 — Acceso a datos
 
-| Opción | Detalle |
-| :--- | :--- |
-| ⭐ **supabase-js + `@supabase/ssr` + migraciones SQL con Supabase CLI + tipos generados** | RLS real aplicado por la sesión del usuario (requisito legal), menos capas. |
-| Drizzle ORM sobre conexión Postgres directa | Mejor DX de queries, pero la conexión directa **saltea RLS** salvo configuración extra; duplica el modelo de seguridad. |
+| Opción                                                                                    | Detalle                                                                                                                 |
+| :---------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------- |
+| ⭐ **supabase-js + `@supabase/ssr` + migraciones SQL con Supabase CLI + tipos generados** | RLS real aplicado por la sesión del usuario (requisito legal), menos capas.                                             |
+| Drizzle ORM sobre conexión Postgres directa                                               | Mejor DX de queries, pero la conexión directa **saltea RLS** salvo configuración extra; duplica el modelo de seguridad. |
 
 ### D3 🔴 — Multi‑tenancy en el MVP
 
@@ -59,10 +59,10 @@ La doc ubica "arquitectura multi‑tenant" en R2, pero el marco legal exige aisl
 
 ### D4 🔴 — ¿Cómo accede el deudor al chat simulado?
 
-| Opción | Detalle |
-| :--- | :--- |
+| Opción                                                                                                                           | Detalle                                                                                                   |
+| :------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
 | ⭐ **Link único tokenizado** `/n/$token` + **verificación de identidad** (ej. últimos 3 dígitos del DNI) antes de mostrar montos | Cumple Ley 6.171 / LPDP (no exponer deuda a terceros). Es exactamente el flujo que tendrá WhatsApp en R2. |
-| Solo "modo simulación" dentro del dashboard (el admin juega de deudor) | Más simple, pero no valida la experiencia del deudor ni la verificación. |
+| Solo "modo simulación" dentro del dashboard (el admin juega de deudor)                                                           | Más simple, pero no valida la experiencia del deudor ni la verificación.                                  |
 
 **Recomendación:** ambos. El link público es el flujo real; "Probar como deudor" en el panel abre el mismo link.
 
@@ -72,18 +72,18 @@ La doc ubica "arquitectura multi‑tenant" en R2, pero el marco legal exige aisl
 
 Propuesta mínima, validada contra [ENTREVISTAS.md](./ENTREVISTAS.md) y el dashboard (planes de 1–3 cuotas):
 
-| Parámetro | Tipo | Ejemplo |
-| :--- | :--- | :--- |
-| `max_installments` | int | 3 |
-| `min_down_payment_pct` | % | 20 |
-| `min_installment_amount` | moneda | $ 20.000 |
-| `max_interest_waiver_pct` (cuotas) | % | 50 |
-| `single_payment_interest_waiver_pct` | % | 100 |
-| `max_principal_discount_pct` | % | 0 (el capital no se toca por defecto) |
-| `max_first_due_days` | int | 15 |
-| `offer_validity_hours` | int | 72 |
-| `escalate_above_amount` | moneda | $ 1.000.000 → requiere humano |
-| `tone` / `custom_instructions` | enum / texto acotado | "empático‑formal" |
+| Parámetro                            | Tipo                 | Ejemplo                               |
+| :----------------------------------- | :------------------- | :------------------------------------ |
+| `max_installments`                   | int                  | 3                                     |
+| `min_down_payment_pct`               | %                    | 20                                    |
+| `min_installment_amount`             | moneda               | $ 20.000                              |
+| `max_interest_waiver_pct` (cuotas)   | %                    | 50                                    |
+| `single_payment_interest_waiver_pct` | %                    | 100                                   |
+| `max_principal_discount_pct`         | %                    | 0 (el capital no se toca por defecto) |
+| `max_first_due_days`                 | int                  | 15                                    |
+| `offer_validity_hours`               | int                  | 72                                    |
+| `escalate_above_amount`              | moneda               | $ 1.000.000 → requiere humano         |
+| `tone` / `custom_instructions`       | enum / texto acotado | "empático‑formal"                     |
 
 ⭐ **Una política por organización**, editable en el lugar. La trazabilidad la da el **snapshot** que cada negociación guarda al crearse (`policy_snapshot`): editar la política no afecta negociaciones en curso. Versionado de políticas y override por deuda quedan para R2.
 
@@ -93,7 +93,7 @@ Propuesta mínima, validada contra [ENTREVISTAS.md](./ENTREVISTAS.md) y el dashb
 
 ### D7 — Diseño del agente (guardrail central)
 
-⭐ **El LLM nunca produce montos.** Toda cifra sale del motor de reglas determinístico vía *tools*; la oferta se persiste en DB y el frontend renderiza una **tarjeta de oferta** desde la DB (no desde el texto del modelo). La **aceptación es un click del deudor** sobre esa tarjeta (endpoint dedicado), nunca una tool del LLM. Ver §3.
+⭐ **El LLM nunca produce montos.** Toda cifra sale del motor de reglas determinístico vía _tools_; la oferta se persiste en DB y el frontend renderiza una **tarjeta de oferta** desde la DB (no desde el texto del modelo). La **aceptación es un click del deudor** sobre esa tarjeta (endpoint dedicado), nunca una tool del LLM. Ver §3.
 
 ### D8 — Proveedor/modelo y gateway
 
@@ -203,13 +203,13 @@ supabase/
 
 ### 3.2 Tools expuestas al LLM (`packages/agent`)
 
-| Tool | Efecto | Notas |
-| :--- | :--- | :--- |
-| `get_debt_summary` | Lee deuda (capital, interés, vencimiento, concepto) | Solo disponible con la sesión del deudor verificada. Usa alias ("Unidad 4B"), no DNI/nombre completo (minimización PII). |
-| `get_negotiation_options` | Devuelve los límites de la política en lenguaje entendible | Para que el agente explique opciones sin inventar. |
-| `simulate_plan({ installments, downPayment? })` | Llama a `evaluateRequest` | Si está fuera de política, devuelve la alternativa más cercana y **registra un evento `out_of_policy_request`** (alimenta "Requieren atención"). |
-| `propose_offer({ installments, downPayment? })` | Revalida con el motor y persiste una `offer` en estado `proposed` (supersede la anterior) | Devuelve `offerId`; el front muestra la tarjeta con botón **Aceptar**. |
-| `escalate_to_human({ reason })` | Pasa la negociación a `escalated`, el agente deja de responder | También se dispara por palabra clave del deudor ("hablar con una persona") sin pasar por el LLM. |
+| Tool                                            | Efecto                                                                                    | Notas                                                                                                                                            |
+| :---------------------------------------------- | :---------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `get_debt_summary`                              | Lee deuda (capital, interés, vencimiento, concepto)                                       | Solo disponible con la sesión del deudor verificada. Usa alias ("Unidad 4B"), no DNI/nombre completo (minimización PII).                         |
+| `get_negotiation_options`                       | Devuelve los límites de la política en lenguaje entendible                                | Para que el agente explique opciones sin inventar.                                                                                               |
+| `simulate_plan({ installments, downPayment? })` | Llama a `evaluateRequest`                                                                 | Si está fuera de política, devuelve la alternativa más cercana y **registra un evento `out_of_policy_request`** (alimenta "Requieren atención"). |
+| `propose_offer({ installments, downPayment? })` | Revalida con el motor y persiste una `offer` en estado `proposed` (supersede la anterior) | Devuelve `offerId`; el front muestra la tarjeta con botón **Aceptar**.                                                                           |
+| `escalate_to_human({ reason })`                 | Pasa la negociación a `escalated`, el agente deja de responder                            | También se dispara por palabra clave del deudor ("hablar con una persona") sin pasar por el LLM.                                                 |
 
 ### 3.3 Guardrails
 
@@ -218,7 +218,7 @@ supabase/
 3. **Validación post‑generación:** si el texto del modelo contiene montos/porcentajes que no coinciden con la última respuesta de tool → se reemplaza por un mensaje seguro y se loguea (`guardrail_violation`). Implementación simple: extraer cifras por regex y compararlas contra los valores devueltos por las tools en ese turno.
 4. **Límite de pasos** de tools por turno (`stopWhen: stepCountIs(5)`) y límite de turnos por negociación.
 5. **Rate limiting** simple por token en el endpoint de chat (ej. contador en DB por minuto).
-6. **Aceptación fuera del LLM:** `POST /accept` revalida la oferta contra el *snapshot* de política, verifica vigencia, y crea el acuerdo en una transacción (RPC Postgres).
+6. **Aceptación fuera del LLM:** `POST /accept` revalida la oferta contra el _snapshot_ de política, verifica vigencia, y crea el acuerdo en una transacción (RPC Postgres).
 7. **Service role encapsulado:** solo `server/db/debtor-access.ts` crea ese cliente; todas sus funciones reciben el `negotiation_id` **obtenido de la cookie verificada**, nunca de un parámetro enviado por el cliente.
 
 ### 3.4 Máquina de estados de la negociación
@@ -258,19 +258,19 @@ erDiagram
   organizations ||--o{ audit_events : registra
 ```
 
-| Tabla | Campos clave |
-| :--- | :--- |
-| `organizations` | `id`, `name`, `kind` (`consorcio`/`colegio`), `display_name_for_debtors` |
-| `memberships` | `user_id` → `auth.users`, `organization_id` (sin roles en el MVP) |
-| `negotiation_policies` | `organization_id` (único), parámetros de D5, `updated_at` |
-| `debtors` | `organization_id`, `full_name`, `alias` (ej. "Unidad 4B"), `group_label` (edificio/curso), `email`, `phone`, `verification_hash` |
-| `debts` | `debtor_id`, `concept`, `principal_cents`, `interest_cents`, `due_date`, `status` (`open`/`in_negotiation`/`agreed`/`paid`/`written_off`) |
-| `negotiations` | `debt_id`, `status` (§3.4), `policy_snapshot jsonb`, `token_hash`, `verified_at`, `verification_attempts`, `expires_at`, `channel` (`web_sim`) |
-| `messages` | `negotiation_id`, `role` (`debtor`/`agent`/`admin`/`system`), `parts jsonb` (formato `UIMessage` del AI SDK), `created_at` |
-| `offers` | `negotiation_id`, `installments`, `down_payment_cents`, `waived_interest_cents`, `total_cents`, `schedule jsonb`, `status`, `valid_until`, `engine_version` |
-| `agreements` | `offer_id`, `accepted_at`, `acceptance_ip`, `user_agent`, `transcript_sha256`, `document_html`, `template_version` |
-| `installments` | `agreement_id`, `number`, `due_date`, `amount_cents`, `paid_at?` (D10) |
-| `audit_events` | `organization_id`, `negotiation_id?`, `type` (`out_of_policy_request`, `escalated`, `guardrail_violation`, `offer_proposed`, ...), `payload jsonb` |
+| Tabla                  | Campos clave                                                                                                                                                |
+| :--------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `organizations`        | `id`, `name`, `kind` (`consorcio`/`colegio`), `display_name_for_debtors`                                                                                    |
+| `memberships`          | `user_id` → `auth.users`, `organization_id` (sin roles en el MVP)                                                                                           |
+| `negotiation_policies` | `organization_id` (único), parámetros de D5, `updated_at`                                                                                                   |
+| `debtors`              | `organization_id`, `full_name`, `alias` (ej. "Unidad 4B"), `group_label` (edificio/curso), `email`, `phone`, `verification_hash`                            |
+| `debts`                | `debtor_id`, `concept`, `principal_cents`, `interest_cents`, `due_date`, `status` (`open`/`in_negotiation`/`agreed`/`paid`/`written_off`)                   |
+| `negotiations`         | `debt_id`, `status` (§3.4), `policy_snapshot jsonb`, `token_hash`, `verified_at`, `verification_attempts`, `expires_at`, `channel` (`web_sim`)              |
+| `messages`             | `negotiation_id`, `role` (`debtor`/`agent`/`admin`/`system`), `parts jsonb` (formato `UIMessage` del AI SDK), `created_at`                                  |
+| `offers`               | `negotiation_id`, `installments`, `down_payment_cents`, `waived_interest_cents`, `total_cents`, `schedule jsonb`, `status`, `valid_until`, `engine_version` |
+| `agreements`           | `offer_id`, `accepted_at`, `acceptance_ip`, `user_agent`, `transcript_sha256`, `document_html`, `template_version`                                          |
+| `installments`         | `agreement_id`, `number`, `due_date`, `amount_cents`, `paid_at?` (D10)                                                                                      |
+| `audit_events`         | `organization_id`, `negotiation_id?`, `type` (`out_of_policy_request`, `escalated`, `guardrail_violation`, `offer_proposed`, ...), `payload jsonb`          |
 
 **RLS:** todas las tablas filtran por `organization_id IN (select organization_id from memberships where user_id = auth.uid())` (función helper `is_member(org_id)`). El deudor **no tiene usuario**: sus accesos pasan por `debtor-access.ts` (§3.3‑7). Token de negociación: 32 bytes aleatorios, se guarda **solo el hash**.
 
@@ -280,22 +280,22 @@ erDiagram
 
 ## 5. Contrato backend ↔ frontend
 
-| Pantalla (existente / nueva) | Hoy | Backend que la alimenta |
-| :--- | :--- | :--- |
-| `/login` | navega sin auth | `signInWithPassword` (Supabase) vía server fn; cookies con `@supabase/ssr`. "Solicitar acceso" → mailto. "Olvidé contraseña" → reset de Supabase. |
-| Layout protegido | — | `_authed.tsx` con `beforeLoad` → `getSessionFn()`; devuelve usuario + organización al contexto del router (reemplaza "Simon" / "Consorcios del Sur" en [app-sidebar.tsx](../apps/platform/src/components/app-sidebar.tsx#L48-L56)). |
-| `/dashboard` tarjetas | mock | `getDashboardKpis()` → `{ recoveredCents, agreedCents, deltaVsPrevMonthPct, agreementsCount, agreementsThisWeek, activeConversations, awaitingReply }` |
-| Gráfico evolución | mock | `getMonthlyRecovery({ months: 6 })` → `[{ month, amountCents }]` |
-| Gráfico por plan | mock | `getAgreementsByPlan({ period })` → `[{ installments, count }]` (el front mapea a "Pago único/2/3 cuotas") |
-| Acuerdos recientes | mock | `listRecentAgreements({ limit: 3 })` |
-| Requieren atención | mock | `getAttentionItems()` → escaladas, ofertas sin respuesta > X h, pedidos fuera de política |
-| Botón "Nueva negociación" | sin acción | Sheet: elegir/crear deudor + deuda → `createNegotiation()` → devuelve link `/n/$token` copiable + "Probar como deudor" |
-| Deudores (sidebar) | disabled | `listDebtors`, `createDebtor`, `createDebt`, `updateDebt` |
-| Conversaciones (sidebar) | disabled | `listNegotiations({ status })`, `getNegotiation(id)` (transcript + ofertas + eventos), `sendAdminMessage`, `returnToAgent`, `closeManually` |
-| Reglas del agente (sidebar) | disabled | `getPolicy`, `updatePolicy` + **previsualización**: `previewPlans(policy, sampleDebt)` usando el motor |
-| Configuración | disabled | `getOrganization`, `updateOrganization` (nombre visible al deudor, tipo) |
-| `/n/$token` (nuevo) | — | `getPublicNegotiation(token)` (sin montos hasta verificar), `verifyIdentity(token, answer)` → setea cookie, `getMessagesSince(token, cursor)` (polling en `escalated`), `POST /api/n/$token/chat` (stream, `useChat`), `POST /api/n/$token/accept` |
-| `/acuerdos/$id` (nuevo) | — | `getAgreement(id)` → acta imprimible; `markInstallmentPaid` |
+| Pantalla (existente / nueva) | Hoy             | Backend que la alimenta                                                                                                                                                                                                                            |
+| :--------------------------- | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/login`                     | navega sin auth | `signInWithPassword` (Supabase) vía server fn; cookies con `@supabase/ssr`. "Solicitar acceso" → mailto. "Olvidé contraseña" → reset de Supabase.                                                                                                  |
+| Layout protegido             | —               | `_authed.tsx` con `beforeLoad` → `getSessionFn()`; devuelve usuario + organización al contexto del router (reemplaza "Simon" / "Consorcios del Sur" en [app-sidebar.tsx](../apps/platform/src/components/app-sidebar.tsx#L48-L56)).                |
+| `/dashboard` tarjetas        | mock            | `getDashboardKpis()` → `{ recoveredCents, agreedCents, deltaVsPrevMonthPct, agreementsCount, agreementsThisWeek, activeConversations, awaitingReply }`                                                                                             |
+| Gráfico evolución            | mock            | `getMonthlyRecovery({ months: 6 })` → `[{ month, amountCents }]`                                                                                                                                                                                   |
+| Gráfico por plan             | mock            | `getAgreementsByPlan({ period })` → `[{ installments, count }]` (el front mapea a "Pago único/2/3 cuotas")                                                                                                                                         |
+| Acuerdos recientes           | mock            | `listRecentAgreements({ limit: 3 })`                                                                                                                                                                                                               |
+| Requieren atención           | mock            | `getAttentionItems()` → escaladas, ofertas sin respuesta > X h, pedidos fuera de política                                                                                                                                                          |
+| Botón "Nueva negociación"    | sin acción      | Sheet: elegir/crear deudor + deuda → `createNegotiation()` → devuelve link `/n/$token` copiable + "Probar como deudor"                                                                                                                             |
+| Deudores (sidebar)           | disabled        | `listDebtors`, `createDebtor`, `createDebt`, `updateDebt`                                                                                                                                                                                          |
+| Conversaciones (sidebar)     | disabled        | `listNegotiations({ status })`, `getNegotiation(id)` (transcript + ofertas + eventos), `sendAdminMessage`, `returnToAgent`, `closeManually`                                                                                                        |
+| Reglas del agente (sidebar)  | disabled        | `getPolicy`, `updatePolicy` + **previsualización**: `previewPlans(policy, sampleDebt)` usando el motor                                                                                                                                             |
+| Configuración                | disabled        | `getOrganization`, `updateOrganization` (nombre visible al deudor, tipo)                                                                                                                                                                           |
+| `/n/$token` (nuevo)          | —               | `getPublicNegotiation(token)` (sin montos hasta verificar), `verifyIdentity(token, answer)` → setea cookie, `getMessagesSince(token, cursor)` (polling en `escalated`), `POST /api/n/$token/chat` (stream, `useChat`), `POST /api/n/$token/accept` |
+| `/acuerdos/$id` (nuevo)      | —               | `getAgreement(id)` → acta imprimible; `markInstallmentPaid`                                                                                                                                                                                        |
 
 Convenciones: validación de input con **Zod** en todas las server fns, errores tipados `{ code, message }`, datos de servidor consumidos con **TanStack Query** (ya está `@tanstack/react-router-ssr-query` en dependencias) + `loader` para SSR. Las URLs públicas usan **solo el token**; nunca se exponen ids internos al deudor.
 
@@ -322,8 +322,8 @@ flowchart LR
 - [ ] Supabase: crear proyecto `dev` en la nube y `pnpm supabase link --project-ref <ref>`.
 - [x] Scripts raíz (`typecheck`, `test`, `db:*`, `smoke:llm`) y CI en [.github/workflows/ci.yml](../.github/workflows/ci.yml) (typecheck + test + build).
 - [ ] Acceso al LLM: key de AI Gateway + `AI_MODEL` en `.env.local`; `pnpm smoke:llm` responde.
-- [ ] Formatear el código existente (`pnpm format`), corregir los errores de `pnpm lint`, agregar `.gitattributes` con `eol=lf` y sumar ambos chequeos al CI.
-- [ ] Cargar los sprints como tickets en Linear; una rama + PR chico por ticket.
+- [x] Formatear el código existente (`pnpm format`), corregir los errores de `pnpm lint`, agregar `.gitattributes` con `eol=lf` y sumar ambos chequeos al CI.
+- [x] Cargar los sprints como tickets en Linear; una rama + PR chico por ticket.
 
 **Criterio:** `pnpm install && pnpm -r typecheck` pasa; `supabase start` levanta local.
 
@@ -400,16 +400,16 @@ Objetivo: **un deudor de seed negocia por chat y recibe ofertas siempre dentro d
 
 ## 8. Riesgos y mitigaciones
 
-| Riesgo | Mitigación |
-| :--- | :--- |
-| Inestabilidad de APIs de TanStack Start (versiones `latest`) | Fijar versiones en Sprint 0; aislar el dominio en `packages/*` para no depender del framework. |
-| El LLM inventa montos o promete condiciones | D7 + validador post‑generación + evals en CI. |
-| Prompt injection del deudor | Las tools validan contra el *snapshot* del servidor; el modelo no tiene tools de escritura arbitraria; aceptación fuera del LLM. |
-| Manipulación del historial desde el navegador | El servidor solo acepta el último mensaje del deudor y reconstruye el resto desde la DB (§3.3‑2). |
-| Fuga de la service role key o uso fuera de alcance | Un único módulo (`debtor-access.ts`) la usa, siempre acotado al `negotiation_id` de la cookie verificada; revisión en PR de cualquier import fuera de `server/`. |
-| Link de negociación reenviado a un tercero | Montos visibles solo tras verificación de identidad; cookie de corta duración; bloqueo tras N intentos. |
-| Costos de inferencia | Límite de turnos, modelo configurable, registro de tokens por negociación. |
-| Alcance excesivo | WhatsApp, links de pago, CSV, PDF server‑side, mails, Realtime, roles y versionado de políticas quedan explícitamente en R2. |
+| Riesgo                                                       | Mitigación                                                                                                                                                       |
+| :----------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Inestabilidad de APIs de TanStack Start (versiones `latest`) | Fijar versiones en Sprint 0; aislar el dominio en `packages/*` para no depender del framework.                                                                   |
+| El LLM inventa montos o promete condiciones                  | D7 + validador post‑generación + evals en CI.                                                                                                                    |
+| Prompt injection del deudor                                  | Las tools validan contra el _snapshot_ del servidor; el modelo no tiene tools de escritura arbitraria; aceptación fuera del LLM.                                 |
+| Manipulación del historial desde el navegador                | El servidor solo acepta el último mensaje del deudor y reconstruye el resto desde la DB (§3.3‑2).                                                                |
+| Fuga de la service role key o uso fuera de alcance           | Un único módulo (`debtor-access.ts`) la usa, siempre acotado al `negotiation_id` de la cookie verificada; revisión en PR de cualquier import fuera de `server/`. |
+| Link de negociación reenviado a un tercero                   | Montos visibles solo tras verificación de identidad; cookie de corta duración; bloqueo tras N intentos.                                                          |
+| Costos de inferencia                                         | Límite de turnos, modelo configurable, registro de tokens por negociación.                                                                                       |
+| Alcance excesivo                                             | WhatsApp, links de pago, CSV, PDF server‑side, mails, Realtime, roles y versionado de políticas quedan explícitamente en R2.                                     |
 
 ### 8.1 Orden de recorte si no alcanza el tiempo
 

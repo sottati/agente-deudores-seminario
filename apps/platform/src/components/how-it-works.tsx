@@ -135,7 +135,10 @@ function SetupPanel() {
               Unidad 4B · Av. Rivadavia 2840
             </CardDescription>
           </div>
-          <Badge variant={isActive ? "secondary" : "outline"} className="shrink-0">
+          <Badge
+            variant={isActive ? "secondary" : "outline"}
+            className="shrink-0"
+          >
             {isActive ? "Política activa" : "Sin activar"}
           </Badge>
         </div>
@@ -221,8 +224,7 @@ const initialMessages: ChatMessage[] = [
   {
     id: "1",
     from: "agent",
-    text:
-      "Hola, soy el agente de Pacta para Consorcios del Sur. Tenés un saldo de $ 186.400 por expensas vencidas.",
+    text: "Hola, soy el agente de Pacta para Consorcios del Sur. Tenés un saldo de $ 186.400 por expensas vencidas.",
     time: "10:14",
   },
   {
@@ -348,7 +350,9 @@ function ConversationPanel() {
           <div className="min-w-0">
             <CardTitle className="text-sm">Unidad 4B</CardTitle>
             <CardDescription className="text-xs">
-              {isTyping ? "Agente escribiendo…" : "Agente negociando · en curso"}
+              {isTyping
+                ? "Agente escribiendo…"
+                : "Agente negociando · en curso"}
             </CardDescription>
           </div>
           <span
@@ -370,7 +374,11 @@ function ConversationPanel() {
           {isTyping && (
             <div className="flex gap-2">
               <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/20">
-                <HugeiconsIcon icon={BotIcon} className="size-3.5" strokeWidth={2} />
+                <HugeiconsIcon
+                  icon={BotIcon}
+                  className="size-3.5"
+                  strokeWidth={2}
+                />
               </div>
               <div className="rounded-2xl rounded-tl-sm bg-muted px-3 py-2">
                 <span className="inline-flex gap-1">
@@ -473,7 +481,9 @@ function RecordsPanel() {
       ? records
       : records.filter((record) => record.status === filter)
 
-  const closedCount = records.filter((record) => record.status === "Acordado").length
+  const closedCount = records.filter(
+    (record) => record.status === "Acordado"
+  ).length
 
   function toggleStatus(id: string) {
     setRecords((current) =>
@@ -522,7 +532,7 @@ function RecordsPanel() {
         </div>
       </CardHeader>
       <CardContent className="min-h-0 flex-1 overflow-hidden px-0 pt-0">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-x-3 border-b px-4 py-2 text-[0.65rem] font-medium uppercase tracking-wide text-muted-foreground">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-x-3 border-b px-4 py-2 text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase">
           <span>Deudor</span>
           <span className="text-right">Monto</span>
           <span>Estado</span>
@@ -544,7 +554,9 @@ function RecordsPanel() {
                   onClick={() => setSelectedId(record.id)}
                   className="min-w-0 text-left"
                 >
-                  <p className="truncate text-xs font-medium">{record.debtor}</p>
+                  <p className="truncate text-xs font-medium">
+                    {record.debtor}
+                  </p>
                   <p className="truncate text-[0.65rem] text-muted-foreground">
                     {record.building}
                   </p>
@@ -564,7 +576,7 @@ function RecordsPanel() {
                 <button
                   type="button"
                   onClick={() => toggleStatus(record.id)}
-                  className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                   aria-label={`Cambiar estado de ${record.debtor}`}
                 >
                   <Badge

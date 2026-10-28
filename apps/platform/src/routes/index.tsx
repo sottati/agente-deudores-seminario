@@ -54,16 +54,12 @@ function HomePage() {
               isDark ? "text-white/80" : "text-muted-foreground"
             )}
           >
-            pacta.ia conversa con cada deudor, propone planes dentro de tu política
-            y registra el acuerdo. Vos intervenís cuando hace falta.
+            pacta.ia conversa con cada deudor, propone planes dentro de tu
+            política y registra el acuerdo. Vos intervenís cuando hace falta.
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <ButtonLink
-              size="lg"
-              className="h-11 px-4"
-              to="/dashboard"
->
+            <ButtonLink size="lg" className="h-11 px-4" to="/dashboard">
               Probar el dashboard
               <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
             </ButtonLink>

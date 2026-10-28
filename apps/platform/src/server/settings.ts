@@ -20,20 +20,22 @@ export const updatePolicy = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(policySchema)
   .handler(async ({ context, data }) => {
-    const { error } = await context.supabase.from("negotiation_policies").upsert({
-      organization_id: context.organizationId,
-      max_installments: data.maxInstallments,
-      min_down_payment_pct: data.minDownPaymentPct,
-      min_installment_amount_cents: data.minInstallmentAmount,
-      max_interest_waiver_pct: data.maxInterestWaiverPct,
-      single_payment_interest_waiver_pct: data.singlePaymentInterestWaiverPct,
-      max_principal_discount_pct: data.maxPrincipalDiscountPct,
-      max_first_due_days: data.maxFirstDueDays,
-      offer_validity_hours: data.offerValidityHours,
-      escalate_above_amount_cents: data.escalateAboveAmount,
-      tone: data.tone,
-      custom_instructions: data.customInstructions,
-    })
+    const { error } = await context.supabase
+      .from("negotiation_policies")
+      .upsert({
+        organization_id: context.organizationId,
+        max_installments: data.maxInstallments,
+        min_down_payment_pct: data.minDownPaymentPct,
+        min_installment_amount_cents: data.minInstallmentAmount,
+        max_interest_waiver_pct: data.maxInterestWaiverPct,
+        single_payment_interest_waiver_pct: data.singlePaymentInterestWaiverPct,
+        max_principal_discount_pct: data.maxPrincipalDiscountPct,
+        max_first_due_days: data.maxFirstDueDays,
+        offer_validity_hours: data.offerValidityHours,
+        escalate_above_amount_cents: data.escalateAboveAmount,
+        tone: data.tone,
+        custom_instructions: data.customInstructions,
+      })
     throwIfError(error)
   })
 

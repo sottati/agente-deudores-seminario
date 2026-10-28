@@ -26,12 +26,12 @@ export const getAgreement = createServerFn({ method: "GET" })
       .maybeSingle()
     throwIfError(error)
 
-    const negotiation = data?.offers?.negotiations
-    const debt = negotiation?.debts
-    const debtor = debt?.debtors
-    if (!data || !negotiation || !debt || !debtor || !negotiation.organizations) {
+    if (!data) {
       throw notFound()
     }
+    const negotiation = data.offers.negotiations
+    const debt = negotiation.debts
+    const debtor = debt.debtors
     return {
       id: data.id,
       acceptedAt: data.accepted_at,
@@ -40,7 +40,7 @@ export const getAgreement = createServerFn({ method: "GET" })
       transcriptSha256: data.transcript_sha256,
       templateVersion: data.template_version,
       installments: data.installments,
-      offer: data.offers!,
+      offer: data.offers,
       negotiationId: negotiation.id,
       debt,
       debtor,
@@ -70,9 +70,11 @@ export const setInstallmentPaid = createServerFn({ method: "POST" })
       .single()
     throwIfError(agreementError)
 
-    const debtId = agreement?.offers?.negotiations?.debt_id
-    if (!debtId) return
-    const allPaid = agreement.installments.every((item) => item.paid_at !== null)
+    if (!agreement) return
+    const debtId = agreement.offers.negotiations.debt_id
+    const allPaid = agreement.installments.every(
+      (item) => item.paid_at !== null
+    )
     const { error: debtError } = await supabase
       .from("debts")
       .update({ status: allPaid ? "paid" : "agreed" })

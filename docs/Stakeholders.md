@@ -10,14 +10,14 @@ Es uno de los principales stakeholders del proyecto. Actualmente realiza o super
 
 **Qué necesitamos validar con ellos:**
 
-* Cómo gestionan actualmente la morosidad.  
-* Cuánto tiempo destinan al seguimiento de deudores.  
-* Qué problemas encuentran al negociar planes de pago.  
-* Qué condiciones están dispuestos a delegar a un agente de IA.  
-* Qué descuentos, cuotas, intereses o excepciones suelen autorizar.  
-* Qué información necesitan visualizar en un dashboard.  
-* Qué situaciones consideran que necesariamente deben escalarse a una persona.  
-* Si estarían dispuestos a pagar por una herramienta de este tipo y bajo qué modelo.
+- Cómo gestionan actualmente la morosidad.
+- Cuánto tiempo destinan al seguimiento de deudores.
+- Qué problemas encuentran al negociar planes de pago.
+- Qué condiciones están dispuestos a delegar a un agente de IA.
+- Qué descuentos, cuotas, intereses o excepciones suelen autorizar.
+- Qué información necesitan visualizar en un dashboard.
+- Qué situaciones consideran que necesariamente deben escalarse a una persona.
+- Si estarían dispuestos a pagar por una herramienta de este tipo y bajo qué modelo.
 
 **Prioridad:** Muy alta.
 
@@ -31,14 +31,14 @@ Constituyen el segundo segmento definido para el MVP. Su problemática es simila
 
 **Qué necesitamos validar con ellos:**
 
-* Cómo realizan actualmente el seguimiento de cuotas vencidas.  
-* Qué nivel de personalización utilizan al contactar a cada familia.  
-* Qué alternativas de financiación o regularización ofrecen.  
-* Qué grado de autonomía podría tener un agente de IA.  
-* Qué tono debería utilizar el sistema.  
-* Qué información debería conocer la IA antes de comenzar una negociación.  
-* Cuándo una conversación debería pasar a intervención humana.  
-* Qué riesgos observan en automatizar este proceso.
+- Cómo realizan actualmente el seguimiento de cuotas vencidas.
+- Qué nivel de personalización utilizan al contactar a cada familia.
+- Qué alternativas de financiación o regularización ofrecen.
+- Qué grado de autonomía podría tener un agente de IA.
+- Qué tono debería utilizar el sistema.
+- Qué información debería conocer la IA antes de comenzar una negociación.
+- Cuándo una conversación debería pasar a intervención humana.
+- Qué riesgos observan en automatizar este proceso.
 
 **Prioridad:** Muy alta.
 
@@ -52,13 +52,13 @@ Aunque no contratan la plataforma, son quienes interactúan con el asistente de 
 
 **Qué necesitamos validar con ellos:**
 
-* Qué canales prefieren para recibir una comunicación relacionada con una deuda.  
-* Cómo reaccionan ante mensajes automáticos.  
-* Qué elementos generan confianza o rechazo.  
-* Si estarían dispuestos a negociar un plan de pago mediante un chatbot.  
-* Qué información necesitan para confiar en que el acuerdo es válido.  
-* En qué situaciones preferirían hablar con una persona.  
-* Qué tono consideran adecuado para una conversación de este tipo.
+- Qué canales prefieren para recibir una comunicación relacionada con una deuda.
+- Cómo reaccionan ante mensajes automáticos.
+- Qué elementos generan confianza o rechazo.
+- Si estarían dispuestos a negociar un plan de pago mediante un chatbot.
+- Qué información necesitan para confiar en que el acuerdo es válido.
+- En qué situaciones preferirían hablar con una persona.
+- Qué tono consideran adecuado para una conversación de este tipo.
 
 **Prioridad:** Alta.
 
@@ -74,13 +74,13 @@ Su aporte permite comprender las reglas reales utilizadas durante una negociaci�
 
 **Qué necesitamos validar con este perfil:**
 
-* Cómo se estructura una negociación real.  
-* Qué variables se consideran antes de ofrecer un acuerdo.  
-* Qué decisiones pueden automatizarse.  
-* Qué decisiones requieren autorización.  
-* Qué excepciones aparecen habitualmente.  
-* Cómo debería registrarse un acuerdo.  
-* Qué indicadores permiten evaluar si una estrategia de cobranza funciona.
+- Cómo se estructura una negociación real.
+- Qué variables se consideran antes de ofrecer un acuerdo.
+- Qué decisiones pueden automatizarse.
+- Qué decisiones requieren autorización.
+- Qué excepciones aparecen habitualmente.
+- Cómo debería registrarse un acuerdo.
+- Qué indicadores permiten evaluar si una estrategia de cobranza funciona.
 
 **Prioridad:** Alta.
 
@@ -94,13 +94,13 @@ La solución automatiza comunicaciones relacionadas con deudas y por lo tanto ne
 
 **Qué necesitamos validar con este perfil:**
 
-* Qué límites deben respetarse al contactar a un deudor.  
-* Qué información puede utilizar el agente.  
-* Qué información debería quedar registrada.  
-* Qué consentimiento o información previa podría ser necesaria.  
-* Qué prácticas podrían interpretarse como hostigamiento.  
-* Qué condiciones debería cumplir un acuerdo realizado mediante el sistema.  
-* Qué acciones deberían estar expresamente prohibidas al agente.
+- Qué límites deben respetarse al contactar a un deudor.
+- Qué información puede utilizar el agente.
+- Qué información debería quedar registrada.
+- Qué consentimiento o información previa podría ser necesaria.
+- Qué prácticas podrían interpretarse como hostigamiento.
+- Qué condiciones debería cumplir un acuerdo realizado mediante el sistema.
+- Qué acciones deberían estar expresamente prohibidas al agente.
 
 **Prioridad:** Alta, especialmente antes de llevar el MVP a un entorno real.
 
@@ -114,12 +114,12 @@ Su función no es validar el problema comercial sino analizar la viabilidad y lo
 
 **Qué necesitamos validar con este perfil:**
 
-* Cómo limitar al modelo a las reglas configuradas por cada cliente.  
-* Cómo evitar que ofrezca descuentos o condiciones inexistentes.  
-* Cómo mantener trazabilidad sobre las decisiones tomadas.  
-* Cómo detectar conversaciones que requieren intervención humana.  
-* Cómo evaluar la calidad de una negociación.  
-* Qué mecanismos de seguridad son necesarios para impedir acciones fuera de los parámetros autorizados.
+- Cómo limitar al modelo a las reglas configuradas por cada cliente.
+- Cómo evitar que ofrezca descuentos o condiciones inexistentes.
+- Cómo mantener trazabilidad sobre las decisiones tomadas.
+- Cómo detectar conversaciones que requieren intervención humana.
+- Cómo evaluar la calidad de una negociación.
+- Qué mecanismos de seguridad son necesarios para impedir acciones fuera de los parámetros autorizados.
 
 **Prioridad:** Media/Alta.
 
@@ -137,23 +137,23 @@ Para el MVP actual no necesitamos integrar necesariamente WhatsApp, ya que el ob
 
 ## **Clasificación**
 
-| Stakeholder | Tipo | Interés | Influencia | Prioridad de validación |
-| ----- | ----- | ----- | ----- | ----- |
-| Administrador de consorcio | Cliente / usuario | Muy alto | Muy alta | Muy alta |
-| Tesorero de colegio privado | Cliente / usuario | Muy alto | Muy alta | Muy alta |
-| Persona morosa | Usuario del agente | Muy alto | Media | Alta |
-| Profesional de cobranzas | Experto de dominio | Alto | Alta | Alta |
-| Profesional legal/compliance | Experto de dominio | Medio/alto | Alta | Alta |
-| Especialista en IA | Experto técnico | Alto | Media/alta | Media/alta |
-| Plataforma de mensajería | Actor externo | Medio | Alta | Media |
+| Stakeholder                  | Tipo               | Interés    | Influencia | Prioridad de validación |
+| ---------------------------- | ------------------ | ---------- | ---------- | ----------------------- |
+| Administrador de consorcio   | Cliente / usuario  | Muy alto   | Muy alta   | Muy alta                |
+| Tesorero de colegio privado  | Cliente / usuario  | Muy alto   | Muy alta   | Muy alta                |
+| Persona morosa               | Usuario del agente | Muy alto   | Media      | Alta                    |
+| Profesional de cobranzas     | Experto de dominio | Alto       | Alta       | Alta                    |
+| Profesional legal/compliance | Experto de dominio | Medio/alto | Alta       | Alta                    |
+| Especialista en IA           | Experto técnico    | Alto       | Media/alta | Media/alta              |
+| Plataforma de mensajería     | Actor externo      | Medio      | Alta       | Media                   |
 
 ## **Stakeholders prioritarios para esta primera etapa**
 
 Para la validación inicial del MVP proponemos concentrarnos principalmente en cuatro perspectivas:
 
-1. **Cliente:** administrador de consorcios y/o tesorero de colegio privado.  
-2. **Usuario final:** persona que haya atravesado una situación de deuda o atraso de pagos.  
-3. **Experto de dominio:** profesional con experiencia en cobranzas o administración financiera.  
+1. **Cliente:** administrador de consorcios y/o tesorero de colegio privado.
+2. **Usuario final:** persona que haya atravesado una situación de deuda o atraso de pagos.
+3. **Experto de dominio:** profesional con experiencia en cobranzas o administración financiera.
 4. **Experto de control:** profesional legal o de cumplimiento que pueda analizar los límites de una cobranza automatizada.
 
 La combinación de estos perfiles permite validar no solamente si el sistema puede construirse, sino principalmente si resuelve un problema real, si las reglas de negociación representan situaciones reales y si la interacción propuesta resulta aceptable para las personas involucradas.

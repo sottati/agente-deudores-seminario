@@ -58,9 +58,7 @@ export const signIn = createServerFn({ method: "POST" })
     return { error: null }
   })
 
-export const signOut = createServerFn({ method: "POST" }).handler(
-  async () => {
-    const supabase = createServerSupabase()
-    await supabase.auth.signOut()
-  }
-)
+export const signOut = createServerFn({ method: "POST" }).handler(async () => {
+  const supabase = createServerSupabase()
+  await supabase.auth.signOut()
+})

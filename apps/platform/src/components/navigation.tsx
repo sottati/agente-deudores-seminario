@@ -1,4 +1,3 @@
-
 import { ButtonLink } from "@/components/button-link"
 import { BrandLogo } from "@/components/brand-logo"
 import { useResolvedDark } from "@/hooks/use-resolved-dark"
@@ -33,7 +32,7 @@ export function Navigation() {
                 : "text-foreground"
             )}
             to="/login"
->
+          >
             Ingresar
           </ButtonLink>
         </div>

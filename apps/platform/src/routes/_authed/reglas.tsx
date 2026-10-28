@@ -2,7 +2,12 @@ import { useState } from "react"
 import { createFileRoute } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 
-import { Field, FormError, MoneyField, TextField } from "@/components/form-field"
+import {
+  Field,
+  FormError,
+  MoneyField,
+  TextField,
+} from "@/components/form-field"
 import { PageBody, PageHeader } from "@/components/page-header"
 import { Button } from "@/components/ui/button"
 import {
@@ -17,7 +22,8 @@ import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { Textarea } from "@/components/ui/textarea"
 import { formValues, useAction } from "@/hooks/use-action"
 import { centsToPesosInput } from "@/lib/format"
-import { toneLabel, type AgentTone } from "@/lib/labels"
+import { toneLabel } from "@/lib/labels"
+import type { AgentTone } from "@/lib/labels"
 import { getPolicy, updatePolicy } from "@/server/settings"
 
 export const Route = createFileRoute("/_authed/reglas")({
@@ -53,7 +59,13 @@ function PolicyPage() {
     if (result.ok) setSaved(true)
   }
 
-  const percent = { type: "number", min: 0, max: 100, step: 1, required: true } as const
+  const percent = {
+    type: "number",
+    min: 0,
+    max: 100,
+    step: 1,
+    required: true,
+  } as const
 
   return (
     <>
@@ -70,8 +82,8 @@ function PolicyPage() {
           <p className="text-muted-foreground">
             El agente nunca ofrece condiciones fuera de estos límites: todas las
             cifras las calcula el motor de reglas. Los cambios aplican a las
-            negociaciones nuevas; las que están en curso conservan las reglas con
-            las que se crearon.
+            negociaciones nuevas; las que están en curso conservan las reglas
+            con las que se crearon.
           </p>
 
           <Card>
@@ -99,7 +111,9 @@ function PolicyPage() {
                 label="Cuota mínima ($)"
                 name="minInstallmentAmount"
                 required
-                defaultValue={centsToPesosInput(policy?.min_installment_amount_cents ?? 2000000)}
+                defaultValue={centsToPesosInput(
+                  policy?.min_installment_amount_cents ?? 2000000
+                )}
               />
               <TextField
                 label="Días máximos hasta la primera cuota"
@@ -116,7 +130,9 @@ function PolicyPage() {
           <Card>
             <CardHeader>
               <CardTitle>Quitas</CardTitle>
-              <CardDescription>Porcentaje máximo que el agente puede descontar.</CardDescription>
+              <CardDescription>
+                Porcentaje máximo que el agente puede descontar.
+              </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4 sm:grid-cols-3">
               <TextField
@@ -157,7 +173,9 @@ function PolicyPage() {
               <MoneyField
                 label="Derivar a una persona desde ($)"
                 name="escalateAboveAmount"
-                defaultValue={centsToPesosInput(policy?.escalate_above_amount_cents)}
+                defaultValue={centsToPesosInput(
+                  policy?.escalate_above_amount_cents
+                )}
                 hint="Deudas mayores a este monto requieren intervención humana. Vacío: sin umbral."
               />
             </CardContent>
@@ -169,7 +187,11 @@ function PolicyPage() {
             </CardHeader>
             <CardContent className="grid gap-4">
               <Field label="Tono" htmlFor="tone">
-                <NativeSelect id="tone" name="tone" defaultValue={policy?.tone ?? "empatico_formal"}>
+                <NativeSelect
+                  id="tone"
+                  name="tone"
+                  defaultValue={policy?.tone ?? "empatico_formal"}
+                >
                   {Object.entries(toneLabel).map(([value, label]) => (
                     <NativeSelectOption key={value} value={value}>
                       {label}
@@ -194,7 +216,11 @@ function PolicyPage() {
             </CardContent>
             <CardFooter className="flex-wrap justify-end gap-3">
               <FormError message={save.error} />
-              {saved ? <span className="text-sm text-muted-foreground">Cambios guardados.</span> : null}
+              {saved ? (
+                <span className="text-sm text-muted-foreground">
+                  Cambios guardados.
+                </span>
+              ) : null}
               <Button type="submit" disabled={save.pending}>
                 {save.pending ? "Guardando…" : "Guardar reglas"}
               </Button>

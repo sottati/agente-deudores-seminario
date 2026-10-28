@@ -7,7 +7,12 @@ import { cn } from "@/lib/utils"
 type AnchorButtonProps = React.ComponentProps<"a"> &
   VariantProps<typeof buttonVariants>
 
-function AnchorButton({ className, variant, size, ...props }: AnchorButtonProps) {
+function AnchorButton({
+  className,
+  variant,
+  size,
+  ...props
+}: AnchorButtonProps) {
   return (
     <a
       data-slot="button"

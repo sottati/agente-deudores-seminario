@@ -1,4 +1,9 @@
-import { Link, useNavigate, useRouter, useRouterState } from "@tanstack/react-router"
+import {
+  Link,
+  useNavigate,
+  useRouter,
+  useRouterState,
+} from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 import { BrandIsotipo } from "@/components/brand-logo"
 import {
@@ -33,11 +38,16 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { signOut, type SessionContext } from "@/server/auth"
+import { signOut } from "@/server/auth"
+import type { SessionContext } from "@/server/auth"
 
 const navItems = [
   { title: "Dashboard", to: "/dashboard", icon: DashboardSquare02Icon },
-  { title: "Conversaciones", to: "/conversaciones", icon: MessageMultiple02Icon },
+  {
+    title: "Conversaciones",
+    to: "/conversaciones",
+    icon: MessageMultiple02Icon,
+  },
   { title: "Deudores", to: "/deudores", icon: UserMultipleIcon },
 ] as const
 
@@ -47,8 +57,11 @@ const footerNavItems = [
 ] as const
 
 export function AppSidebar({ session }: { session: SessionContext }) {
-  const pathname = useRouterState({ select: (state) => state.location.pathname })
-  const isActive = (to: string) => pathname === to || pathname.startsWith(`${to}/`)
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  })
+  const isActive = (to: string) =>
+    pathname === to || pathname.startsWith(`${to}/`)
 
   return (
     <Sidebar variant="sidebar" collapsible="icon" className="print:hidden">

@@ -13,9 +13,18 @@ import { CreateDebtDialog, EditDebtorDialog } from "@/components/debtor-dialogs"
 import { FormError } from "@/components/form-field"
 import { NewNegotiationDialog } from "@/components/new-negotiation-dialog"
 import { PageBody, PageHeader } from "@/components/page-header"
-import { DebtStatusBadge, NegotiationStatusBadge } from "@/components/status-badge"
+import {
+  DebtStatusBadge,
+  NegotiationStatusBadge,
+} from "@/components/status-badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -74,7 +83,9 @@ function DebtorPage() {
         <Card>
           <CardHeader>
             <CardTitle>{debtor.full_name}</CardTitle>
-            <CardDescription>{debtor.group_label ?? "Sin edificio / curso"}</CardDescription>
+            <CardDescription>
+              {debtor.group_label ?? "Sin edificio / curso"}
+            </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 sm:grid-cols-3">
             <Detail label="Email" value={debtor.email} />
@@ -85,8 +96,13 @@ function DebtorPage() {
             />
             {!debtor.hasVerification ? (
               <p className="flex items-start gap-2 rounded-lg bg-muted/60 p-3 text-xs text-muted-foreground sm:col-span-3">
-                <HugeiconsIcon icon={Alert02Icon} strokeWidth={2} className="size-4 shrink-0 text-primary" />
-                Sin DNI cargado el deudor no puede verificar su identidad en el chat. Editalo para agregarlo.
+                <HugeiconsIcon
+                  icon={Alert02Icon}
+                  strokeWidth={2}
+                  className="size-4 shrink-0 text-primary"
+                />
+                Sin DNI cargado el deudor no puede verificar su identidad en el
+                chat. Editalo para agregarlo.
               </p>
             ) : null}
           </CardContent>
@@ -105,9 +121,15 @@ function DebtorPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="pl-4">Concepto</TableHead>
-                    <TableHead className="hidden sm:table-cell">Vencimiento</TableHead>
-                    <TableHead className="hidden text-right lg:table-cell">Capital</TableHead>
-                    <TableHead className="hidden text-right lg:table-cell">Intereses</TableHead>
+                    <TableHead className="hidden sm:table-cell">
+                      Vencimiento
+                    </TableHead>
+                    <TableHead className="hidden text-right lg:table-cell">
+                      Capital
+                    </TableHead>
+                    <TableHead className="hidden text-right lg:table-cell">
+                      Intereses
+                    </TableHead>
                     <TableHead className="text-right">Total</TableHead>
                     <TableHead>Estado</TableHead>
                     <TableHead className="pr-4 text-right">
@@ -118,8 +140,12 @@ function DebtorPage() {
                 <TableBody>
                   {debtor.debts.map((debt) => (
                     <TableRow key={debt.id}>
-                      <TableCell className="pl-4 whitespace-normal">{debt.concept}</TableCell>
-                      <TableCell className="hidden sm:table-cell">{formatDate(debt.due_date)}</TableCell>
+                      <TableCell className="pl-4 whitespace-normal">
+                        {debt.concept}
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        {formatDate(debt.due_date)}
+                      </TableCell>
                       <TableCell className="hidden text-right tabular-nums lg:table-cell">
                         {formatARS(debt.principal_cents)}
                       </TableCell>
@@ -171,9 +197,9 @@ function DebtActions({
   debtLabel: string
   onStatusChange: (status: "open" | "paid" | "written_off") => void
 }) {
-  const latest = [...debt.negotiations].sort((a, b) =>
-    b.created_at.localeCompare(a.created_at)
-  )[0]
+  const latest = [...debt.negotiations]
+    .sort((a, b) => b.created_at.localeCompare(a.created_at))
+    .at(0)
   const canClose = debt.status === "open" || debt.status === "agreed"
   const canReopen = debt.status === "paid" || debt.status === "written_off"
 
@@ -198,7 +224,13 @@ function DebtActions({
       {canClose || canReopen ? (
         <DropdownMenu>
           <DropdownMenuTrigger
-            render={<Button size="icon-sm" variant="ghost" aria-label="Más acciones" />}
+            render={
+              <Button
+                size="icon-sm"
+                variant="ghost"
+                aria-label="Más acciones"
+              />
+            }
           >
             <HugeiconsIcon icon={MoreHorizontalIcon} strokeWidth={2} />
           </DropdownMenuTrigger>
@@ -208,12 +240,17 @@ function DebtActions({
                 <DropdownMenuItem onClick={() => onStatusChange("paid")}>
                   Marcar como pagada
                 </DropdownMenuItem>
-                <DropdownMenuItem variant="destructive" onClick={() => onStatusChange("written_off")}>
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={() => onStatusChange("written_off")}
+                >
                   Marcar como incobrable
                 </DropdownMenuItem>
               </>
             ) : (
-              <DropdownMenuItem onClick={() => onStatusChange("open")}>Reabrir deuda</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onStatusChange("open")}>
+                Reabrir deuda
+              </DropdownMenuItem>
             )}
           </DropdownMenuContent>
         </DropdownMenu>

@@ -4,7 +4,9 @@ import { generateText } from "ai"
 
 const model = process.env.AI_MODEL
 if (!model) {
-  console.error("Falta AI_MODEL. Copiá apps/platform/.env.example a apps/platform/.env.local y completalo.")
+  console.error(
+    "Falta AI_MODEL. Copiá apps/platform/.env.example a apps/platform/.env.local y completalo."
+  )
   process.exit(1)
 }
 

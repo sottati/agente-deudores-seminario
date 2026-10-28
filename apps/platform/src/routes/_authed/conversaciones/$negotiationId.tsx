@@ -37,8 +37,8 @@ import {
   installmentsLabel,
   messageRoleLabel,
   offerStatusLabel,
-  type MessageRole,
 } from "@/lib/labels"
+import type { MessageRole } from "@/lib/labels"
 import { cn } from "@/lib/utils"
 import type { Json } from "@/server/db/types.gen"
 import {
@@ -50,10 +50,15 @@ import {
 } from "@/server/negotiations"
 
 export const Route = createFileRoute("/_authed/conversaciones/$negotiationId")({
-  loader: ({ params }) => getNegotiation({ data: { id: params.negotiationId } }),
+  loader: ({ params }) =>
+    getNegotiation({ data: { id: params.negotiationId } }),
   component: NegotiationPage,
   head: ({ loaderData }) => ({
-    meta: [{ title: `${loaderData?.debt.debtors?.alias ?? "Conversación"} | pacta.ia` }],
+    meta: [
+      {
+        title: `${loaderData?.debt.debtors.alias ?? "Conversación"} | pacta.ia`,
+      },
+    ],
   }),
 })
 
@@ -71,13 +76,16 @@ function NegotiationPage() {
   // del deudor (PLAN_BACKEND D9: polling en lugar de Realtime).
   useEffect(() => {
     if (!isOpen) return
-    const interval = window.setInterval(() => router.invalidate(), POLL_INTERVAL_MS)
+    const interval = window.setInterval(
+      () => router.invalidate(),
+      POLL_INTERVAL_MS
+    )
     return () => window.clearInterval(interval)
   }, [isOpen, router])
 
   return (
     <>
-      <PageHeader title={debtor?.alias ?? "Conversación"}>
+      <PageHeader title={debtor.alias}>
         <NegotiationStatusBadge status={negotiation.status} />
       </PageHeader>
       <PageBody>
@@ -109,7 +117,8 @@ function partsToContent(parts: Json): MessageContent[] {
   return parts.flatMap((part): MessageContent[] => {
     if (!part || typeof part !== "object" || Array.isArray(part)) return []
     const { type, text } = part as MessagePart
-    if (type === "text" && typeof text === "string") return [{ kind: "text", text }]
+    if (type === "text" && typeof text === "string")
+      return [{ kind: "text", text }]
     if (typeof type === "string" && type.startsWith("tool-")) {
       return [{ kind: "tool", text: type.slice("tool-".length) }]
     }
@@ -121,7 +130,8 @@ const bubbleStyles: Record<MessageRole, string> = {
   debtor: "mr-auto bg-muted",
   agent: "ml-auto bg-primary/10",
   admin: "ml-auto bg-primary text-primary-foreground",
-  system: "mx-auto max-w-[90%] bg-transparent text-center text-xs text-muted-foreground",
+  system:
+    "mx-auto max-w-[90%] bg-transparent text-center text-xs text-muted-foreground",
 }
 
 function Transcript({ negotiation }: { negotiation: Negotiation }) {
@@ -161,7 +171,8 @@ function Transcript({ negotiation }: { negotiation: Negotiation }) {
               >
                 {message.role !== "system" ? (
                   <p className="mb-0.5 text-[11px] font-medium opacity-70">
-                    {messageRoleLabel[message.role]} · {formatDateTime(message.created_at)}
+                    {messageRoleLabel[message.role]} ·{" "}
+                    {formatDateTime(message.created_at)}
                   </p>
                 ) : null}
                 {partsToContent(message.parts).map((content, index) =>
@@ -199,7 +210,11 @@ function AdminComposer({ negotiationId }: { negotiationId: string }) {
   }
 
   return (
-    <form method="post" onSubmit={handleSubmit} className="mt-auto grid gap-2 border-t pt-3">
+    <form
+      method="post"
+      onSubmit={handleSubmit}
+      className="mt-auto grid gap-2 border-t pt-3"
+    >
       <Textarea
         aria-label="Mensaje para el deudor"
         placeholder="Escribí como administración…"
@@ -209,7 +224,11 @@ function AdminComposer({ negotiationId }: { negotiationId: string }) {
         rows={3}
       />
       <FormError message={send.error} />
-      <Button type="submit" className="justify-self-end" disabled={send.pending || !text.trim()}>
+      <Button
+        type="submit"
+        className="justify-self-end"
+        disabled={send.pending || !text.trim()}
+      >
         {send.pending ? "Enviando…" : "Enviar"}
       </Button>
     </form>
@@ -227,39 +246,60 @@ function DebtCard({ negotiation }: { negotiation: Negotiation }) {
     <Card size="sm">
       <CardHeader>
         <CardTitle>Deuda</CardTitle>
-        {debtor ? (
-          <CardDescription>
-            <Link
-              to="/deudores/$debtorId"
-              params={{ debtorId: debtor.id }}
-              className="hover:underline"
-            >
-              {debtor.full_name} · {debtor.alias}
-            </Link>
-          </CardDescription>
-        ) : null}
+        <CardDescription>
+          <Link
+            to="/deudores/$debtorId"
+            params={{ debtorId: debtor.id }}
+            className="hover:underline"
+          >
+            {debtor.full_name} · {debtor.alias}
+          </Link>
+        </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-2">
         <p>{debt.concept}</p>
         <Row label="Capital" value={formatARS(debt.principal_cents)} />
         <Row label="Intereses" value={formatARS(debt.interest_cents)} />
-        <Row label="Total" value={formatARS(debt.principal_cents + debt.interest_cents)} strong />
+        <Row
+          label="Total"
+          value={formatARS(debt.principal_cents + debt.interest_cents)}
+          strong
+        />
         <Row label="Vencida desde" value={formatDate(debt.due_date)} />
-        <Row label="Link vigente hasta" value={formatDateTime(negotiation.expires_at)} />
+        <Row
+          label="Link vigente hasta"
+          value={formatDateTime(negotiation.expires_at)}
+        />
         <Row
           label="Identidad"
-          value={negotiation.verified_at ? `Verificada ${formatDateTime(negotiation.verified_at)}` : "Sin verificar"}
+          value={
+            negotiation.verified_at
+              ? `Verificada ${formatDateTime(negotiation.verified_at)}`
+              : "Sin verificar"
+          }
         />
       </CardContent>
     </Card>
   )
 }
 
-function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
+function Row({
+  label,
+  value,
+  strong,
+}: {
+  label: string
+  value: string
+  strong?: boolean
+}) {
   return (
     <div className="flex items-baseline justify-between gap-3">
       <span className="text-muted-foreground">{label}</span>
-      <span className={cn("text-right tabular-nums", strong && "font-semibold")}>{value}</span>
+      <span
+        className={cn("text-right tabular-nums", strong && "font-semibold")}
+      >
+        {value}
+      </span>
     </div>
   )
 }
@@ -271,7 +311,8 @@ function ActionsCard({ negotiation }: { negotiation: Negotiation }) {
   const { status, id } = negotiation
   const error = takeOver.error ?? giveBack.error ?? cancel.error
 
-  if (!canTakeOver(status) && !canReturnToAgent(status) && !canCancel(status)) return null
+  if (!canTakeOver(status) && !canReturnToAgent(status) && !canCancel(status))
+    return null
 
   return (
     <Card size="sm">
@@ -289,25 +330,32 @@ function ActionsCard({ negotiation }: { negotiation: Negotiation }) {
           </Button>
         ) : null}
         {canReturnToAgent(status) ? (
-          <Button disabled={giveBack.pending} onClick={() => giveBack.run({ data: { id } })}>
+          <Button
+            disabled={giveBack.pending}
+            onClick={() => giveBack.run({ data: { id } })}
+          >
             Devolver al agente
           </Button>
         ) : null}
         {canCancel(status) ? (
           <Dialog>
-            <DialogTrigger render={<Button variant="ghost" className="text-destructive" />}>
+            <DialogTrigger
+              render={<Button variant="ghost" className="text-destructive" />}
+            >
               Cancelar link
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>¿Cancelar el link de negociación?</DialogTitle>
                 <DialogDescription>
-                  El deudor ya no va a poder usarlo y la deuda vuelve a quedar impaga.
-                  Podés generar un link nuevo más adelante.
+                  El deudor ya no va a poder usarlo y la deuda vuelve a quedar
+                  impaga. Podés generar un link nuevo más adelante.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <DialogClose render={<Button variant="outline" />}>Volver</DialogClose>
+                <DialogClose render={<Button variant="outline" />}>
+                  Volver
+                </DialogClose>
                 <DialogClose
                   render={<Button variant="destructive" />}
                   onClick={() => cancel.run({ data: { id } })}
@@ -348,24 +396,38 @@ function OffersCard({ negotiation }: { negotiation: Negotiation }) {
       </CardHeader>
       <CardContent className="grid gap-3">
         {negotiation.offers.map((offer) => {
-          const agreement = offer.agreements[0]
+          const agreement = offer.agreements.at(0)
           return (
-            <div key={offer.id} className="grid gap-1.5 rounded-lg bg-muted/60 p-3">
+            <div
+              key={offer.id}
+              className="grid gap-1.5 rounded-lg bg-muted/60 p-3"
+            >
               <div className="flex items-center justify-between gap-2">
-                <span className="font-medium">{installmentsLabel(offer.installments)}</span>
-                <Badge variant={offer.status === "accepted" ? "default" : "outline"}>
+                <span className="font-medium">
+                  {installmentsLabel(offer.installments)}
+                </span>
+                <Badge
+                  variant={offer.status === "accepted" ? "default" : "outline"}
+                >
                   {offerStatusLabel[offer.status]}
                 </Badge>
               </div>
               <Row label="Total" value={formatARS(offer.total_cents)} strong />
               {offer.waived_interest_cents > 0 ? (
-                <Row label="Quita de intereses" value={formatARS(offer.waived_interest_cents)} />
+                <Row
+                  label="Quita de intereses"
+                  value={formatARS(offer.waived_interest_cents)}
+                />
               ) : null}
               <ul className="text-xs text-muted-foreground">
                 {parseSchedule(offer.schedule).map((item) => (
                   <li key={item.number} className="flex justify-between">
-                    <span>Cuota {item.number} · {formatDate(item.due_date)}</span>
-                    <span className="tabular-nums">{formatARS(item.amount_cents)}</span>
+                    <span>
+                      Cuota {item.number} · {formatDate(item.due_date)}
+                    </span>
+                    <span className="tabular-nums">
+                      {formatARS(item.amount_cents)}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -392,7 +454,8 @@ function OffersCard({ negotiation }: { negotiation: Negotiation }) {
 }
 
 function snapshotNumber(snapshot: Json, key: string) {
-  if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot)) return null
+  if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot))
+    return null
   const value = snapshot[key]
   return typeof value === "number" ? value : null
 }
@@ -401,7 +464,10 @@ function PolicyCard({ snapshot }: { snapshot: Json }) {
   const maxInstallments = snapshotNumber(snapshot, "max_installments")
   const downPayment = snapshotNumber(snapshot, "min_down_payment_pct")
   const waiver = snapshotNumber(snapshot, "max_interest_waiver_pct")
-  const singleWaiver = snapshotNumber(snapshot, "single_payment_interest_waiver_pct")
+  const singleWaiver = snapshotNumber(
+    snapshot,
+    "single_payment_interest_waiver_pct"
+  )
   const escalateAbove = snapshotNumber(snapshot, "escalate_above_amount_cents")
 
   return (
@@ -411,13 +477,26 @@ function PolicyCard({ snapshot }: { snapshot: Json }) {
         <CardDescription>Fijadas al crear la negociación.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-2">
-        {maxInstallments !== null ? <Row label="Cuotas máximas" value={String(maxInstallments)} /> : null}
-        {downPayment !== null ? <Row label="Anticipo mínimo" value={`${downPayment} %`} /> : null}
-        {waiver !== null ? <Row label="Quita de intereses en cuotas" value={`hasta ${waiver} %`} /> : null}
-        {singleWaiver !== null ? <Row label="Quita en pago único" value={`hasta ${singleWaiver} %`} /> : null}
+        {maxInstallments !== null ? (
+          <Row label="Cuotas máximas" value={String(maxInstallments)} />
+        ) : null}
+        {downPayment !== null ? (
+          <Row label="Anticipo mínimo" value={`${downPayment} %`} />
+        ) : null}
+        {waiver !== null ? (
+          <Row
+            label="Quita de intereses en cuotas"
+            value={`hasta ${waiver} %`}
+          />
+        ) : null}
+        {singleWaiver !== null ? (
+          <Row label="Quita en pago único" value={`hasta ${singleWaiver} %`} />
+        ) : null}
         <Row
           label="Deriva a una persona desde"
-          value={escalateAbove !== null ? formatARS(escalateAbove) : "Sin umbral"}
+          value={
+            escalateAbove !== null ? formatARS(escalateAbove) : "Sin umbral"
+          }
         />
       </CardContent>
     </Card>

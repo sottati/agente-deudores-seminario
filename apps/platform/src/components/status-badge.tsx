@@ -1,10 +1,6 @@
 import { Badge } from "@/components/ui/badge"
-import {
-  debtStatusMeta,
-  negotiationStatusMeta,
-  type DebtStatus,
-  type NegotiationStatus,
-} from "@/lib/labels"
+import { debtStatusMeta, negotiationStatusMeta } from "@/lib/labels"
+import type { DebtStatus, NegotiationStatus } from "@/lib/labels"
 
 export function NegotiationStatusBadge({
   status,

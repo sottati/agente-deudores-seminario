@@ -13,8 +13,8 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-  type ChartConfig,
 } from "@/components/ui/chart"
+import type { ChartConfig } from "@/components/ui/chart"
 import { cn } from "@/lib/utils"
 
 const agreementPlansData = [
@@ -76,10 +76,7 @@ export function AgreementPlansChart({
               strokeWidth={2}
             >
               {agreementPlansData.map((entry) => (
-                <Cell
-                  key={entry.plan}
-                  fill={`var(--color-${entry.plan})`}
-                />
+                <Cell key={entry.plan} fill={`var(--color-${entry.plan})`} />
               ))}
             </Pie>
             <ChartLegend

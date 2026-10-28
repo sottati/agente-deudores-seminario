@@ -58,7 +58,8 @@ function AgreementPage() {
               Acta de acuerdo de pago · {organization.display_name_for_debtors}
             </p>
             <h2 className="text-xl font-semibold">
-              {installmentsLabel(offer.installments)} por {formatARS(offer.total_cents)}
+              {installmentsLabel(offer.installments)} por{" "}
+              {formatARS(offer.total_cents)}
             </h2>
             <p className="text-muted-foreground">
               Aceptado el {formatDateTime(agreement.acceptedAt)}
@@ -82,12 +83,17 @@ function AgreementPage() {
 
           <section className="grid gap-2">
             <h3 className="font-medium">Deuda regularizada</h3>
-            <p>{debt.concept} (vencida el {formatDate(debt.due_date)})</p>
+            <p>
+              {debt.concept} (vencida el {formatDate(debt.due_date)})
+            </p>
             <dl className="grid gap-1 sm:max-w-sm">
               <Amount label="Capital" cents={debt.principal_cents} />
               <Amount label="Intereses" cents={debt.interest_cents} />
               <Amount label="Deuda original" cents={originalCents} />
-              <Amount label="Quita de intereses" cents={-offer.waived_interest_cents} />
+              <Amount
+                label="Quita de intereses"
+                cents={-offer.waived_interest_cents}
+              />
               <Amount label="Total acordado" cents={offer.total_cents} strong />
             </dl>
           </section>
@@ -96,7 +102,8 @@ function AgreementPage() {
             <div className="flex items-baseline justify-between gap-2">
               <h3 className="font-medium">Cronograma de pagos</h3>
               <p className="text-xs text-muted-foreground print:hidden">
-                Cobrado: {formatARS(paidCents)} de {formatARS(offer.total_cents)}
+                Cobrado: {formatARS(paidCents)} de{" "}
+                {formatARS(offer.total_cents)}
               </p>
             </div>
             <Table>
@@ -105,7 +112,9 @@ function AgreementPage() {
                   <TableHead>Cuota</TableHead>
                   <TableHead>Vencimiento</TableHead>
                   <TableHead className="text-right">Importe</TableHead>
-                  <TableHead className="text-right print:hidden">Estado</TableHead>
+                  <TableHead className="text-right print:hidden">
+                    Estado
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -123,7 +132,10 @@ function AgreementPage() {
                         disabled={markPaid.pending}
                         onClick={() =>
                           markPaid.run({
-                            data: { id: installment.id, paid: !installment.paid_at },
+                            data: {
+                              id: installment.id,
+                              paid: !installment.paid_at,
+                            },
                           })
                         }
                       >
@@ -140,10 +152,13 @@ function AgreementPage() {
           </section>
 
           <section className="grid gap-2 border-t pt-4 text-xs text-muted-foreground">
-            <h3 className="text-sm font-medium text-foreground">Evidencia de aceptación</h3>
+            <h3 className="text-sm font-medium text-foreground">
+              Evidencia de aceptación
+            </h3>
             <p>
-              El deudor aceptó expresamente los términos mediante el botón "Acepto
-              los términos del plan de pago" en el canal de negociación de pacta.ia.
+              El deudor aceptó expresamente los términos mediante el botón
+              "Acepto los términos del plan de pago" en el canal de negociación
+              de pacta.ia.
             </p>
             <dl className="grid gap-1 break-all sm:grid-cols-[auto_1fr] sm:gap-x-4">
               <dt>Fecha y hora</dt>
@@ -166,11 +181,21 @@ function AgreementPage() {
   )
 }
 
-function Amount({ label, cents, strong }: { label: string; cents: number; strong?: boolean }) {
+function Amount({
+  label,
+  cents,
+  strong,
+}: {
+  label: string
+  cents: number
+  strong?: boolean
+}) {
   return (
     <div className="flex justify-between gap-4">
       <dt className="text-muted-foreground">{label}</dt>
-      <dd className={strong ? "font-semibold tabular-nums" : "tabular-nums"}>{formatARS(cents)}</dd>
+      <dd className={strong ? "font-semibold tabular-nums" : "tabular-nums"}>
+        {formatARS(cents)}
+      </dd>
     </div>
   )
 }

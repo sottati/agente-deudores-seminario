@@ -9,7 +9,9 @@ const envSchema = z.object({
 export function getServerEnv() {
   const parsed = envSchema.safeParse(process.env)
   if (!parsed.success) {
-    const missing = parsed.error.issues.map((issue) => issue.path.join(".")).join(", ")
+    const missing = parsed.error.issues
+      .map((issue) => issue.path.join("."))
+      .join(", ")
     throw new Error(
       `Variables de entorno faltantes o inválidas: ${missing}. Revisá apps/platform/.env.local (ver .env.example).`
     )

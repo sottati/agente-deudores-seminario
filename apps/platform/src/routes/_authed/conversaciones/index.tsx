@@ -6,10 +6,14 @@ import { PageBody, PageHeader } from "@/components/page-header"
 import { NegotiationStatusBadge } from "@/components/status-badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { formatARS, formatRelative } from "@/lib/format"
-import { negotiationFilters, type NegotiationFilter } from "@/lib/labels"
+import { negotiationFilters } from "@/lib/labels"
+import type { NegotiationFilter } from "@/lib/labels"
 import { listNegotiations } from "@/server/negotiations"
 
-const filterKeys = Object.keys(negotiationFilters) as [NegotiationFilter, ...NegotiationFilter[]]
+const filterKeys = Object.keys(negotiationFilters) as [
+  NegotiationFilter,
+  ...NegotiationFilter[],
+]
 
 export const Route = createFileRoute("/_authed/conversaciones/")({
   validateSearch: z.object({ estado: z.enum(filterKeys).optional() }),
@@ -51,7 +55,7 @@ function ConversationsPage() {
               <ul className="divide-y">
                 {negotiations.map((negotiation) => {
                   const debt = negotiation.debts
-                  const debtor = debt?.debtors
+                  const debtor = debt.debtors
                   return (
                     <li key={negotiation.id}>
                       <Link
@@ -61,18 +65,22 @@ function ConversationsPage() {
                       >
                         <div className="min-w-0">
                           <p className="truncate font-medium">
-                            {debtor?.alias}
+                            {debtor.alias}
                             <span className="font-normal text-muted-foreground">
-                              {debtor?.group_label ? ` · ${debtor.group_label}` : ""}
+                              {debtor.group_label
+                                ? ` · ${debtor.group_label}`
+                                : ""}
                             </span>
                           </p>
                           <p className="truncate text-xs text-muted-foreground">
-                            {debt?.concept}
+                            {debt.concept}
                           </p>
                         </div>
                         <div className="sm:text-right">
                           <p className="font-medium tabular-nums">
-                            {debt ? formatARS(debt.principal_cents + debt.interest_cents) : "—"}
+                            {formatARS(
+                              debt.principal_cents + debt.interest_cents
+                            )}
                           </p>
                           <time
                             dateTime={negotiation.lastActivityAt}

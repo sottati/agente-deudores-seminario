@@ -10,7 +10,13 @@ type FieldProps = {
   children: React.ReactNode
 }
 
-export function Field({ label, htmlFor, hint, className, children }: FieldProps) {
+export function Field({
+  label,
+  htmlFor,
+  hint,
+  className,
+  children,
+}: FieldProps) {
   return (
     <div className={cn("space-y-1.5", className)}>
       <Label htmlFor={htmlFor}>{label}</Label>
@@ -26,7 +32,13 @@ type TextFieldProps = Omit<React.ComponentProps<typeof Input>, "id"> & {
   hint?: string
 }
 
-export function TextField({ label, name, hint, className, ...props }: TextFieldProps) {
+export function TextField({
+  label,
+  name,
+  hint,
+  className,
+  ...props
+}: TextFieldProps) {
   return (
     <Field label={label} htmlFor={name} hint={hint} className={className}>
       <Input id={name} name={name} {...props} />
@@ -50,7 +62,10 @@ export function MoneyField(props: Omit<TextFieldProps, "type" | "inputMode">) {
 export function FormError({ message }: { message: string | null }) {
   if (!message) return null
   return (
-    <p role="alert" className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+    <p
+      role="alert"
+      className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive"
+    >
       {message}
     </p>
   )

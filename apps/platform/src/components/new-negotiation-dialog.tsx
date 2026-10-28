@@ -31,9 +31,15 @@ type NewNegotiationDialogProps = {
   debt?: { id: string; label: string }
 }
 
-export function NewNegotiationDialog({ trigger, debt }: NewNegotiationDialogProps) {
+export function NewNegotiationDialog({
+  trigger,
+  debt,
+}: NewNegotiationDialogProps) {
   const [open, setOpen] = useState(false)
-  const [created, setCreated] = useState<{ negotiationId: string; link: string } | null>(null)
+  const [created, setCreated] = useState<{
+    negotiationId: string
+    link: string
+  } | null>(null)
 
   function handleOpenChange(next: boolean) {
     setOpen(next)
@@ -79,7 +85,10 @@ function NegotiationForm({
     event.preventDefault()
     const values = formValues(event.currentTarget)
     const result = await create.run({
-      data: { debtId: values.debtId, expiresInDays: Number(values.expiresInDays) },
+      data: {
+        debtId: values.debtId,
+        expiresInDays: Number(values.expiresInDays),
+      },
     })
     if (result.ok) {
       onCreated({
@@ -108,7 +117,13 @@ function NegotiationForm({
         </>
       ) : (
         <Field label="Deuda" htmlFor="debtId">
-          <NativeSelect id="debtId" name="debtId" required className="w-full" disabled={!debts?.length}>
+          <NativeSelect
+            id="debtId"
+            name="debtId"
+            required
+            className="w-full"
+            disabled={!debts?.length}
+          >
             {debts === null ? (
               <NativeSelectOption value="">Cargando deudas…</NativeSelectOption>
             ) : (
@@ -126,7 +141,10 @@ function NegotiationForm({
       {noDebts ? (
         <p className="text-muted-foreground">
           No hay deudas impagas sin negociación. Cargá una desde{" "}
-          <Link to="/deudores" className="font-medium text-foreground underline underline-offset-4">
+          <Link
+            to="/deudores"
+            className="font-medium text-foreground underline underline-offset-4"
+          >
             Deudores
           </Link>
           .
@@ -134,7 +152,12 @@ function NegotiationForm({
       ) : null}
 
       <Field label="Vigencia del link" htmlFor="expiresInDays">
-        <NativeSelect id="expiresInDays" name="expiresInDays" defaultValue="7" className="w-full">
+        <NativeSelect
+          id="expiresInDays"
+          name="expiresInDays"
+          defaultValue="7"
+          className="w-full"
+        >
           <NativeSelectOption value="3">3 días</NativeSelectOption>
           <NativeSelectOption value="7">7 días</NativeSelectOption>
           <NativeSelectOption value="14">14 días</NativeSelectOption>
@@ -145,8 +168,13 @@ function NegotiationForm({
       <FormError message={loadError ?? create.error} />
 
       <DialogFooter>
-        <DialogClose render={<Button type="button" variant="outline" />}>Cancelar</DialogClose>
-        <Button type="submit" disabled={create.pending || noDebts || (!debt && !debts)}>
+        <DialogClose render={<Button type="button" variant="outline" />}>
+          Cancelar
+        </DialogClose>
+        <Button
+          type="submit"
+          disabled={create.pending || noDebts || (!debt && !debts)}
+        >
           {create.pending ? "Generando…" : "Generar link"}
         </Button>
       </DialogFooter>
@@ -175,14 +203,27 @@ function CreatedLink({
       <DialogHeader>
         <DialogTitle>Link de negociación generado</DialogTitle>
         <DialogDescription>
-          Copialo ahora y envialo al deudor. Por seguridad no se guarda en
-          claro y no se vuelve a mostrar.
+          Copialo ahora y envialo al deudor. Por seguridad no se guarda en claro
+          y no se vuelve a mostrar.
         </DialogDescription>
       </DialogHeader>
       <div className="flex gap-2">
-        <Input readOnly value={link} aria-label="Link de negociación" onFocus={(event) => event.currentTarget.select()} />
-        <Button type="button" variant="outline" onClick={copy} aria-label="Copiar link">
-          <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} strokeWidth={2} />
+        <Input
+          readOnly
+          value={link}
+          aria-label="Link de negociación"
+          onFocus={(event) => event.currentTarget.select()}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          onClick={copy}
+          aria-label="Copiar link"
+        >
+          <HugeiconsIcon
+            icon={copied ? Tick02Icon : Copy01Icon}
+            strokeWidth={2}
+          />
         </Button>
       </div>
       <DialogFooter>

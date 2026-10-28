@@ -8,8 +8,8 @@ import {
   canSendAdminMessage,
   canTakeOver,
   negotiationFilters,
-  type NegotiationStatus,
 } from "@/lib/labels"
+import type { NegotiationStatus } from "@/lib/labels"
 import { logAuditEvent, throwIfError } from "./db/audit"
 import { generateNegotiationToken } from "./db/crypto"
 import type { ServerSupabase } from "./db/supabase-server"
@@ -70,7 +70,10 @@ export const getNegotiation = createServerFn({ method: "GET" })
       .eq("id", id)
       .order("created_at", { referencedTable: "messages", ascending: true })
       .order("created_at", { referencedTable: "offers", ascending: false })
-      .order("created_at", { referencedTable: "audit_events", ascending: false })
+      .order("created_at", {
+        referencedTable: "audit_events",
+        ascending: false,
+      })
       .maybeSingle()
     throwIfError(error)
     if (!data?.debts) throw notFound()
@@ -107,7 +110,9 @@ export const createNegotiation = createServerFn({ method: "POST" })
     throwIfError(debtError)
     if (!debt) throw notFound()
     if (debt.status !== "open") {
-      throw new Error("Solo se puede negociar una deuda impaga sin negociación abierta.")
+      throw new Error(
+        "Solo se puede negociar una deuda impaga sin negociación abierta."
+      )
     }
 
     const { data: policy, error: policyError } = await supabase
@@ -117,10 +122,16 @@ export const createNegotiation = createServerFn({ method: "POST" })
       .maybeSingle()
     throwIfError(policyError)
     if (!policy) {
-      throw new Error("Configurá las reglas del agente antes de iniciar una negociación.")
+      throw new Error(
+        "Configurá las reglas del agente antes de iniciar una negociación."
+      )
     }
     // Snapshot inmutable: cambios posteriores de la política no afectan esta negociación.
-    const { organization_id: _org, updated_at: _updated, ...policySnapshot } = policy
+    const {
+      organization_id: _org,
+      updated_at: _updated,
+      ...policySnapshot
+    } = policy
 
     const { token, tokenHash } = generateNegotiationToken()
     const expiresAt = new Date(Date.now() + data.expiresInDays * 86_400_000)
@@ -181,7 +192,9 @@ export const takeOverNegotiation = createServerFn({ method: "POST" })
   .handler(async ({ context, data: { id } }) => {
     const current = await getStatus(context.supabase, id)
     if (!canTakeOver(current.status)) {
-      throw new Error("Esta negociación no admite tomar el control en su estado actual.")
+      throw new Error(
+        "Esta negociación no admite tomar el control en su estado actual."
+      )
     }
     await setStatus(context.supabase, id, "escalated")
     await logAuditEvent(context, "admin_takeover", id, { from: current.status })
@@ -193,7 +206,9 @@ export const returnToAgent = createServerFn({ method: "POST" })
   .handler(async ({ context, data: { id } }) => {
     const current = await getStatus(context.supabase, id)
     if (!canReturnToAgent(current.status)) {
-      throw new Error("Solo se puede devolver al agente una negociación derivada.")
+      throw new Error(
+        "Solo se puede devolver al agente una negociación derivada."
+      )
     }
     const next = current.verified_at ? "active" : "pending"
     await setStatus(context.supabase, id, next)

@@ -32,7 +32,12 @@ type DebtorValues = {
 function DebtorFields({ debtor }: { debtor?: DebtorValues }) {
   return (
     <div className="grid gap-3 sm:grid-cols-2">
-      <TextField label="Nombre y apellido" name="fullName" required defaultValue={debtor?.full_name} />
+      <TextField
+        label="Nombre y apellido"
+        name="fullName"
+        required
+        defaultValue={debtor?.full_name}
+      />
       <TextField
         label="Identificador"
         name="alias"
@@ -41,7 +46,11 @@ function DebtorFields({ debtor }: { debtor?: DebtorValues }) {
         defaultValue={debtor?.alias}
         hint="Es lo que ve el agente en lugar del nombre."
       />
-      <TextField label="Edificio / curso" name="groupLabel" defaultValue={debtor?.group_label ?? ""} />
+      <TextField
+        label="Edificio / curso"
+        name="groupLabel"
+        defaultValue={debtor?.group_label ?? ""}
+      />
       <TextField
         label="DNI"
         name="dni"
@@ -52,8 +61,18 @@ function DebtorFields({ debtor }: { debtor?: DebtorValues }) {
             : "Solo se guardan los últimos 3 dígitos, hasheados."
         }
       />
-      <TextField label="Email" name="email" type="email" defaultValue={debtor?.email ?? ""} />
-      <TextField label="Teléfono" name="phone" type="tel" defaultValue={debtor?.phone ?? ""} />
+      <TextField
+        label="Email"
+        name="email"
+        type="email"
+        defaultValue={debtor?.email ?? ""}
+      />
+      <TextField
+        label="Teléfono"
+        name="phone"
+        type="tel"
+        defaultValue={debtor?.phone ?? ""}
+      />
     </div>
   )
 }
@@ -68,21 +87,37 @@ function DebtFields({ required }: { required: boolean }) {
         placeholder="Expensas ordinarias jul–sep"
         className="sm:col-span-2"
       />
-      <MoneyField label="Capital adeudado ($)" name="principal" required={required} />
+      <MoneyField
+        label="Capital adeudado ($)"
+        name="principal"
+        required={required}
+      />
       <MoneyField label="Intereses acumulados ($)" name="interest" />
-      <TextField label="Vencimiento" name="dueDate" type="date" required={required} max={todayIsoDate()} />
+      <TextField
+        label="Vencimiento"
+        name="dueDate"
+        type="date"
+        required={required}
+        max={todayIsoDate()}
+      />
     </div>
   )
 }
 
-export function CreateDebtorDialog({ trigger }: { trigger: React.ReactElement }) {
+export function CreateDebtorDialog({
+  trigger,
+}: {
+  trigger: React.ReactElement
+}) {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
   const create = useAction(useServerFn(createDebtor))
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const { concept, principal, interest, dueDate, ...debtor } = formValues(event.currentTarget)
+    const { concept, principal, interest, dueDate, ...debtor } = formValues(
+      event.currentTarget
+    )
     const hasDebt = Boolean(concept || principal || dueDate)
     const result = await create.run({
       data: {
@@ -94,7 +129,10 @@ export function CreateDebtorDialog({ trigger }: { trigger: React.ReactElement })
     })
     if (result.ok) {
       setOpen(false)
-      await navigate({ to: "/deudores/$debtorId", params: { debtorId: result.data.id } })
+      await navigate({
+        to: "/deudores/$debtorId",
+        params: { debtorId: result.data.id },
+      })
     }
   }
 
@@ -115,7 +153,9 @@ export function CreateDebtorDialog({ trigger }: { trigger: React.ReactElement })
           <DebtFields required={false} />
           <FormError message={create.error} />
           <DialogFooter>
-            <DialogClose render={<Button type="button" variant="outline" />}>Cancelar</DialogClose>
+            <DialogClose render={<Button type="button" variant="outline" />}>
+              Cancelar
+            </DialogClose>
             <Button type="submit" disabled={create.pending}>
               {create.pending ? "Guardando…" : "Crear deudor"}
             </Button>
@@ -140,7 +180,12 @@ export function EditDebtorDialog({
     event.preventDefault()
     const values = formValues(event.currentTarget)
     const result = await update.run({
-      data: { ...values, id: debtor.id, fullName: values.fullName, alias: values.alias },
+      data: {
+        ...values,
+        id: debtor.id,
+        fullName: values.fullName,
+        alias: values.alias,
+      },
     })
     if (result.ok) setOpen(false)
   }
@@ -150,14 +195,20 @@ export function EditDebtorDialog({
       <DialogTrigger render={trigger} />
       <DialogContent className="max-h-[90svh] overflow-y-auto sm:max-w-2xl">
         {/* key: remonta el form si cambian los datos guardados (inputs no controlados). */}
-        <form key={Object.values(debtor).join("|")} onSubmit={handleSubmit} className="grid gap-4">
+        <form
+          key={Object.values(debtor).join("|")}
+          onSubmit={handleSubmit}
+          className="grid gap-4"
+        >
           <DialogHeader>
             <DialogTitle>Editar deudor</DialogTitle>
           </DialogHeader>
           <DebtorFields debtor={debtor} />
           <FormError message={update.error} />
           <DialogFooter>
-            <DialogClose render={<Button type="button" variant="outline" />}>Cancelar</DialogClose>
+            <DialogClose render={<Button type="button" variant="outline" />}>
+              Cancelar
+            </DialogClose>
             <Button type="submit" disabled={update.pending}>
               {update.pending ? "Guardando…" : "Guardar cambios"}
             </Button>
@@ -204,7 +255,9 @@ export function CreateDebtDialog({
           <DebtFields required />
           <FormError message={create.error} />
           <DialogFooter>
-            <DialogClose render={<Button type="button" variant="outline" />}>Cancelar</DialogClose>
+            <DialogClose render={<Button type="button" variant="outline" />}>
+              Cancelar
+            </DialogClose>
             <Button type="submit" disabled={create.pending}>
               {create.pending ? "Guardando…" : "Agregar deuda"}
             </Button>

@@ -1,4 +1,9 @@
-import { createFileRoute, redirect, useNavigate, useRouter } from "@tanstack/react-router"
+import {
+  createFileRoute,
+  redirect,
+  useNavigate,
+  useRouter,
+} from "@tanstack/react-router"
 import { useState } from "react"
 import { useServerFn } from "@tanstack/react-start"
 import { z } from "zod"
@@ -12,7 +17,9 @@ import { getSessionContext, signIn } from "@/server/auth"
 
 // Solo rutas internas: evita redirecciones abiertas a otros dominios.
 const safeRedirect = (value: string | undefined) =>
-  value && value.startsWith("/") && !value.startsWith("//") ? value : "/dashboard"
+  value && value.startsWith("/") && !value.startsWith("//")
+    ? value
+    : "/dashboard"
 
 export const Route = createFileRoute("/login")({
   validateSearch: z.object({ redirect: z.string().optional() }),

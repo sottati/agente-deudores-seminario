@@ -29,7 +29,13 @@ export const Route = createFileRoute("/_authed/deudores/")({
 
 const PENDING: DebtStatus[] = ["open", "in_negotiation", "agreed"]
 // Estado más relevante para la administración cuando hay varias deudas.
-const PRIORITY: DebtStatus[] = ["in_negotiation", "open", "agreed", "paid", "written_off"]
+const PRIORITY: DebtStatus[] = [
+  "in_negotiation",
+  "open",
+  "agreed",
+  "paid",
+  "written_off",
+]
 
 type DebtorRow = Awaited<ReturnType<typeof listDebtors>>[number]
 
@@ -53,8 +59,8 @@ function DebtorsPage() {
       .filter((debtor) =>
         !needle
           ? true
-          : [debtor.alias, debtor.full_name, debtor.group_label ?? ""].some((value) =>
-              value.toLowerCase().includes(needle)
+          : [debtor.alias, debtor.full_name, debtor.group_label ?? ""].some(
+              (value) => value.toLowerCase().includes(needle)
             )
       )
       .map((debtor) => ({ debtor, ...summarize(debtor) }))
@@ -102,8 +108,12 @@ function DebtorsPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="pl-4">Deudor</TableHead>
-                    <TableHead className="hidden md:table-cell">Edificio / curso</TableHead>
-                    <TableHead className="text-right">Deuda pendiente</TableHead>
+                    <TableHead className="hidden md:table-cell">
+                      Edificio / curso
+                    </TableHead>
+                    <TableHead className="text-right">
+                      Deuda pendiente
+                    </TableHead>
                     <TableHead className="pr-4">Estado</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -118,7 +128,9 @@ function DebtorsPage() {
                         >
                           {debtor.alias}
                         </Link>
-                        <p className="text-xs text-muted-foreground">{debtor.full_name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {debtor.full_name}
+                        </p>
                       </TableCell>
                       <TableCell className="hidden text-muted-foreground md:table-cell">
                         {debtor.group_label ?? "—"}
@@ -130,7 +142,9 @@ function DebtorsPage() {
                         {status ? (
                           <DebtStatusBadge status={status} />
                         ) : (
-                          <span className="text-xs text-muted-foreground">Sin deudas</span>
+                          <span className="text-xs text-muted-foreground">
+                            Sin deudas
+                          </span>
                         )}
                       </TableCell>
                     </TableRow>
