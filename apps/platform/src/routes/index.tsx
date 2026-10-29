@@ -1,7 +1,8 @@
-import { Link, createFileRoute } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
+import { ButtonLink } from "@/components/button-link"
 import { DashboardPreview } from "@/components/dashboard-preview"
 import { Faq } from "@/components/faq"
 import { Footer } from "@/components/footer"
@@ -53,19 +54,15 @@ function HomePage() {
               isDark ? "text-white/80" : "text-muted-foreground"
             )}
           >
-            pacta.ia conversa con cada deudor, propone planes dentro de tu política
-            y registra el acuerdo. Vos intervenís cuando hace falta.
+            pacta.ia conversa con cada deudor, propone planes dentro de tu
+            política y registra el acuerdo. Vos intervenís cuando hace falta.
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button
-              size="lg"
-              className="h-11 px-4"
-              render={<Link to="/dashboard" />}
-            >
+            <ButtonLink size="lg" className="h-11 px-4" to="/dashboard">
               Probar el dashboard
               <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
-            </Button>
+            </ButtonLink>
             <Button
               size="lg"
               variant="outline"

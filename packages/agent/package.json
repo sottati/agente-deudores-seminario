@@ -1,0 +1,24 @@
+{
+  "name": "@agente/agent",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc --noEmit",
+    "smoke": "tsx --env-file-if-exists=../../apps/platform/.env.local scripts/smoke.ts"
+  },
+  "dependencies": {
+    "@agente/negotiation-engine": "workspace:*",
+    "ai": "^7.0.147",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4.23.15",
+    "typescript": "^6",
+    "vitest": "^4"
+  }
+}
