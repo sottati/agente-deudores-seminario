@@ -7,9 +7,9 @@
 
 ### Estado Actual de la Implementación
 
-- **Estructura base:** Se ha configurado el repositorio bajo un esquema _monorepo_ (usando `pnpm`).
-- **Frontend (MVP Mock):** Iniciado en `apps/platform` con React 19, Vite, TanStack Start (SSR) y shadcn/ui (Tailwind v4). Incluye Landing Page y la identidad visual (logo, colores y tema dark/light dinámico).
-- **Backend e Inteligencia Artificial:** _En implementación_ según [PLAN_BACKEND.md](./PLAN_BACKEND.md). Sprint 0 en curso: paquetes `packages/agent` y `packages/negotiation-engine` creados, Supabase CLI inicializado y CI configurado. Decisiones de arquitectura registradas en [§5.4](#54-decisiones-de-arquitectura-del-backend).
+- **Estructura base:** Se ha configurado el repositorio bajo un esquema _monorepo_ (usando `pnpm`) con CI (format check, lint, typecheck, tests y build).
+- **Frontend y Panel del Administrador:** Implementado en `apps/platform` con React 19, Vite, TanStack Start (SSR) y shadcn/ui (Tailwind v4). Incluye Landing Page, identidad visual, autenticación real con Supabase, protección de rutas (`_authed`) y pantallas de Deudores, Reglas del agente, Conversaciones, Acuerdos imprimibles y Configuración.
+- **Backend, Base de Datos y Motor de Reglas:** _En implementación_ según [PLAN_BACKEND.md](./PLAN_BACKEND.md). Esquema PostgreSQL con RLS multi-tenant, seed de desarrollo y tests pgTAP completados (`supabase/`). Motor determinístico de reglas implementado y testeado en `packages/negotiation-engine`. Capa del agente conversacional en `packages/agent` en curso. Decisiones de arquitectura registradas en [§5.4](#54-decisiones-de-arquitectura-del-backend).
 - **Gestión Documental:** Relevamiento inicial completado. Documentos como el Marco Legal, Stakeholders, Uso de IA, Entrevistas e Identidad Visual ya están definidos y consolidados en el directorio `/docs`.
 
 ---
@@ -122,8 +122,8 @@ Resolver la siguiente premisa: _¿Cómo podríamos ayudar a un administrador de 
 
 - **Frontend / Plataforma:** React 19 + TanStack Start (Router + SSR) + Vite.
 - **UI Components:** shadcn/ui, Base UI y Tailwind CSS v4 para el diseño de componentes, efectos (como `hero-shader-gradient`) y estilos estandarizados.
-- **IA y Agente:** Vercel AI SDK implementando **GPT-5.6 Luna** _(Pendiente)_.
-- **Backend / Auth:** Supabase (Auth + Base de datos relacional PostgreSQL) _(Pendiente)_.
+- **IA y Agente:** Vercel AI SDK implementando **GPT-5.6 Luna** _(En integración en `packages/agent`)_, respaldado por el motor determinístico `packages/negotiation-engine`.
+- **Backend / Auth:** Supabase (Auth + Base de datos relacional PostgreSQL con RLS multi-tenant).
 
 > **Decisión Técnica - Modelo de IA:** Se seleccionó **GPT-5.6 Luna** como modelo fundacional priorizando su robustez en el cumplimiento estricto de system prompts (guardrails) para evitar "alucinaciones" (como otorgar descuentos no permitidos por la administración), además de contar con excelentes capacidades de _Function Calling_ y un balance ideal de costo/velocidad.
 
