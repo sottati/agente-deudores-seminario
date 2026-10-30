@@ -335,7 +335,7 @@ Objetivo: **un deudor de seed negocia por chat y recibe ofertas siempre dentro d
 - [x] `seed.sql`: org "Consorcios del Sur", usuario demo `demo@pacta.ai` / `demo1234`, política, 12 deudores / 13 deudas, 6 acuerdos históricos y **negociación con token conocido** (`/n/dev-4b`). DNI de verificación de todos los deudores: terminación `123`.
 - [x] Tipos generados → `apps/platform/src/server/db/types.gen.ts` (`pnpm db:types`).
 - [x] Motor de reglas: utilidades monetarias en centavos, `getNegotiationBounds`, `evaluateRequest`, `buildSchedule`, `requiresHuman`, con tests exhaustivos (cuota mínima, anticipo, redondeo, quita 100 % en pago único, umbral de escalado). Objetivo ≥ 95 % de cobertura del paquete.
-- [ ] `packages/agent`: system prompt versionado, tools de §3.2 con `inputSchema` Zod, `runNegotiationTurn({ negotiation, lastMessage, history, model, persistence })` sobre `streamText`.
+- [x] `packages/agent`: system prompt versionado, tools de §3.2 con `inputSchema` Zod, `runNegotiationTurn({ negotiation, lastMessage, history, model, persistence })` sobre `streamText`.
 - [ ] `server/db/debtor-access.ts` y endpoint `POST /api/n/$token/chat`: valida token y estado, reconstruye el historial desde la DB, ejecuta el turno, persiste mensajes (`onFinish`), devuelve `toUIMessageStreamResponse()`.
 - [ ] Página `/n/$token` mínima con `useChat` (sin verificación todavía).
 

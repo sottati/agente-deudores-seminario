@@ -122,7 +122,7 @@ Resolver la siguiente premisa: _¿Cómo podríamos ayudar a un administrador de 
 
 - **Frontend / Plataforma:** React 19 + TanStack Start (Router + SSR) + Vite.
 - **UI Components:** shadcn/ui, Base UI y Tailwind CSS v4 para el diseño de componentes, efectos (como `hero-shader-gradient`) y estilos estandarizados.
-- **IA y Agente:** Vercel AI SDK implementando **GPT-5.6 Luna** _(En integración en `packages/agent`)_, respaldado por el motor determinístico `packages/negotiation-engine`.
+- **IA y Agente:** Vercel AI SDK implementando **GPT-5.6 Luna** en `packages/agent` (system prompt versionado, tools tipadas con Zod y `runNegotiationTurn`), respaldado por el motor determinístico `packages/negotiation-engine`.
 - **Backend / Auth:** Supabase (Auth + Base de datos relacional PostgreSQL con RLS multi-tenant).
 
 > **Decisión Técnica - Modelo de IA:** Se seleccionó **GPT-5.6 Luna** como modelo fundacional priorizando su robustez en el cumplimiento estricto de system prompts (guardrails) para evitar "alucinaciones" (como otorgar descuentos no permitidos por la administración), además de contar con excelentes capacidades de _Function Calling_ y un balance ideal de costo/velocidad.
