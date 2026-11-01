@@ -38,13 +38,8 @@ function extractText(message: UIMessage | undefined): string {
   if (!message || !Array.isArray(message.parts)) return ""
   const texts: string[] = []
   for (const part of message.parts) {
-    if (
-      part &&
-      typeof part === "object" &&
-      (part as { type?: unknown }).type === "text" &&
-      typeof (part as { text?: unknown }).text === "string"
-    ) {
-      texts.push((part as { text: string }).text)
+    if (part.type === "text" && typeof part.text === "string") {
+      texts.push(part.text)
     }
   }
   return texts.join("\n").trim()
@@ -145,7 +140,7 @@ async function handleChat({
     persistence,
     onFinish: async (event) => {
       // Persistimos la respuesta del agente reconstruida desde el servidor.
-      const text = event.text?.trim()
+      const text = event.text.trim()
       if (text) {
         await appendMessage(negotiation, "agent", textPart(text))
       }

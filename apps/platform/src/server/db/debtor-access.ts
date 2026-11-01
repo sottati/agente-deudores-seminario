@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js"
 import type { SupabaseClient } from "@supabase/supabase-js"
 
 import type {
+  AgentAuditEventType,
   AgentNegotiationContext,
   AgentPersistence,
   SavedOfferRecord,
@@ -12,8 +13,6 @@ import type {
   NegotiationPolicy,
   PolicySnapshotRow,
 } from "@agente/negotiation-engine"
-
-import type { AgentAuditEventType } from "@agente/agent"
 
 import { sha256Hex } from "./crypto"
 import type { Database, Json, Tables } from "./types.gen"
@@ -184,7 +183,7 @@ export async function getConversationHistory(
     .order("created_at", { ascending: true })
 
   if (error) throw new Error(error.message)
-  return data ?? []
+  return data
 }
 
 type StoredRole = Database["public"]["Enums"]["message_role"]
