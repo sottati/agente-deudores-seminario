@@ -127,7 +127,11 @@ function ActiveChat({
 
         {/* Historial previo persistido en la base de datos. */}
         {historyBubbles.map((bubble) => (
-          <Bubble key={bubble.id} fromDebtor={bubble.fromDebtor} text={bubble.text} />
+          <Bubble
+            key={bubble.id}
+            fromDebtor={bubble.fromDebtor}
+            text={bubble.text}
+          />
         ))}
 
         {/* Mensajes del turno actual (streaming en vivo). */}

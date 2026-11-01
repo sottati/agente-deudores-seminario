@@ -20,7 +20,12 @@ const MAX_MESSAGE_LENGTH = 4_000
 
 // Estados en los que el agente puede responder. En "escalated"/"agreed"/etc.
 // el agente deja de responder (atiende un humano o la negociación está cerrada).
-const AGENT_ANSWERABLE_STATUSES = new Set(["pending", "verifying", "active", "offer_pending"])
+const AGENT_ANSWERABLE_STATUSES = new Set([
+  "pending",
+  "verifying",
+  "active",
+  "offer_pending",
+])
 
 function json(body: unknown, status: number) {
   return new Response(JSON.stringify(body), {
@@ -97,16 +102,15 @@ async function handleChat({
   if (isHumanHandoffKeyword(lastText)) {
     const persistence = createNegotiationPersistence(negotiation)
     await persistence.escalate("debtor_requested_human")
-    await persistence.logEvent("escalated", { reason: "debtor_requested_human" })
+    await persistence.logEvent("escalated", {
+      reason: "debtor_requested_human",
+    })
 
     const handoffText =
       "Te derivo con una persona de la administración. Te van a responder por este mismo chat."
     await appendMessage(negotiation, "agent", textPart(handoffText))
 
-    return json(
-      { escalated: true, message: handoffText },
-      200
-    )
+    return json({ escalated: true, message: handoffText }, 200)
   }
 
   const history = await getConversationHistory(negotiation.id)

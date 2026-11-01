@@ -213,7 +213,10 @@ export function createNegotiationPersistence(
   negotiation: ResolvedNegotiation
 ): AgentPersistence {
   const supabase = createServiceClient()
-  const scope = { id: negotiation.id, organizationId: negotiation.organizationId }
+  const scope = {
+    id: negotiation.id,
+    organizationId: negotiation.organizationId,
+  }
 
   return {
     async saveOffer(offer: EvaluatedOffer): Promise<SavedOfferRecord> {
