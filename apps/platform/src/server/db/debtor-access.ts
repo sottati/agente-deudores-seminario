@@ -15,7 +15,7 @@ import type {
   PolicySnapshotRow,
 } from "@agente/negotiation-engine"
 
-import { sha256Hex } from "./crypto"
+import { debtorVerificationHash, sha256Hex } from "./crypto"
 import { AGENT_ANSWERABLE_STATUSES } from "@/lib/debtor-chat"
 import type { Database, Json, Tables } from "./types.gen"
 
@@ -50,6 +50,8 @@ function createServiceClient(): ServiceClient {
   })
 }
 
+export const MAX_VERIFICATION_ATTEMPTS = 5
+
 // Negociación resuelta por token, con todo lo necesario para ejecutar un turno
 // del agente sin volver a tocar la DB para datos de contexto.
 export type ResolvedNegotiation = {
@@ -57,6 +59,7 @@ export type ResolvedNegotiation = {
   organizationId: string
   status: Database["public"]["Enums"]["negotiation_status"]
   verifiedAt: string | null
+  verificationAttempts: number
   expiresAt: string
   updatedAt: string
   turnId?: string
@@ -69,8 +72,10 @@ export type ResolvedNegotiation = {
     interestCents: number
   }
   debtor: {
+    id: string
     alias: string
     groupLabel: string | null
+    verificationHash: string | null
   }
   organization: {
     displayNameForDebtors: string
@@ -108,9 +113,9 @@ export async function resolveNegotiationByToken(
   const { data, error } = await supabase
     .from("negotiations")
     .select(
-      `id, organization_id, status, verified_at, expires_at, updated_at, policy_snapshot, debt_id,
+      `id, organization_id, status, verified_at, verification_attempts, expires_at, updated_at, policy_snapshot, debt_id,
        debts!inner(concept, due_date, principal_cents, interest_cents,
-         debtors!inner(alias, group_label)),
+         debtors!inner(id, alias, group_label, verification_hash)),
        organizations!inner(display_name_for_debtors, kind)`
     )
     .eq("token_hash", tokenHash)
@@ -128,6 +133,7 @@ export async function resolveNegotiationByToken(
     organizationId: data.organization_id,
     status: data.status,
     verifiedAt: data.verified_at,
+    verificationAttempts: data.verification_attempts,
     expiresAt: data.expires_at,
     updatedAt: data.updated_at,
     policySnapshot: data.policy_snapshot as unknown as PolicySnapshotRow,
@@ -139,8 +145,10 @@ export async function resolveNegotiationByToken(
       interestCents: debt.interest_cents,
     },
     debtor: {
+      id: debtor.id,
       alias: debtor.alias,
       groupLabel: debtor.group_label,
+      verificationHash: debtor.verification_hash,
     },
     organization: {
       displayNameForDebtors: organization.display_name_for_debtors,
@@ -362,5 +370,140 @@ export function createNegotiationPersistence(
       })
       if (error) throw new Error(error.message)
     },
+  }
+}
+
+export type VerifyDebtorIdentityResult =
+  | { ok: true }
+  | {
+      ok: false
+      locked: boolean
+      remainingAttempts: number
+      message: string
+    }
+
+/**
+ * Si la negociación está en `pending` (link recién creado), pasa a `verifying`
+ * cuando el deudor abre el enlace por primera vez (PLAN_BACKEND §3.4).
+ */
+export async function markNegotiationVerifying(
+  negotiation: Pick<ResolvedNegotiation, "id" | "organizationId" | "status">
+): Promise<Database["public"]["Enums"]["negotiation_status"]> {
+  if (negotiation.status !== "pending") return negotiation.status
+  const supabase = createServiceClient()
+  const { error } = await supabase
+    .from("negotiations")
+    .update({ status: "verifying" })
+    .eq("id", negotiation.id)
+    .eq("organization_id", negotiation.organizationId)
+    .eq("status", "pending")
+  if (error) throw new Error(error.message)
+  return "verifying"
+}
+
+/**
+ * Verifica los últimos 3 dígitos del DNI contra `debtors.verification_hash`.
+ * - Si el deudor no tiene `verification_hash` configurado, permite el acceso.
+ * - Si coincide: actualiza `verified_at` (si era null) y pasa `pending`/`verifying` a `active`.
+ * - Si no coincide: incrementa `verification_attempts`; al llegar a
+ *   `MAX_VERIFICATION_ATTEMPTS` bloquea la negociación (`status = 'locked'`),
+ *   libera la deuda (`status = 'open'`) y registra el evento en `audit_events`.
+ */
+export async function verifyDebtorIdentity(
+  negotiation: ResolvedNegotiation,
+  dniLast3: string
+): Promise<VerifyDebtorIdentityResult> {
+  if (negotiation.status === "locked") {
+    return {
+      ok: false,
+      locked: true,
+      remainingAttempts: 0,
+      message:
+        "El acceso a este enlace fue bloqueado por superar el límite de intentos de verificación.",
+    }
+  }
+
+  const supabase = createServiceClient()
+  const normalized = dniLast3.replace(/\D/g, "").slice(-3)
+
+  const expectedHash = negotiation.debtor.verificationHash
+  const isValid =
+    expectedHash === null ||
+    (normalized.length === 3 &&
+      debtorVerificationHash(negotiation.debtor.id, normalized) ===
+        expectedHash)
+
+  if (isValid) {
+    const nextStatus =
+      negotiation.status === "pending" || negotiation.status === "verifying"
+        ? "active"
+        : negotiation.status
+
+    const { error } = await supabase
+      .from("negotiations")
+      .update({
+        status: nextStatus,
+        verified_at: negotiation.verifiedAt ?? new Date().toISOString(),
+      })
+      .eq("id", negotiation.id)
+      .eq("organization_id", negotiation.organizationId)
+    if (error) throw new Error(error.message)
+
+    return { ok: true }
+  }
+
+  const nextAttempts = negotiation.verificationAttempts + 1
+  const shouldLock = nextAttempts >= MAX_VERIFICATION_ATTEMPTS
+  const remainingAttempts = Math.max(
+    0,
+    MAX_VERIFICATION_ATTEMPTS - nextAttempts
+  )
+
+  const { error: updateError } = await supabase
+    .from("negotiations")
+    .update({
+      verification_attempts: nextAttempts,
+      status: shouldLock
+        ? "locked"
+        : negotiation.status === "pending"
+          ? "verifying"
+          : negotiation.status,
+    })
+    .eq("id", negotiation.id)
+    .eq("organization_id", negotiation.organizationId)
+  if (updateError) throw new Error(updateError.message)
+
+  if (shouldLock) {
+    await supabase
+      .from("debts")
+      .update({ status: "open" })
+      .eq("id", negotiation.debtId)
+      .eq("organization_id", negotiation.organizationId)
+      .eq("status", "in_negotiation")
+
+    await supabase.from("audit_events").insert({
+      organization_id: negotiation.organizationId,
+      negotiation_id: negotiation.id,
+      type: "verification_locked",
+      payload: { attempts: nextAttempts },
+    })
+
+    return {
+      ok: false,
+      locked: true,
+      remainingAttempts: 0,
+      message:
+        "Superaste el máximo de intentos permitidos. Por seguridad bloqueamos este enlace.",
+    }
+  }
+
+  return {
+    ok: false,
+    locked: false,
+    remainingAttempts,
+    message:
+      remainingAttempts === 1
+        ? "Los dígitos ingresados no coinciden. Te queda 1 intento."
+        : `Los dígitos ingresados no coinciden. Te quedan ${remainingAttempts} intentos.`,
   }
 }

@@ -7,9 +7,13 @@ import type { DebtorUIMessage } from "@/lib/debtor-chat"
 import { createConfiguredModel } from "@agente/agent/model"
 import { handleDebtorChat } from "./debtor-chat-handler"
 import * as access from "./db/debtor-access"
+import * as debtorSession from "./debtor-session"
 
 vi.mock("@tanstack/react-start/server-only", () => ({}))
 vi.mock("@agente/agent/model", () => ({ createConfiguredModel: vi.fn() }))
+vi.mock("./debtor-session", () => ({
+  hasValidDebtorSessionRequest: vi.fn(),
+}))
 vi.mock("./db/debtor-access", () => ({
   resolveNegotiationByToken: vi.fn(),
   getConversationHistory: vi.fn(),
@@ -49,6 +53,7 @@ function request(text = "Hola", role = "user") {
 
 describe("endpoint del chat", () => {
   beforeEach(() => {
+    vi.mocked(debtorSession.hasValidDebtorSessionRequest).mockReturnValue(true)
     vi.mocked(access.resolveNegotiationByToken).mockResolvedValue(
       negotiationFixture()
     )
@@ -322,6 +327,16 @@ describe("endpoint del chat", () => {
       expect(access.claimNegotiationTurn).not.toHaveBeenCalled()
     }
   )
+
+  it("rechaza con 401 si no hay cookie de sesión verificada del deudor", async () => {
+    vi.mocked(debtorSession.hasValidDebtorSessionRequest).mockReturnValue(false)
+    const response = await handleDebtorChat({
+      request: request(),
+      params: { token: "example" },
+    })
+    expect(response.status).toBe(401)
+    expect(access.claimNegotiationTurn).not.toHaveBeenCalled()
+  })
 
   it("reserva antes de cargar el historial y persiste la respuesta completa con ID estable", async () => {
     vi.mocked(createConfiguredModel).mockReturnValue(

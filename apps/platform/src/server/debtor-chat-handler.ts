@@ -20,6 +20,7 @@ import {
   resolveNegotiationByToken,
   toAgentContext,
 } from "./db/debtor-access"
+import { hasValidDebtorSessionRequest } from "./debtor-session"
 import { negotiationStreamResponse } from "./negotiation-stream"
 import type { ResolvedNegotiation } from "./db/debtor-access"
 
@@ -55,6 +56,19 @@ export async function handleDebtorChat({
       return json({ error: "Link de negociación inválido." }, 404)
     if (isNegotiationExpired(negotiation))
       return json({ error: "Este link de negociación venció." }, 410)
+    if (negotiation.status === "locked") {
+      return json(
+        { error: "Esta conversación no está disponible para el asistente." },
+        409
+      )
+    }
+    // Exige sesión del deudor verificada mediante cookie firmada (PLAN_BACKEND D4).
+    if (!hasValidDebtorSessionRequest(request, negotiation.id)) {
+      return json(
+        { error: "Verificá tu identidad antes de iniciar la conversación." },
+        401
+      )
+    }
     if (!AGENT_ANSWERABLE_STATUSES.includes(negotiation.status)) {
       return json(
         { error: "Esta conversación no está disponible para el asistente." },
