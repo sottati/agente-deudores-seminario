@@ -299,7 +299,20 @@ export function DebtorChat({
                           variant={fromDebtor ? "default" : "muted"}
                         >
                           <BubbleContent className="whitespace-pre-wrap">
-                            {text}
+                            <p>{text}</p>
+                            {message.id === "bot-disclosure" && (
+                              <p className="mt-2 border-t border-border/60 pt-1.5 text-xs text-muted-foreground">
+                                <a
+                                  href="/privacidad"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="font-medium text-foreground underline underline-offset-4 hover:text-primary"
+                                >
+                                  Ver aviso de privacidad y derechos sobre tus
+                                  datos personales
+                                </a>
+                              </p>
+                            )}
                           </BubbleContent>
                         </Bubble>
                       </MessageContent>
@@ -403,7 +416,15 @@ export function DebtorChat({
           </Button>
         </form>
         <p className="mt-2 text-center text-xs text-muted-foreground">
-          Podés pedir hablar con una persona en cualquier momento.
+          Podés pedir hablar con una persona en cualquier momento ·{" "}
+          <a
+            href="/privacidad"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4 hover:text-foreground"
+          >
+            Aviso de privacidad
+          </a>
         </p>
       </footer>
     </>
@@ -575,7 +596,15 @@ function IdentityVerificationGate({
 
           <p className="text-center text-[11px] text-muted-foreground">
             Intentos restantes: {remainingAttempts}. Este canal es operado por
-            un asistente virtual automatizado de pacta.ia.
+            un asistente virtual automatizado de pacta.ia ·{" "}
+            <a
+              href="/privacidad"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4 hover:text-foreground"
+            >
+              Aviso de privacidad
+            </a>
           </p>
         </div>
       </div>
