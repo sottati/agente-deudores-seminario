@@ -1,5 +1,6 @@
 import "@tanstack/react-start/server-only"
 import { createClient } from "@supabase/supabase-js"
+import { z } from "zod"
 import type { SupabaseClient } from "@supabase/supabase-js"
 
 import type {
@@ -15,6 +16,7 @@ import type {
 } from "@agente/negotiation-engine"
 
 import { sha256Hex } from "./crypto"
+import { AGENT_ANSWERABLE_STATUSES } from "@/lib/debtor-chat"
 import type { Database, Json, Tables } from "./types.gen"
 
 type JsonObject = NonNullable<Json>
@@ -56,6 +58,8 @@ export type ResolvedNegotiation = {
   status: Database["public"]["Enums"]["negotiation_status"]
   verifiedAt: string | null
   expiresAt: string
+  updatedAt: string
+  turnId?: string
   policySnapshot: PolicySnapshotRow
   debtId: string
   debt: {
@@ -104,7 +108,7 @@ export async function resolveNegotiationByToken(
   const { data, error } = await supabase
     .from("negotiations")
     .select(
-      `id, organization_id, status, verified_at, expires_at, policy_snapshot, debt_id,
+      `id, organization_id, status, verified_at, expires_at, updated_at, policy_snapshot, debt_id,
        debts!inner(concept, due_date, principal_cents, interest_cents,
          debtors!inner(alias, group_label)),
        organizations!inner(display_name_for_debtors, kind)`
@@ -125,6 +129,7 @@ export async function resolveNegotiationByToken(
     status: data.status,
     verifiedAt: data.verified_at,
     expiresAt: data.expires_at,
+    updatedAt: data.updated_at,
     policySnapshot: data.policy_snapshot as unknown as PolicySnapshotRow,
     debtId: data.debt_id,
     debt: {
@@ -174,34 +179,125 @@ export function toAgentContext(
  */
 export async function getConversationHistory(
   negotiationId: string
-): Promise<Pick<Tables<"messages">, "role" | "parts" | "created_at">[]> {
+): Promise<Pick<Tables<"messages">, "id" | "role" | "parts" | "created_at">[]> {
   const supabase = createServiceClient()
   const { data, error } = await supabase
     .from("messages")
-    .select("role, parts, created_at")
+    .select("id, role, parts, created_at")
     .eq("negotiation_id", negotiationId)
     .order("created_at", { ascending: true })
+    .order("id", { ascending: true })
 
   if (error) throw new Error(error.message)
   return data
 }
 
-type StoredRole = Database["public"]["Enums"]["message_role"]
+export type NegotiationAccessState = {
+  status: ResolvedNegotiation["status"]
+  expiresAt: string
+  updatedAt: string
+}
 
-/** Persiste un mensaje dentro del alcance de la negociación resuelta. */
-export async function appendMessage(
-  negotiation: Pick<ResolvedNegotiation, "id" | "organizationId">,
-  role: StoredRole,
-  parts: JsonObject
-): Promise<void> {
-  const supabase = createServiceClient()
-  const { error } = await supabase.from("messages").insert({
-    organization_id: negotiation.organizationId,
-    negotiation_id: negotiation.id,
-    role,
-    parts,
-  })
+export async function getNegotiationAccessState(
+  negotiation: ResolvedNegotiation
+): Promise<NegotiationAccessState> {
+  const { data, error } = await createServiceClient()
+    .from("negotiations")
+    .select("status, expires_at, updated_at")
+    .eq("id", negotiation.id)
+    .eq("organization_id", negotiation.organizationId)
+    .maybeSingle()
   if (error) throw new Error(error.message)
+  return data
+    ? {
+        status: data.status,
+        expiresAt: data.expires_at,
+        updatedAt: data.updated_at,
+      }
+    : { status: "expired", expiresAt: negotiation.expiresAt, updatedAt: "" }
+}
+
+const persistedResponseSchema = z.object({
+  status: z.enum([
+    "pending",
+    "verifying",
+    "active",
+    "offer_pending",
+    "escalated",
+    "agreed",
+    "expired",
+    "locked",
+  ]),
+  persisted: z.boolean(),
+})
+
+export async function claimNegotiationTurn(
+  negotiation: ResolvedNegotiation,
+  messageId: string,
+  parts: JsonObject,
+  humanRequested: boolean
+) {
+  const turnId = crypto.randomUUID()
+  const { data, error } = await createServiceClient().rpc(
+    "claim_negotiation_turn",
+    {
+      p_organization_id: negotiation.organizationId,
+      p_negotiation_id: negotiation.id,
+      p_expected_updated_at: negotiation.updatedAt,
+      p_turn_id: turnId,
+      p_message_id: messageId,
+      p_parts: parts,
+      p_human_requested: humanRequested,
+    }
+  )
+  if (error) throw new Error(error.message)
+  if (!data) return false
+  const claimed = z
+    .object({
+      status: persistedResponseSchema.shape.status,
+      updated_at: z.string(),
+    })
+    .parse(data)
+  negotiation.status = claimed.status
+  negotiation.updatedAt = claimed.updated_at
+  negotiation.turnId = turnId
+  return true
+}
+
+export async function releaseNegotiationTurn(negotiation: ResolvedNegotiation) {
+  if (!negotiation.turnId) return
+  const { error } = await createServiceClient().rpc(
+    "release_negotiation_turn",
+    {
+      p_organization_id: negotiation.organizationId,
+      p_negotiation_id: negotiation.id,
+      p_turn_id: negotiation.turnId,
+    }
+  )
+  // El lease libera un turno si el proceso o la conexión a DB se interrumpen.
+  if (error)
+    console.error("No se pudo liberar el turno de negociación", error.code)
+}
+
+export async function persistAgentResponse(
+  negotiation: ResolvedNegotiation,
+  id: string,
+  parts: JsonObject
+) {
+  const { data, error } = await createServiceClient().rpc(
+    "persist_negotiation_response",
+    {
+      p_organization_id: negotiation.organizationId,
+      p_negotiation_id: negotiation.id,
+      p_expected_updated_at: negotiation.updatedAt,
+      p_allow_escalated: negotiation.status === "escalated",
+      p_turn_id: negotiation.turnId!,
+      p_message_id: id,
+      p_parts: parts,
+    }
+  )
+  if (error) throw new Error(error.message)
+  return persistedResponseSchema.parse(data)
 }
 
 /**
@@ -220,49 +316,37 @@ export function createNegotiationPersistence(
 
   return {
     async saveOffer(offer: EvaluatedOffer): Promise<SavedOfferRecord> {
-      // La nueva oferta reemplaza (supersede) cualquier oferta propuesta previa.
-      const { error: supersedeError } = await supabase
-        .from("offers")
-        .update({ status: "superseded" })
-        .eq("negotiation_id", scope.id)
-        .eq("status", "proposed")
-      if (supersedeError) throw new Error(supersedeError.message)
-
-      const { data, error } = await supabase
-        .from("offers")
-        .insert({
-          organization_id: scope.organizationId,
-          negotiation_id: scope.id,
-          installments: offer.installments,
-          down_payment_cents: offer.downPaymentCents,
-          waived_interest_cents: offer.waivedInterestCents,
-          total_cents: offer.totalCents,
-          schedule: offer.schedule as unknown as JsonObject,
-          status: "proposed",
-          valid_until: offer.validUntil,
-          engine_version: offer.engineVersion,
-        })
-        .select("id")
-        .single()
+      const { data, error } = await supabase.rpc("save_negotiation_offer", {
+        p_organization_id: scope.organizationId,
+        p_negotiation_id: scope.id,
+        p_expected_updated_at: negotiation.updatedAt,
+        p_offer: offer as unknown as JsonObject,
+      })
       if (error) throw new Error(error.message)
-
-      // El estado pasa a "oferta enviada" salvo que ya esté escalada/cerrada.
-      await supabase
-        .from("negotiations")
-        .update({ status: "offer_pending" })
-        .eq("id", scope.id)
-        .in("status", ["active", "offer_pending"])
-
-      return { id: data.id }
+      const saved = z
+        .object({ id: z.uuid(), updated_at: z.string() })
+        .parse(data)
+      negotiation.status = "offer_pending"
+      negotiation.updatedAt = saved.updated_at
+      return { id: saved.id }
     },
 
     async escalate(reason: string): Promise<void> {
-      const { error } = await supabase
+      const { data: updated, error } = await supabase
         .from("negotiations")
         .update({ status: "escalated" })
         .eq("id", scope.id)
-        .in("status", ["active", "offer_pending", "verifying"])
+        .eq("organization_id", scope.organizationId)
+        .eq("updated_at", negotiation.updatedAt)
+        .in("status", AGENT_ANSWERABLE_STATUSES)
+        .gt("expires_at", new Date().toISOString())
+        .select("status, updated_at")
+        .maybeSingle()
       if (error) throw new Error(error.message)
+      if (!updated)
+        throw new Error("La negociación ya no permite derivaciones.")
+      negotiation.status = updated.status
+      negotiation.updatedAt = updated.updated_at
       void reason
     },
 

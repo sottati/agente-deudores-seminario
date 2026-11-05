@@ -20,6 +20,7 @@ export const listDebtors = createServerFn({ method: "GET" })
       .select(
         "id, full_name, alias, group_label, email, phone, debts(id, principal_cents, interest_cents, status)"
       )
+      .eq("organization_id", context.organizationId)
       .is("archived_at", null)
       .order("group_label")
       .order("alias")
@@ -38,6 +39,7 @@ export const getDebtor = createServerFn({ method: "GET" })
          debts(id, concept, principal_cents, interest_cents, due_date, status, created_at,
            negotiations(id, status, created_at))`
       )
+      .eq("organization_id", context.organizationId)
       .eq("id", id)
       .maybeSingle()
     throwIfError(error)
@@ -101,6 +103,7 @@ export const updateDebtor = createServerFn({ method: "POST" })
           ? { verification_hash: debtorVerificationHash(data.id, data.dni) }
           : {}),
       })
+      .eq("organization_id", context.organizationId)
       .eq("id", data.id)
     throwIfError(error)
   })
@@ -127,6 +130,7 @@ export const updateDebtStatus = createServerFn({ method: "POST" })
     const { data: debt, error } = await context.supabase
       .from("debts")
       .select("status")
+      .eq("organization_id", context.organizationId)
       .eq("id", data.id)
       .maybeSingle()
     throwIfError(error)
@@ -140,6 +144,7 @@ export const updateDebtStatus = createServerFn({ method: "POST" })
     const { error: updateError } = await context.supabase
       .from("debts")
       .update({ status: data.status })
+      .eq("organization_id", context.organizationId)
       .eq("id", data.id)
     throwIfError(updateError)
   })

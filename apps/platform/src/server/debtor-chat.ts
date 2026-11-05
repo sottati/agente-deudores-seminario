@@ -1,7 +1,10 @@
 import { createServerFn } from "@tanstack/react-start"
 import { z } from "zod"
+import { setResponseHeader } from "@tanstack/react-start/server"
 
 import { buildBotDisclosureMessage } from "@agente/agent"
+import { isNegotiationExpired, messagePartsToText } from "@/lib/debtor-chat"
+import type { NegotiationStatus } from "@/lib/labels"
 
 import {
   getConversationHistory,
@@ -13,6 +16,7 @@ import {
 // no exponemos montos de la deuda acá: solo el nombre visible de la
 // administración, el estado y el historial de texto de la conversación.
 export type DebtorChatMessage = {
+  id: string
   role: "debtor" | "agent" | "admin" | "system"
   text: string
 }
@@ -23,46 +27,42 @@ export type DebtorChatState =
     }
   | {
       found: true
-      status: string
+      status: NegotiationStatus
       expired: boolean
+      expiresAt: string
       organizationName: string
       disclosure: string
       messages: DebtorChatMessage[]
     }
 
-function partsToText(parts: unknown): string {
-  if (!Array.isArray(parts)) return ""
-  const texts: string[] = []
-  for (const part of parts) {
-    if (
-      part &&
-      typeof part === "object" &&
-      (part as { type?: unknown }).type === "text" &&
-      typeof (part as { text?: unknown }).text === "string"
-    ) {
-      texts.push((part as { text: string }).text)
-    }
-  }
-  return texts.join("\n").trim()
-}
-
 export const getDebtorChatState = createServerFn({ method: "GET" })
   .validator(z.object({ token: z.string().min(1) }))
   .handler(async ({ data }): Promise<DebtorChatState> => {
+    setResponseHeader("Cache-Control", "private, no-store")
     const negotiation = await resolveNegotiationByToken(data.token)
     if (!negotiation) return { found: false }
 
-    const expired = new Date(negotiation.expiresAt).getTime() < Date.now()
-    const history = await getConversationHistory(negotiation.id)
+    const expired = isNegotiationExpired(negotiation)
+    // La vigencia se aplica antes de leer el transcript, también al invocar la server fn directamente.
+    const history =
+      expired || negotiation.status === "locked"
+        ? []
+        : await getConversationHistory(negotiation.id)
 
     const messages: DebtorChatMessage[] = history
-      .map((row) => ({ role: row.role, text: partsToText(row.parts) }))
+      .filter((row) => row.role !== "system")
+      .map((row) => ({
+        id: row.id,
+        role: row.role,
+        text: messagePartsToText(row.parts),
+      }))
       .filter((message) => message.text.length > 0)
 
     return {
       found: true,
       status: negotiation.status,
       expired,
+      expiresAt: negotiation.expiresAt,
       organizationName: negotiation.organization.displayNameForDebtors,
       disclosure: buildBotDisclosureMessage(
         negotiation.organization.displayNameForDebtors

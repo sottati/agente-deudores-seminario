@@ -25,6 +25,7 @@ export const getSessionContext = createServerFn({ method: "GET" }).handler(
     const { data } = await supabase
       .from("memberships")
       .select("organizations(id, name, kind, display_name_for_debtors)")
+      .order("organization_id")
       .limit(1)
       .maybeSingle()
     const organization = data?.organizations

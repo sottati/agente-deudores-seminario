@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./model": "./src/model.ts"
   },
   "scripts": {
     "test": "vitest run --passWithNoTests",
@@ -12,6 +13,7 @@
   },
   "dependencies": {
     "@agente/negotiation-engine": "workspace:*",
+    "@openrouter/ai-sdk-provider": "^3.1.0",
     "ai": "^7.0.159",
     "zod": "^4.6.7"
   },

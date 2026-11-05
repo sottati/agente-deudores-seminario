@@ -17,6 +17,7 @@ export const authMiddleware = createMiddleware({ type: "function" }).server(
     const { data: membership, error } = await supabase
       .from("memberships")
       .select("organization_id")
+      .order("organization_id")
       .limit(1)
       .maybeSingle()
     if (error) throw new Error(error.message)

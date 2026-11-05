@@ -197,14 +197,14 @@ isOneToOne: true
                   ]
                 },"negotiations": {
                   Row: {
-                    "channel": Database["public"]['Enums']["negotiation_channel"],"created_at": string,"created_by": string | null,"debt_id": string,"expires_at": string,"id": string,"organization_id": string,"policy_snapshot": NonNullable<Json>,"status": Database["public"]['Enums']["negotiation_status"],"token_hash": string,"updated_at": string,"verification_attempts": number,"verified_at": string | null
+                    "active_turn_id": string | null,"active_turn_expires_at": string | null,"channel": Database["public"]['Enums']["negotiation_channel"],"created_at": string,"created_by": string | null,"debt_id": string,"expires_at": string,"id": string,"organization_id": string,"policy_snapshot": NonNullable<Json>,"status": Database["public"]['Enums']["negotiation_status"],"token_hash": string,"updated_at": string,"verification_attempts": number,"verified_at": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "channel"?: Database["public"]['Enums']["negotiation_channel"],"created_at"?: string,"created_by"?: string | null,"debt_id": string,"expires_at": string,"id"?: string,"organization_id": string,"policy_snapshot": NonNullable<Json>,"status"?: Database["public"]['Enums']["negotiation_status"],"token_hash": string,"updated_at"?: string,"verification_attempts"?: number,"verified_at"?: string | null
+                    "active_turn_id"?: string | null,"active_turn_expires_at"?: string | null,"channel"?: Database["public"]['Enums']["negotiation_channel"],"created_at"?: string,"created_by"?: string | null,"debt_id": string,"expires_at": string,"id"?: string,"organization_id": string,"policy_snapshot": NonNullable<Json>,"status"?: Database["public"]['Enums']["negotiation_status"],"token_hash": string,"updated_at"?: string,"verification_attempts"?: number,"verified_at"?: string | null
                   }
                   Update: {
-                    "channel"?: Database["public"]['Enums']["negotiation_channel"],"created_at"?: string,"created_by"?: string | null,"debt_id"?: string,"expires_at"?: string,"id"?: string,"organization_id"?: string,"policy_snapshot"?: NonNullable<Json>,"status"?: Database["public"]['Enums']["negotiation_status"],"token_hash"?: string,"updated_at"?: string,"verification_attempts"?: number,"verified_at"?: string | null
+                    "active_turn_id"?: string | null,"active_turn_expires_at"?: string | null,"channel"?: Database["public"]['Enums']["negotiation_channel"],"created_at"?: string,"created_by"?: string | null,"debt_id"?: string,"expires_at"?: string,"id"?: string,"organization_id"?: string,"policy_snapshot"?: NonNullable<Json>,"status"?: Database["public"]['Enums']["negotiation_status"],"token_hash"?: string,"updated_at"?: string,"verification_attempts"?: number,"verified_at"?: string | null
                   }
                   Relationships: [
                     {
@@ -261,6 +261,11 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
+            "record_installment_payment": { Args: { p_organization_id: string; p_installment_id: string; p_paid: boolean }; Returns: undefined }
+            "save_negotiation_offer": { Args: { p_organization_id: string; p_negotiation_id: string; p_expected_updated_at: string; p_offer: Json }; Returns: Json }
+            "claim_negotiation_turn": { Args: { p_organization_id: string; p_negotiation_id: string; p_expected_updated_at: string; p_turn_id: string; p_message_id: string; p_parts: Json; p_human_requested: boolean }; Returns: Json }
+            "release_negotiation_turn": { Args: { p_organization_id: string; p_negotiation_id: string; p_turn_id: string }; Returns: undefined }
+            "persist_negotiation_response": { Args: { p_turn_id: string; p_organization_id: string; p_negotiation_id: string; p_expected_updated_at: string; p_allow_escalated: boolean; p_message_id: string; p_parts: Json }; Returns: Json }
             "is_member":
 { Args: { "org": string }; Returns: boolean
                            }

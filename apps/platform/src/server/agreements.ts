@@ -21,6 +21,7 @@ export const getAgreement = createServerFn({ method: "GET" })
                debtors(id, alias, full_name, group_label, email, phone)),
              organizations(name, display_name_for_debtors)))`
       )
+      .eq("organization_id", context.organizationId)
       .eq("id", id)
       .order("number", { referencedTable: "installments" })
       .maybeSingle()
@@ -52,32 +53,10 @@ export const setInstallmentPaid = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(installmentPaidSchema)
   .handler(async ({ context, data }) => {
-    const { supabase } = context
-    const { data: installment, error } = await supabase
-      .from("installments")
-      .update({ paid_at: data.paid ? new Date().toISOString() : null })
-      .eq("id", data.id)
-      .select("agreement_id")
-      .maybeSingle()
+    const { error } = await context.supabase.rpc("record_installment_payment", {
+      p_organization_id: context.organizationId,
+      p_installment_id: data.id,
+      p_paid: data.paid,
+    })
     throwIfError(error)
-    if (!installment) throw notFound()
-
-    // La deuda pasa a "pagada" cuando se cobran todas las cuotas del acuerdo.
-    const { data: agreement, error: agreementError } = await supabase
-      .from("agreements")
-      .select("installments(paid_at), offers(negotiations(debt_id))")
-      .eq("id", installment.agreement_id)
-      .single()
-    throwIfError(agreementError)
-
-    if (!agreement) return
-    const debtId = agreement.offers.negotiations.debt_id
-    const allPaid = agreement.installments.every(
-      (item) => item.paid_at !== null
-    )
-    const { error: debtError } = await supabase
-      .from("debts")
-      .update({ status: allPaid ? "paid" : "agreed" })
-      .eq("id", debtId)
-    throwIfError(debtError)
   })
