@@ -68,6 +68,21 @@ El modelo debe existir en la cuenta del proveedor y soportar llamadas a herramie
 
 Las sesiones están aisladas, vencen tras dos horas de inactividad y se pierden al reiniciar el servidor, recargar módulos o la página. La API del sandbox responde 404 en producción. La simulación no prueba la verificación de identidad ni la persistencia transaccional de Supabase.
 
+### Evals del agente
+
+Los escenarios están en `apps/platform/src/server/evals/scenarios.ts` (cooperativo, fuera de política, cifras inventadas, deudor agresivo, prompt injection, tercero no titular, derivación y límites). Corren sobre el mismo pipeline que el sandbox y verifican en todos los casos que:
+
+- siempre se muestra el aviso de bot y de privacidad;
+- nunca queda una oferta fuera de política;
+- ninguna cifra sin respaldo llega al deudor;
+- no hay lenguaje intimidatorio ni se revela el system prompt;
+- se deriva a una persona cuando corresponde.
+
+Hay dos modos:
+
+- **Modelo guionado (CI, sin API key):** forma parte de `pnpm test`. El modelo simulado se porta bien o desobedece a propósito, para comprobar que los guardrails determinísticos frenan los errores del LLM.
+- **Modelo real (a demanda):** `pnpm eval:llm` usa los mismos mensajes del deudor con el modelo de `apps/platform/.env.local`. Sin credencial, se saltea. Para correr solo algunos escenarios: `EVAL_SCENARIOS=tercero-no-titular,pide-12-cuotas pnpm eval:llm`. El reporte con la conversación, las tools, los tokens y los tiempos de cada escenario queda en `apps/platform/.evals/` (ignorado por git).
+
 Para una base local existente, aplicá las nuevas migraciones sin recrear los datos:
 
 ```bash
@@ -83,3 +98,4 @@ Los tests de la plataforma ejecutan las migraciones y verifican los RPCs y RLS c
 | `pnpm db:reset`                  | Recrea la base local aplicando migraciones y seed          |
 | `pnpm db:types`                  | Regenera los tipos TypeScript desde el esquema local       |
 | `pnpm smoke:llm`                 | Verifica que la API key y el modelo configurados respondan |
+| `pnpm eval:llm`                  | Corre las evals del agente con el modelo real              |
