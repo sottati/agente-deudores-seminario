@@ -37,6 +37,7 @@ export const listNegotiations = createServerFn({ method: "GET" })
          debts(id, concept, principal_cents, interest_cents, debtors(id, alias, full_name, group_label)),
          messages(created_at)`
       )
+      .eq("organization_id", context.organizationId)
       .order("updated_at", { ascending: false })
       .order("created_at", { referencedTable: "messages", ascending: false })
       .limit(1, { referencedTable: "messages" })
@@ -67,6 +68,7 @@ export const getNegotiation = createServerFn({ method: "GET" })
            agreements(id, accepted_at)),
          audit_events(id, type, payload, created_at)`
       )
+      .eq("organization_id", context.organizationId)
       .eq("id", id)
       .order("created_at", { referencedTable: "messages", ascending: true })
       .order("created_at", { referencedTable: "offers", ascending: false })
@@ -89,6 +91,7 @@ export const listNegotiableDebts = createServerFn({ method: "GET" })
       .select(
         "id, concept, principal_cents, interest_cents, debtors!inner(alias, full_name, archived_at)"
       )
+      .eq("organization_id", context.organizationId)
       .eq("status", "open")
       .is("debtors.archived_at", null)
       .order("due_date")
@@ -105,6 +108,7 @@ export const createNegotiation = createServerFn({ method: "POST" })
     const { data: debt, error: debtError } = await supabase
       .from("debts")
       .select("id, status")
+      .eq("organization_id", organizationId)
       .eq("id", data.debtId)
       .maybeSingle()
     throwIfError(debtError)
@@ -153,6 +157,7 @@ export const createNegotiation = createServerFn({ method: "POST" })
     const { error: updateError } = await supabase
       .from("debts")
       .update({ status: "in_negotiation" })
+      .eq("organization_id", organizationId)
       .eq("id", debt.id)
     throwIfError(updateError)
 
@@ -162,10 +167,15 @@ export const createNegotiation = createServerFn({ method: "POST" })
     return { negotiationId: negotiation!.id, token }
   })
 
-async function getStatus(supabase: ServerSupabase, id: string) {
+async function getStatus(
+  supabase: ServerSupabase,
+  id: string,
+  organizationId: string
+) {
   const { data, error } = await supabase
     .from("negotiations")
     .select("status, verified_at, debt_id")
+    .eq("organization_id", organizationId)
     .eq("id", id)
     .maybeSingle()
   throwIfError(error)
@@ -177,11 +187,13 @@ async function setStatus(
   supabase: ServerSupabase,
   id: string,
   status: NegotiationStatus,
+  organizationId: string,
   extra: { expires_at?: string } = {}
 ) {
   const { error } = await supabase
     .from("negotiations")
     .update({ status, ...extra })
+    .eq("organization_id", organizationId)
     .eq("id", id)
   throwIfError(error)
 }
@@ -190,13 +202,17 @@ export const takeOverNegotiation = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(negotiationIdSchema)
   .handler(async ({ context, data: { id } }) => {
-    const current = await getStatus(context.supabase, id)
+    const current = await getStatus(
+      context.supabase,
+      id,
+      context.organizationId
+    )
     if (!canTakeOver(current.status)) {
       throw new Error(
         "Esta negociación no admite tomar el control en su estado actual."
       )
     }
-    await setStatus(context.supabase, id, "escalated")
+    await setStatus(context.supabase, id, "escalated", context.organizationId)
     await logAuditEvent(context, "admin_takeover", id, { from: current.status })
   })
 
@@ -204,14 +220,18 @@ export const returnToAgent = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(negotiationIdSchema)
   .handler(async ({ context, data: { id } }) => {
-    const current = await getStatus(context.supabase, id)
+    const current = await getStatus(
+      context.supabase,
+      id,
+      context.organizationId
+    )
     if (!canReturnToAgent(current.status)) {
       throw new Error(
         "Solo se puede devolver al agente una negociación derivada."
       )
     }
     const next = current.verified_at ? "active" : "pending"
-    await setStatus(context.supabase, id, next)
+    await setStatus(context.supabase, id, next, context.organizationId)
     await logAuditEvent(context, "returned_to_agent", id, { to: next })
   })
 
@@ -219,16 +239,21 @@ export const cancelNegotiation = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(negotiationIdSchema)
   .handler(async ({ context, data: { id } }) => {
-    const current = await getStatus(context.supabase, id)
+    const current = await getStatus(
+      context.supabase,
+      id,
+      context.organizationId
+    )
     if (!canCancel(current.status)) {
       throw new Error("Esta negociación ya está cerrada.")
     }
-    await setStatus(context.supabase, id, "expired", {
+    await setStatus(context.supabase, id, "expired", context.organizationId, {
       expires_at: new Date().toISOString(),
     })
     const { error } = await context.supabase
       .from("debts")
       .update({ status: "open" })
+      .eq("organization_id", context.organizationId)
       .eq("id", current.debt_id)
       .eq("status", "in_negotiation")
     throwIfError(error)
@@ -241,7 +266,11 @@ export const sendAdminMessage = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(adminMessageSchema)
   .handler(async ({ context, data }) => {
-    const current = await getStatus(context.supabase, data.negotiationId)
+    const current = await getStatus(
+      context.supabase,
+      data.negotiationId,
+      context.organizationId
+    )
     if (!canSendAdminMessage(current.status)) {
       throw new Error("Tomá el control de la conversación antes de escribir.")
     }

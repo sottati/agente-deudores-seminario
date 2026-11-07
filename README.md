@@ -44,6 +44,16 @@ pnpm db:start        # levanta Supabase local e imprime las keys
 pnpm dev             # http://localhost:3000
 ```
 
+El chat admite `AI_PROVIDER=gateway` con `AI_GATEWAY_API_KEY`, o `AI_PROVIDER=openrouter` con `OPENROUTER_API_KEY`. En ambos casos configurá `AI_MODEL` con un modelo que soporte herramientas y streaming. Ver [la prueba de integración del agente](./packages/agent/README.md#prueba-de-humo-del-llm).
+
+Para una base local existente, aplicá las nuevas migraciones sin recrear los datos:
+
+```bash
+pnpm exec supabase migration up --local
+```
+
+Los tests de la plataforma ejecutan las migraciones y verifican los RPCs y RLS con PostgreSQL embebido, sin requerir Docker. `pnpm db:test` mantiene la suite pgTAP de Supabase.
+
 | Script                           | Qué hace                                                   |
 | :------------------------------- | :--------------------------------------------------------- |
 | `pnpm typecheck` / `pnpm test`   | Typecheck y tests de todos los paquetes                    |
