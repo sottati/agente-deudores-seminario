@@ -15,6 +15,8 @@ Este documento contiene el registro de las entrevistas cualitativas realizadas a
 - **Teléfono:** +54 9 11 6359-4365
 - **Fecha de realización:** 15/09/2026
 
+> **Perfil frente al target:** administra 1 consorcio de 36 unidades. Queda fuera del target definido (administraciones con 5 o más edificios), así que sus respuestas se toman como indicio, no como validación.
+
 ### PREGUNTAS DE INVESTIGACIÓN
 
 **1. Una vez vencidas las expensas, ¿cuál es el procedimiento habitual que utiliza para contactar y reclamar la deuda a los propietarios o inquilinos morosos?**
@@ -58,10 +60,12 @@ _(Opciones dadas: A. Suscripción fija, B. Comisión por éxito, C. Pago por uso
 
 ### Análisis de la Entrevista
 
-- **Validación de Canal:** El uso de WhatsApp y correo son confirmados como los canales primarios.
-- **Dolor Operativo:** El mayor dolor no es convencer al deudor empedernido, sino "estar en contacto y responder dudas básicas". La IA encaja perfectamente aquí.
-- **Modelo de Negocio:** La hipótesis del "Modelo Mixto" de suscripción base + comisión por éxito (Sección 6.1 de la Documentación) ha sido directamente validada por la usuaria potencial como la opción ideal.
-- **Insights del Roadmap:** La función más deseada (conciliación) coincide exactamente con el **Release 3** del Product Roadmap (Conciliación automática y conexión con ERPs).
+- **Canal:** Reclama la deuda por WhatsApp y correo electrónico, además del aviso en la liquidación de expensas. Gestiona el consorcio con un software (Adminprop).
+- **Dolor operativo:** Lo que más trabajo le ahorraría es "estar en contacto y responder las dudas básicas" de los morosos. Coincide con la función principal del agente.
+- **Formalización de acuerdos:** Los planes de pago se formalizan ante escribano. El acuerdo que registra el agente funcionaría como pre-acuerdo, y la formalización puede requerir un paso adicional.
+- **Riesgos percibidos:** No identificó riesgos en delegar el contacto inicial en un asistente.
+- **Modelo de negocio:** Prefiere una combinación de abono fijo y comisión por éxito, que coincide con el modelo elegido (Sección 6.1 de la Documentación). Es una sola respuesta, de alguien fuera del target, así que se toma como indicio y se valida con la encuesta.
+- **Insights del Roadmap:** La función ideal que pidió es la conciliación, prevista para el **Release 3** (conciliación automática y conexión con software de gestión).
 
 ---
 
@@ -75,6 +79,8 @@ _(Opciones dadas: A. Suscripción fija, B. Comisión por éxito, C. Pago por uso
 - **Teléfono:** +54 9 11 3848-5023
 - **Correo electrónico:** bygconsorcios@gmail.com
 - **Fecha de la Entrevista:** 09/10/2026
+
+> **Perfil frente al target:** administra 25 consorcios (unas 1.100 unidades funcionales). Está dentro del target definido.
 
 ### Contexto de la Entrevista y del Proyecto
 
@@ -168,10 +174,10 @@ El objetivo principal de este espacio es comprender el funcionamiento real del �
 
 ### Análisis de la Entrevista
 
-- **Validación del Canal y Alcance Operativo:** Confirmación absoluta de que WhatsApp es el medio principal de comunicación e interacción diaria con los consorcistas. La IA aporta un alto valor en la atención inicial y el filtrado preventivo antes de llegar a la carta documento.
+- **Canal y alcance operativo:** WhatsApp es el canal de uso más frecuente con los consorcistas, y la carta documento es el medio de intimación formal más efectivo. Valora el asistente para la atención inicial y el seguimiento continuo, antes de llegar a la carta documento. En el MVP el agente funciona en un chat web; WhatsApp queda para el Release 2.
 - **Dolor Operativo y Gestión de Morosidad:** La morosidad no siempre responde a falta de solvencia, sino a desorganización de los vecinos, lo que demanda un esfuerzo continuo y desgastante de seguimiento repetitivo. Asimismo, la mora aumenta sustancialmente ante obras extraordinarias o en la época estival (diciembre a febrero).
-- **Validación del Enfoque "Human-in-the-Loop":** La administradora confirmó que no cuenta con autonomía directa para condonar intereses ni cerrar quitas, ya que esas decisiones deben ser aprobadas por el Consejo de Administración o la Asamblea. Esto valida plenamente la arquitectura del sistema: el bot negocia y propone bajo reglas fijadas, pero la aprobación y el cierre financiero quedan estrictamente delegados en el humano.
-- **Alertas de Emergencia e Integración Multicanal:** Se identificó una restricción crítica del sistema: ante problemas graves de mantenimiento (fugas de gas, filtraciones severas) o consultas dentro de grupos de WhatsApp institucionales, el asistente debe detener la interacción y derivar inmediatamente.
+- **Quién decide las reglas ("Human-in-the-Loop"):** La administración no tiene autonomía para condonar intereses ni hacer quitas: esas excepciones las aprueba el Consejo de Administración o la Asamblea. Esto respalda el diseño del sistema (el agente propone dentro de reglas fijadas y la aprobación queda en manos humanas) y agrega un requisito: las reglas que usa el agente deben reflejar lo que aprobó el Consejo o la Asamblea, no solo el criterio del administrador.
+- **Alertas de emergencia:** Ante problemas graves de mantenimiento (fugas de gas, filtraciones severas) o consultas dentro de grupos de WhatsApp institucionales, el asistente debe detener la interacción y derivar de inmediato. Aunque el mantenimiento está fuera del alcance de la cobranza, el agente tiene que reconocer esos casos y derivarlos.
 - **Insights para el Product Roadmap y Dashboard:**
   - **Clasificación por Gravedad y Alertas Tempranas:** Requerimiento clave para priorizar derivaciones urgentes al personal humano.
   - **Reporte Diario Consolidado:** Necesidad de un resumen diario automático con el historial de interacciones y reclamos atendidos.
@@ -189,9 +195,11 @@ El objetivo principal de este espacio es comprender el funcionamiento real del �
 - **Fecha del contacto:** 13/10/2026
 - **Modalidad:** Consulta cualitativa por correo electrónico.
 
+> **Perfil frente al segmento:** institución educativa. Después de las entrevistas, el equipo acotó el MVP a administraciones de consorcios, así que esta entrevista queda fuera del segmento del MVP. Se mantiene como registro del análisis realizado.
+
 ### Contexto de la Entrevista y del Proyecto
 
-El proyecto pacta.ai está concebido para gestionar la morosidad en dos ámbitos: la
+Al momento de esta entrevista, el proyecto pacta.ai contemplaba gestionar la morosidad en dos ámbitos: la
 cobranza de expensas en consorcios y la cobranza de cuotas en instituciones
 educativas. Ambos comparten el mismo problema de fondo (seguimiento de deudores,
 negociación de planes de pago y registro formal de acuerdos) y la misma propuesta de
@@ -238,8 +246,19 @@ puntos clave. Ante este nuevo enfoque, la institución accedió a responder.
 
 ### Análisis de la Entrevista
 
-- **Validación del Ámbito Educativo:** La entrevista confirma que el problema de cobranza y morosidad, y la lógica de negociación de planes de pago, aplican plenamente a las instituciones educativas. Esto valida que el ámbito de cuotas escolares forma parte del alcance del proyecto y comparte las mismas necesidades que el de consorcios.
-- **Validación del Canal:** Se confirma, una vez más, que WhatsApp es el canal dominante ("la preferencia es total") y que el mail prácticamente no se usa. Refuerza la decisión de centrar el producto en WhatsApp en ambos ámbitos.
-- **Dolor Operativo — Formalidad del registro:** Se menciona un problema concreto: el chat resta formalidad y dificulta dejar asentados los compromisos de pago. Esto valida una función central de pacta.ai: registrar cada pre-acuerdo con trazabilidad (código de referencia, fecha, responsable), convirtiendo una conversación informal en un acuerdo documentado.
-- **Validación del Enfoque "Human-in-the-Loop":** Se reafirma la necesidad de evaluación personalizada y de que un humano apruebe cada acuerdo. El criterio rígido no es viable en contextos sensibles; el sistema debe proponer dentro de reglas, pero habilitar la revisión humana.
-- **Insight crítico para el producto — El TONO del agente:** El mayor temor no es la automatización en sí, sino que el trato resulte frío o impersonal en un tema sensible. Esto es un requerimiento de diseño clave para el prompt del agente de IA: debe ser empático, cuidado y humano en su redacción, especialmente en las etapas previas a que intervenga una persona.
+- **Ámbito educativo:** La institución describe el mismo tipo de problema (morosidad y negociación de planes de pago), pero con un contexto distinto: la relación con las familias y la necesidad de evaluar cada caso. El equipo decidió no incluir este segmento en el MVP.
+- **Canal:** WhatsApp es el canal dominante con las familias ("la preferencia es total") y el mail casi no se usa. Coincide con lo que dicen las dos administradoras de consorcios.
+- **Dolor Operativo — Formalidad del registro:** Se menciona un problema concreto: el chat resta formalidad y dificulta dejar asentados los compromisos de pago. Esto respalda una función central de pacta.ai: registrar cada pre-acuerdo con trazabilidad (código de referencia, fecha, responsable), convirtiendo una conversación informal en un acuerdo documentado.
+- **Enfoque "Human-in-the-Loop":** Se reafirma la necesidad de evaluación personalizada y de que un humano apruebe cada acuerdo. El criterio rígido no es viable en contextos sensibles; el sistema debe proponer dentro de reglas, pero habilitar la revisión humana.
+- **Insight para el producto — El TONO del agente:** El mayor temor no es la automatización en sí, sino que el trato resulte frío o impersonal en un tema sensible. Aplica también a consorcios (la Entrevista 2 menciona la desconfianza por respuestas rígidas de otros chatbots): el agente debe ser empático y cuidado en su redacción, sobre todo antes de que intervenga una persona.
+
+---
+
+## Síntesis de las Entrevistas
+
+- **Alcance de la evidencia:** Se hicieron 3 entrevistas. Solo la Entrevista 2 corresponde al target del MVP (administraciones con 5 o más edificios); la 1 es un consorcio chico y la 3 es de un segmento descartado. La muestra es chica: los hallazgos se toman como indicios y se complementan con la encuesta y la entrevista con el experto.
+- **Canal:** Las 3 entrevistas coinciden en que WhatsApp es el canal más usado. En el MVP se usa un chat web; WhatsApp queda para el Release 2.
+- **Aprobación humana de los acuerdos:** En la Entrevista 2 las quitas las aprueba el Consejo o la Asamblea; en la 1 los acuerdos se formalizan ante escribano; en la 3 cada caso se evalúa en forma personalizada. El agente propone dentro de reglas y la decisión final queda en manos humanas.
+- **Temores:** Que el trato sea rígido o frío (Entrevistas 2 y 3) y que una emergencia quede sin derivar (Entrevista 2).
+- **Implicancias para el producto:** Reglas de negociación que reflejen lo aprobado por el Consejo o la Asamblea; derivación inmediata a una persona ante casos sensibles; tono empático; registro formal de cada pre-acuerdo.
+- **Pendiente:** Entrevista con el experto en cobranzas (SEM-8) y resultados de la encuesta (SEM-66).
