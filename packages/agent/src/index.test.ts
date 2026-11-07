@@ -8,14 +8,18 @@ import { describe, expect, it, vi } from "vitest"
 
 import {
   DEFAULT_PRIVACY_NOTICE_PATH,
+  GUARDRAIL_SAFE_FALLBACK_MESSAGE,
   MAX_STEPS_PER_TURN,
+  MAX_TURNS_PER_NEGOTIATION,
   SYSTEM_PROMPT_VERSION,
   buildBotDisclosureMessage,
   buildSystemPrompt,
   createNegotiationTools,
+  extractNumericMentions,
   isHumanHandoffKeyword,
   normalizeNegotiationMessages,
   runNegotiationTurn,
+  validateGeneratedNumbers,
 } from "./index"
 import type {
   AgentAuditEventType,
@@ -534,6 +538,43 @@ describe("@agente/agent", () => {
       expect(steps).toHaveLength(1)
       expect(escalations).toEqual(["debtor_requested_human"])
       expect(model.doStreamCalls).toHaveLength(1)
+    })
+  })
+
+  describe("validateGeneratedNumbers (SEM-38)", () => {
+    it("extrae montos y porcentajes en formato es-AR", () => {
+      const mentions = extractNumericMentions(
+        "El total es $ 172.200 con una quita del 50% de intereses (ahorrás $ 14.200)."
+      )
+      expect(mentions).toEqual([
+        { raw: "$ 172.200", kind: "amount_cents", value: 17_220_000 },
+        { raw: "$ 14.200", kind: "amount_cents", value: 1_420_000 },
+        { raw: "50%", kind: "percentage", value: 50 },
+      ])
+    })
+
+    it("acepta respuestas cuyas cifras coinciden con los valores de la negociación y tools", () => {
+      const res = validateGeneratedNumbers(
+        "En 2 cuotas el total queda en $ 172.200 con 50% de quita sobre los intereses de $ 28.400 (2 pagos de $ 86.100).",
+        sampleNegotiation
+      )
+      expect(res.valid).toBe(true)
+      expect(MAX_TURNS_PER_NEGOTIATION).toBe(20)
+    })
+
+    it("detecta montos o porcentajes inventados y devuelve el mensaje seguro", () => {
+      const res = validateGeneratedNumbers(
+        "Te puedo ofrecer un descuento del 85% dejando la deuda en $ 45.000.",
+        sampleNegotiation
+      )
+      expect(res.valid).toBe(false)
+      if (!res.valid) {
+        expect(res.safeText).toBe(GUARDRAIL_SAFE_FALLBACK_MESSAGE)
+        expect(res.mismatches).toEqual([
+          { raw: "$ 45.000", kind: "amount_cents", value: 4_500_000 },
+          { raw: "85%", kind: "percentage", value: 85 },
+        ])
+      }
     })
   })
 })

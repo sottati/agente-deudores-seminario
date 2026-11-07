@@ -3,12 +3,15 @@ import { z } from "zod"
 import { setResponseHeader } from "@tanstack/react-start/server"
 
 import { buildBotDisclosureMessage } from "@agente/agent"
+import type { ScheduleItem } from "@agente/negotiation-engine"
 import { isNegotiationExpired, messagePartsToText } from "@/lib/debtor-chat"
 import type { NegotiationStatus } from "@/lib/labels"
 
 import {
   MAX_VERIFICATION_ATTEMPTS,
   getConversationHistory,
+  getMessagesSinceForDebtor,
+  getNegotiationOffersForDebtor,
   markNegotiationVerifying,
   resolveNegotiationByToken,
   verifyDebtorIdentity,
@@ -25,6 +28,31 @@ export type DebtorChatMessage = {
   id: string
   role: "debtor" | "agent" | "admin" | "system"
   text: string
+  createdAt?: string
+}
+
+export type DebtorOfferView = {
+  id: string
+  installments: number
+  downPaymentCents: number
+  waivedInterestCents: number
+  totalCents: number
+  schedule: ScheduleItem[]
+  validUntil: string
+  engineVersion: string
+}
+
+export type DebtorAgreementView = {
+  id: string
+  offerId: string
+  acceptedAt: string
+  transcriptSha256: string
+  installments: number
+  downPaymentCents: number
+  waivedInterestCents: number
+  totalCents: number
+  schedule: ScheduleItem[]
+  agreementUrl: string
 }
 
 export type DebtorChatState =
@@ -43,6 +71,9 @@ export type DebtorChatState =
       remainingAttempts: number
       disclosure: string
       messages: DebtorChatMessage[]
+      proposedOffer?: DebtorOfferView | null
+      acceptedAgreement?: DebtorAgreementView | null
+      cursor?: string | null
     }
 
 export const getDebtorChatState = createServerFn({ method: "GET" })
@@ -73,6 +104,9 @@ export const getDebtorChatState = createServerFn({ method: "GET" })
           negotiation.status === "locked" ? 0 : remainingAttempts,
         disclosure: "",
         messages: [],
+        proposedOffer: null,
+        acceptedAgreement: null,
+        cursor: null,
       }
     }
 
@@ -93,19 +127,29 @@ export const getDebtorChatState = createServerFn({ method: "GET" })
         remainingAttempts,
         disclosure: "",
         messages: [],
+        proposedOffer: null,
+        acceptedAgreement: null,
+        cursor: null,
       }
     }
 
     // La vigencia y la sesión verificada se aplican antes de leer el transcript.
-    const history = await getConversationHistory(negotiation.id)
+    const [history, { proposedOffer, acceptedAgreement }] = await Promise.all([
+      getConversationHistory(negotiation.id),
+      getNegotiationOffersForDebtor(negotiation),
+    ])
     const messages: DebtorChatMessage[] = history
       .filter((row) => row.role !== "system")
       .map((row) => ({
         id: row.id,
         role: row.role,
         text: messagePartsToText(row.parts),
+        createdAt: row.created_at,
       }))
       .filter((message) => message.text.length > 0)
+
+    const cursor = history.at(-1)?.created_at ?? null
+    const encodedToken = encodeURIComponent(data.token)
 
     return {
       found: true,
@@ -119,6 +163,145 @@ export const getDebtorChatState = createServerFn({ method: "GET" })
       remainingAttempts,
       disclosure: buildBotDisclosureMessage(organizationName),
       messages,
+      proposedOffer: proposedOffer
+        ? {
+            id: proposedOffer.id,
+            installments: proposedOffer.installments,
+            downPaymentCents: proposedOffer.downPaymentCents,
+            waivedInterestCents: proposedOffer.waivedInterestCents,
+            totalCents: proposedOffer.totalCents,
+            schedule: proposedOffer.schedule,
+            validUntil: proposedOffer.validUntil,
+            engineVersion: proposedOffer.engineVersion,
+          }
+        : null,
+      acceptedAgreement: acceptedAgreement
+        ? {
+            id: acceptedAgreement.id,
+            offerId: acceptedAgreement.offerId,
+            acceptedAt: acceptedAgreement.acceptedAt,
+            transcriptSha256: acceptedAgreement.transcriptSha256,
+            installments: acceptedAgreement.installments,
+            downPaymentCents: acceptedAgreement.downPaymentCents,
+            waivedInterestCents: acceptedAgreement.waivedInterestCents,
+            totalCents: acceptedAgreement.totalCents,
+            schedule: acceptedAgreement.schedule,
+            agreementUrl: `/api/n/${encodedToken}/accept`,
+          }
+        : null,
+      cursor,
+    }
+  })
+
+const messagesSinceInputSchema = z.object({
+  token: z.string().min(1),
+  cursor: z.string().optional(),
+})
+
+export type MessagesSinceResponse =
+  | { found: false }
+  | {
+      found: true
+      status: NegotiationStatus
+      expired: boolean
+      verified: boolean
+      messages: DebtorChatMessage[]
+      nextCursor: string | null
+      proposedOffer: DebtorOfferView | null
+      acceptedAgreement: DebtorAgreementView | null
+    }
+
+/**
+ * Polling liviano cada ~5 s mientras la conversación está en `escalated` para
+ * recibir mensajes de la administración o enterarse si el admin devolvió el
+ * control al agente o cerró el link (PLAN_BACKEND D9, §5, SEM-39).
+ */
+export const getMessagesSince = createServerFn({ method: "GET" })
+  .validator(messagesSinceInputSchema)
+  .handler(async ({ data }): Promise<MessagesSinceResponse> => {
+    setResponseHeader("Cache-Control", "private, no-store")
+    const negotiation = await resolveNegotiationByToken(data.token)
+    if (!negotiation) return { found: false }
+
+    const expired = isNegotiationExpired(negotiation)
+    if (expired || negotiation.status === "locked") {
+      return {
+        found: true,
+        status: negotiation.status,
+        expired,
+        verified: false,
+        messages: [],
+        nextCursor: null,
+        proposedOffer: null,
+        acceptedAgreement: null,
+      }
+    }
+
+    if (!hasValidDebtorSessionCookie(negotiation.id)) {
+      return {
+        found: true,
+        status: negotiation.status,
+        expired: false,
+        verified: false,
+        messages: [],
+        nextCursor: null,
+        proposedOffer: null,
+        acceptedAgreement: null,
+      }
+    }
+
+    const [
+      { messages: rows, nextCursor },
+      { proposedOffer, acceptedAgreement },
+    ] = await Promise.all([
+      getMessagesSinceForDebtor(negotiation, data.cursor),
+      getNegotiationOffersForDebtor(negotiation),
+    ])
+    const encodedToken = encodeURIComponent(data.token)
+
+    const messages: DebtorChatMessage[] = rows
+      .filter((row) => row.role !== "system")
+      .map((row) => ({
+        id: row.id,
+        role: row.role,
+        text: messagePartsToText(row.parts),
+        createdAt: row.created_at,
+      }))
+      .filter((message) => message.text.length > 0)
+
+    return {
+      found: true,
+      status: negotiation.status,
+      expired: false,
+      verified: true,
+      messages,
+      nextCursor,
+      proposedOffer: proposedOffer
+        ? {
+            id: proposedOffer.id,
+            installments: proposedOffer.installments,
+            downPaymentCents: proposedOffer.downPaymentCents,
+            waivedInterestCents: proposedOffer.waivedInterestCents,
+            totalCents: proposedOffer.totalCents,
+            schedule: proposedOffer.schedule,
+            validUntil: proposedOffer.validUntil,
+            engineVersion: proposedOffer.engineVersion,
+          }
+        : null,
+      acceptedAgreement: acceptedAgreement
+        ? {
+            id: acceptedAgreement.id,
+            offerId: acceptedAgreement.offerId,
+            acceptedAt: acceptedAgreement.acceptedAt,
+            transcriptSha256: acceptedAgreement.transcriptSha256,
+            installments: acceptedAgreement.installments,
+            downPaymentCents: acceptedAgreement.downPaymentCents,
+            waivedInterestCents: acceptedAgreement.waivedInterestCents,
+            totalCents: acceptedAgreement.totalCents,
+            schedule: acceptedAgreement.schedule,
+            agreementUrl: `/api/n/${encodedToken}/accept`,
+          }
+        : null,
     }
   })
 

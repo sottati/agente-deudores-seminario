@@ -2,7 +2,8 @@ import "@tanstack/react-start/server-only"
 import { randomUUID } from "node:crypto"
 import { createUIMessageStream, createUIMessageStreamResponse } from "ai"
 import type { InferUIMessageChunk } from "ai"
-import type { RunNegotiationTurnResult } from "@agente/agent"
+import { validateGeneratedNumbers } from "@agente/agent"
+import type { AgentPersistence, RunNegotiationTurnResult } from "@agente/agent"
 import {
   AGENT_ANSWERABLE_STATUSES,
   isNegotiationExpired,
@@ -12,6 +13,7 @@ import {
   getNegotiationAccessState,
   persistAgentResponse,
   releaseNegotiationTurn,
+  toAgentContext,
 } from "./db/debtor-access"
 import type {
   NegotiationAccessState,
@@ -44,7 +46,8 @@ function ownsTurn(
 export function negotiationStreamResponse(
   result: RunNegotiationTurnResult,
   negotiation: ResolvedNegotiation,
-  controller: AbortController
+  controller: AbortController,
+  persistence?: Pick<AgentPersistence, "logEvent">
 ) {
   let finalMessage: DebtorUIMessage | undefined
   const source = result.toUIMessageStream<DebtorUIMessage>({
@@ -82,10 +85,14 @@ export function negotiationStreamResponse(
               >
             | undefined
           let lastCheck = -Infinity
+          let lastTextPartId: string | undefined
           for await (const chunk of source) {
             if (chunk.type === "finish" || chunk.type === "abort") {
               terminal = chunk
               continue
+            }
+            if (chunk.type === "text-start" || chunk.type === "text-delta") {
+              lastTextPartId = chunk.id
             }
             // La primera salida se valida siempre. Durante streaming, se comprueba
             // periódicamente, y el cierre vuelve a validarse atómicamente en DB.
@@ -108,10 +115,73 @@ export function negotiationStreamResponse(
             writer.write(chunk)
           }
           if (finalMessage?.parts.length) {
+            const agentText = finalMessage.parts
+              .filter(
+                (
+                  part
+                ): part is Extract<
+                  DebtorUIMessage["parts"][number],
+                  { type: "text" }
+                > => part.type === "text"
+              )
+              .map((part) => part.text)
+              .join("\n")
+              .trim()
+
+            const toolOutputs = finalMessage.parts.flatMap((part) => {
+              if (
+                part.type.startsWith("tool-") &&
+                "output" in part &&
+                part.output !== undefined
+              ) {
+                return [part.output]
+              }
+              return []
+            })
+
+            let partsToPersist: DebtorUIMessage["parts"] = finalMessage.parts
+
+            if (agentText) {
+              const validation = validateGeneratedNumbers(
+                agentText,
+                toAgentContext(negotiation),
+                toolOutputs
+              )
+
+              if (!validation.valid) {
+                await persistence?.logEvent("guardrail_violation", {
+                  reason: "number_mismatch",
+                  original_text: agentText,
+                  mismatches: validation.mismatches.map((m) => ({
+                    raw: m.raw,
+                    kind: m.kind,
+                    value: m.value,
+                  })),
+                })
+
+                const nonTextParts = finalMessage.parts.filter(
+                  (part) => part.type !== "text"
+                )
+                partsToPersist = [
+                  ...nonTextParts,
+                  { type: "text", text: validation.safeText },
+                ]
+
+                const replaceId = lastTextPartId ?? "guardrail-safe"
+                writer.write({ type: "text-start", id: replaceId })
+                writer.write({
+                  type: "text-delta",
+                  id: replaceId,
+                  delta: validation.safeText,
+                })
+                writer.write({ type: "text-end", id: replaceId })
+              }
+            }
+
             const saved = await persistAgentResponse(
               negotiation,
               finalMessage.id,
-              finalMessage.parts as Json[]
+              partsToPersist as Json[]
             )
             if (!saved.persisted) {
               revoked(saved)

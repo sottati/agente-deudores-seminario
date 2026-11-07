@@ -23,6 +23,7 @@ import { Route as AuthedConversacionesNegotiationIdRouteImport } from './routes/
 import { Route as AuthedDeudoresIndexRouteImport } from './routes/_authed/deudores/index'
 import { Route as AuthedDeudoresDebtorIdRouteImport } from './routes/_authed/deudores/$debtorId'
 import { Route as ApiNTokenChatRouteImport } from './routes/api/n/$token/chat'
+import { Route as ApiNTokenAcceptRouteImport } from './routes/api/n/$token/accept'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -96,6 +97,11 @@ const ApiNTokenChatRoute = ApiNTokenChatRouteImport.update({
   path: '/api/n/$token/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiNTokenAcceptRoute = ApiNTokenAcceptRouteImport.update({
+  id: '/api/n/$token/accept',
+  path: '/api/n/$token/accept',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/conversaciones/': typeof AuthedConversacionesIndexRoute
   '/deudores/': typeof AuthedDeudoresIndexRoute
   '/api/n/$token/chat': typeof ApiNTokenChatRoute
+  '/api/n/$token/accept': typeof ApiNTokenAcceptRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -126,6 +133,7 @@ export interface FileRoutesByTo {
   '/conversaciones': typeof AuthedConversacionesIndexRoute
   '/deudores': typeof AuthedDeudoresIndexRoute
   '/api/n/$token/chat': typeof ApiNTokenChatRoute
+  '/api/n/$token/accept': typeof ApiNTokenAcceptRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/_authed/conversaciones/': typeof AuthedConversacionesIndexRoute
   '/_authed/deudores/': typeof AuthedDeudoresIndexRoute
   '/api/n/$token/chat': typeof ApiNTokenChatRoute
+  '/api/n/$token/accept': typeof ApiNTokenAcceptRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -160,6 +169,7 @@ export interface FileRouteTypes {
     | '/conversaciones/'
     | '/deudores/'
     | '/api/n/$token/chat'
+    | '/api/n/$token/accept'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -175,6 +185,7 @@ export interface FileRouteTypes {
     | '/conversaciones'
     | '/deudores'
     | '/api/n/$token/chat'
+    | '/api/n/$token/accept'
   id:
     | '__root__'
     | '/'
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/_authed/conversaciones/'
     | '/_authed/deudores/'
     | '/api/n/$token/chat'
+    | '/api/n/$token/accept'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -200,6 +212,7 @@ export interface RootRouteChildren {
   PrivacidadRoute: typeof PrivacidadRoute
   NTokenRoute: typeof NTokenRoute
   ApiNTokenChatRoute: typeof ApiNTokenChatRoute
+  ApiNTokenAcceptRoute: typeof ApiNTokenAcceptRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -302,6 +315,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiNTokenChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/n/$token/accept': {
+      id: '/api/n/$token/accept'
+      path: '/api/n/$token/accept'
+      fullPath: '/api/n/$token/accept'
+      preLoaderRoute: typeof ApiNTokenAcceptRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -338,6 +358,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacidadRoute: PrivacidadRoute,
   NTokenRoute: NTokenRoute,
   ApiNTokenChatRoute: ApiNTokenChatRoute,
+  ApiNTokenAcceptRoute: ApiNTokenAcceptRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -4,6 +4,10 @@ import { MockLanguageModelV4, simulateReadableStream } from "ai/test"
 import { negotiationFixture } from "@/test/negotiation"
 import { HUMAN_HANDOFF_MESSAGE, messagePartsToText } from "@/lib/debtor-chat"
 import type { DebtorUIMessage } from "@/lib/debtor-chat"
+import {
+  GUARDRAIL_SAFE_FALLBACK_MESSAGE,
+  MAX_TURNS_PER_NEGOTIATION,
+} from "@agente/agent"
 import { createConfiguredModel } from "@agente/agent/model"
 import { handleDebtorChat } from "./debtor-chat-handler"
 import * as access from "./db/debtor-access"
@@ -384,5 +388,107 @@ describe("endpoint del chat", () => {
         expect.objectContaining({ type: "text", text: "Hola, te ayudo." }),
       ])
     )
+  })
+
+  it("reemplaza el texto persistido y registra guardrail_violation si el modelo menciona cifras inventadas", async () => {
+    const logEvent = vi.fn().mockResolvedValue(undefined)
+    vi.mocked(access.createNegotiationPersistence).mockImplementation(
+      (negotiation) => ({
+        saveOffer: vi.fn(),
+        logEvent,
+        escalate: vi.fn().mockImplementation(() => {
+          negotiation.status = "escalated"
+          return Promise.resolve()
+        }),
+      })
+    )
+    vi.mocked(createConfiguredModel).mockReturnValue(
+      new MockLanguageModelV4({
+        doStream: async () => ({
+          stream: simulateReadableStream({
+            chunks: [
+              { type: "text-start", id: "t1" },
+              {
+                type: "text-delta",
+                id: "t1",
+                delta: "Te hago un descuento del 95% y pagás solo $ 12.345.",
+              },
+              { type: "text-end", id: "t1" },
+              {
+                type: "finish",
+                finishReason: { unified: "stop", raw: "stop" },
+                usage: {
+                  inputTokens: {
+                    total: 1,
+                    noCache: 1,
+                    cacheRead: 0,
+                    cacheWrite: 0,
+                  },
+                  outputTokens: { total: 1, text: 1, reasoning: 0 },
+                },
+              },
+            ],
+          }),
+        }),
+      })
+    )
+
+    const response = await handleDebtorChat({
+      request: request("¿Qué descuento me hacés?"),
+      params: { token: "example" },
+    })
+    await response.text()
+
+    expect(logEvent).toHaveBeenCalledWith(
+      "guardrail_violation",
+      expect.objectContaining({
+        reason: "number_mismatch",
+      })
+    )
+    expect(access.persistAgentResponse).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.stringMatching(/^[a-f\d-]{36}$/),
+      expect.arrayContaining([
+        { type: "text", text: GUARDRAIL_SAFE_FALLBACK_MESSAGE },
+      ])
+    )
+  })
+
+  it("escala automáticamente la negociación cuando se supera MAX_TURNS_PER_NEGOTIATION", async () => {
+    const logEvent = vi.fn().mockResolvedValue(undefined)
+    const escalate = vi.fn().mockResolvedValue(undefined)
+    vi.mocked(access.createNegotiationPersistence).mockImplementation(() => ({
+      saveOffer: vi.fn(),
+      logEvent,
+      escalate,
+    }))
+    vi.mocked(access.getConversationHistory).mockResolvedValue(
+      Array.from({ length: MAX_TURNS_PER_NEGOTIATION + 1 }, (_, idx) => ({
+        id: idx === MAX_TURNS_PER_NEGOTIATION ? messageId : `msg-${idx}`,
+        role: "debtor" as const,
+        parts: [{ type: "text", text: `Mensaje ${idx + 1}` }],
+        created_at: "2026-11-04T00:00:00Z",
+      }))
+    )
+
+    const model = new MockLanguageModelV4()
+    vi.mocked(createConfiguredModel).mockReturnValue(model)
+
+    const response = await handleDebtorChat({
+      request: request("Un mensaje más"),
+      params: { token: "example" },
+    })
+    const body = await response.text()
+
+    expect(body).toContain(HUMAN_HANDOFF_MESSAGE)
+    expect(escalate).toHaveBeenCalledWith("max_turns_exceeded")
+    expect(logEvent).toHaveBeenCalledWith(
+      "escalated",
+      expect.objectContaining({
+        reason: "max_turns_exceeded",
+        max_turns: MAX_TURNS_PER_NEGOTIATION,
+      })
+    )
+    expect(model.doStreamCalls).toHaveLength(0)
   })
 })

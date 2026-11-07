@@ -173,3 +173,100 @@ end;
 $$;
 revoke all on function public.persist_negotiation_response(uuid, uuid, timestamptz, boolean, uuid, uuid, jsonb) from public, anon, authenticated;
 grant execute on function public.persist_negotiation_response(uuid, uuid, timestamptz, boolean, uuid, uuid, jsonb) to service_role;
+
+-- Aceptación atómica de la oferta por parte del deudor (PLAN_BACKEND §3.3-6, D11).
+-- Verifica estado, vigencia del link y de la oferta, marca la oferta como aceptada,
+-- crea el acuerdo y sus cuotas, pasa la negociación y la deuda a 'agreed' y
+-- registra el mensaje de sistema y el evento de auditoría.
+create function public.accept_offer(
+  p_organization_id uuid, p_negotiation_id uuid, p_offer_id uuid,
+  p_acceptance_ip text, p_user_agent text, p_transcript_sha256 text,
+  p_document_html text, p_template_version text
+) returns jsonb
+language plpgsql security invoker set search_path = '' as $$
+declare
+  v_negotiation public.negotiations;
+  v_offer public.offers;
+  v_agreement_id uuid;
+  v_accepted_at timestamptz := now();
+begin
+  select * into v_negotiation from public.negotiations
+  where id = p_negotiation_id and organization_id = p_organization_id for update;
+  if not found then
+    raise exception 'Negociación no encontrada.' using errcode = 'P0002';
+  end if;
+  if v_negotiation.expires_at <= clock_timestamp() or v_negotiation.status = 'expired' then
+    raise exception 'El link de negociación venció.' using errcode = 'P0001';
+  end if;
+  if v_negotiation.status = 'agreed' then
+    raise exception 'Esta negociación ya tiene un acuerdo cerrado.' using errcode = 'P0001';
+  end if;
+  if v_negotiation.status not in ('active', 'offer_pending') then
+    raise exception 'La negociación no admite la aceptación de ofertas en su estado actual.' using errcode = 'P0001';
+  end if;
+
+  select * into v_offer from public.offers
+  where id = p_offer_id and negotiation_id = p_negotiation_id and organization_id = p_organization_id
+  for update;
+  if not found then
+    raise exception 'Oferta no encontrada.' using errcode = 'P0002';
+  end if;
+  if v_offer.status <> 'proposed' then
+    raise exception 'Esta oferta ya no está disponible para ser aceptada.' using errcode = 'P0001';
+  end if;
+  if v_offer.valid_until <= clock_timestamp() then
+    update public.offers set status = 'expired' where id = v_offer.id;
+    raise exception 'La vigencia de esta oferta venció.' using errcode = 'P0001';
+  end if;
+
+  update public.offers set status = 'accepted' where id = v_offer.id;
+  update public.offers set status = 'superseded'
+  where negotiation_id = p_negotiation_id and organization_id = p_organization_id
+    and id <> v_offer.id and status = 'proposed';
+
+  insert into public.agreements (
+    organization_id, offer_id, accepted_at, acceptance_ip, user_agent,
+    transcript_sha256, document_html, template_version
+  ) values (
+    p_organization_id, v_offer.id, v_accepted_at, p_acceptance_ip, p_user_agent,
+    p_transcript_sha256, p_document_html, p_template_version
+  ) returning id into v_agreement_id;
+
+  insert into public.installments (organization_id, agreement_id, number, due_date, amount_cents)
+  select
+    p_organization_id, v_agreement_id, (item ->> 'number')::smallint,
+    (item ->> 'due_date')::date, (item ->> 'amount_cents')::bigint
+  from jsonb_array_elements(v_offer.schedule) item;
+
+  update public.negotiations
+  set status = 'agreed', active_turn_id = null, active_turn_expires_at = null
+  where id = p_negotiation_id and organization_id = p_organization_id;
+
+  update public.debts set status = 'agreed'
+  where id = v_negotiation.debt_id and organization_id = p_organization_id;
+
+  insert into public.messages (organization_id, negotiation_id, role, parts, created_at)
+  values (
+    p_organization_id, p_negotiation_id, 'system',
+    jsonb_build_array(jsonb_build_object('type', 'text', 'text', 'El deudor aceptó el plan de pago. Se generó el acta del acuerdo.')),
+    v_accepted_at
+  );
+
+  insert into public.audit_events (organization_id, negotiation_id, type, payload, created_at)
+  values (
+    p_organization_id, p_negotiation_id, 'offer_accepted',
+    jsonb_build_object(
+      'offer_id', v_offer.id,
+      'agreement_id', v_agreement_id,
+      'installments', v_offer.installments,
+      'total_cents', v_offer.total_cents,
+      'transcript_sha256', p_transcript_sha256
+    ),
+    v_accepted_at
+  );
+
+  return jsonb_build_object('agreement_id', v_agreement_id, 'accepted_at', v_accepted_at);
+end;
+$$;
+revoke all on function public.accept_offer(uuid, uuid, uuid, text, text, text, text, text) from public, anon, authenticated;
+grant execute on function public.accept_offer(uuid, uuid, uuid, text, text, text, text, text) to service_role;

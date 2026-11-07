@@ -340,4 +340,57 @@ describe("migraciones y RPCs con PostgreSQL embebido", () => {
       (await db.query("select * from public.messages where role='agent'")).rows
     ).toHaveLength(1)
   })
+
+  it("accept_offer valida la oferta propuesta, crea el acuerdo con cuotas y pasa la deuda y negociación a agreed", async () => {
+    await db.exec(
+      `delete from public.agreements where offer_id='f0000000-0000-4000-8000-000000000001';
+       delete from public.offers where id='f0000000-0000-4000-8000-000000000001';
+       update public.debts set status='in_negotiation' where id='${debt}';
+       update public.negotiations set status='active' where id='${negotiation}';`
+    )
+    await actor(user, "service_role")
+    const saved = await db.query<{
+      save_negotiation_offer: { id: string; updated_at: string }
+    }>("select public.save_negotiation_offer($1,$2,$3,$4)", [
+      org,
+      negotiation,
+      await version(),
+      validOffer,
+    ])
+    const offerId = saved.rows[0].save_negotiation_offer.id
+
+    const acceptRes = await db.query<{
+      accept_offer: { agreement_id: string; accepted_at: string }
+    }>("select public.accept_offer($1,$2,$3,$4,$5,$6,$7,$8)", [
+      org,
+      negotiation,
+      offerId,
+      "203.0.113.10",
+      "TestAgent/1.0",
+      "sha256-transcript-test",
+      "<html>Acta</html>",
+      "1.0.0",
+    ])
+    const agreementId = acceptRes.rows[0].accept_offer.agreement_id
+    expect(agreementId).toBeTruthy()
+    expect(await debtStatus()).toBe("agreed")
+
+    const negState = await db.query<{ status: string }>(
+      "select status from public.negotiations where id=$1",
+      [negotiation]
+    )
+    expect(negState.rows[0]?.status).toBe("agreed")
+
+    const installments = await db.query<{
+      number: number
+      amount_cents: number
+    }>(
+      "select number, amount_cents from public.installments where agreement_id=$1 order by number",
+      [agreementId]
+    )
+    expect(installments.rows).toEqual([
+      { number: 1, amount_cents: 5000 },
+      { number: 2, amount_cents: 5000 },
+    ])
+  })
 })

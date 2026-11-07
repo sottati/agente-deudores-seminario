@@ -9,8 +9,12 @@ import {
 } from "@testing-library/react"
 import { createUIMessageStream, createUIMessageStreamResponse } from "ai"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { DebtorChat } from "./debtor-chat"
-import { getDebtorChatState, verifyIdentity } from "@/server/debtor-chat"
+import { DebtorChat, ESCALATED_POLL_INTERVAL_MS } from "./debtor-chat"
+import {
+  getDebtorChatState,
+  getMessagesSince,
+  verifyIdentity,
+} from "@/server/debtor-chat"
 import type { DebtorChatState } from "@/server/debtor-chat"
 import type { DebtorUIMessage } from "@/lib/debtor-chat"
 
@@ -19,6 +23,7 @@ vi.mock("@tanstack/react-start", () => ({
 }))
 vi.mock("@/server/debtor-chat", () => ({
   getDebtorChatState: vi.fn(),
+  getMessagesSince: vi.fn(),
   verifyIdentity: vi.fn(),
 }))
 type AvailableState = Extract<DebtorChatState, { found: true }>
@@ -70,6 +75,16 @@ function response(status: AvailableState["status"] = "active") {
 
 beforeEach(() => {
   vi.mocked(getDebtorChatState).mockResolvedValue(state())
+  vi.mocked(getMessagesSince).mockResolvedValue({
+    found: true,
+    status: "escalated",
+    expired: false,
+    verified: true,
+    messages: [],
+    nextCursor: null,
+    proposedOffer: null,
+    acceptedAgreement: null,
+  })
   vi.stubGlobal(
     "fetch",
     vi.fn(async () => response())
@@ -348,5 +363,108 @@ describe("chat del deudor", () => {
     expect(verifyIdentity).toHaveBeenCalledWith({
       data: { token: "token", dniLast3: "123" },
     })
+  })
+
+  it("renderiza OfferCard desde la DB y acepta la oferta vía POST /api/n/$token/accept mostrando el acta", async () => {
+    const offer = {
+      id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      installments: 2,
+      downPaymentCents: 8610000,
+      waivedInterestCents: 1420000,
+      totalCents: 17220000,
+      schedule: [
+        { number: 1, due_date: "2026-11-15", amount_cents: 8610000 },
+        { number: 2, due_date: "2026-12-15", amount_cents: 8610000 },
+      ],
+      validUntil: "2030-01-01T00:00:00Z",
+      engineVersion: "0.1.0",
+    }
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: string | URL, init?: RequestInit) => {
+        expect(String(input)).toBe("/api/n/token/accept")
+        expect(init?.method).toBe("POST")
+        expect(JSON.parse(String(init?.body))).toEqual({ offerId: offer.id })
+        return Response.json({
+          ok: true,
+          agreementId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+          acceptedAt: "2026-11-07T15:00:00Z",
+          transcriptSha256: "abc123sha256",
+          agreementUrl: "/api/n/token/accept",
+        })
+      })
+    )
+
+    render(
+      <DebtorChat
+        token="token"
+        initialState={state({
+          status: "offer_pending",
+          proposedOffer: offer,
+        })}
+      />
+    )
+
+    expect(
+      screen.getByRole("region", { name: "Propuesta de plan de pago" })
+    ).toBeTruthy()
+    expect(screen.getAllByText(/2 cuotas/).length).toBeGreaterThanOrEqual(1)
+
+    const acceptBtn = screen.getByRole<HTMLButtonElement>("button", {
+      name: "Acepto los términos del plan de pago",
+    })
+    fireEvent.click(acceptBtn)
+
+    await screen.findByRole("region", { name: "Acuerdo de pago confirmado" })
+    expect(screen.getByText("Acuerdo de pago confirmado.")).toBeTruthy()
+    expect(screen.getByRole<HTMLTextAreaElement>("textbox").disabled).toBe(true)
+
+    const actaLink = screen.getByRole("link", {
+      name: "Ver e imprimir acta de acuerdo",
+    })
+    expect(actaLink.getAttribute("href")).toBe("/api/n/token/accept")
+  })
+
+  it("hace polling cada ~5 s en estado escalated y agrega mensajes del administrador", async () => {
+    vi.useFakeTimers()
+    vi.mocked(getMessagesSince).mockResolvedValue({
+      found: true,
+      status: "escalated",
+      expired: false,
+      verified: true,
+      messages: [
+        {
+          id: "99999999-9999-4999-8999-999999999999",
+          role: "admin",
+          text: "Hola, soy Laura de la administración.",
+          createdAt: "2026-11-07T16:00:00Z",
+        },
+      ],
+      nextCursor: "2026-11-07T16:00:00Z",
+      proposedOffer: null,
+      acceptedAgreement: null,
+    })
+
+    render(
+      <DebtorChat
+        token="token"
+        initialState={state({
+          status: "escalated",
+          cursor: "2026-11-07T15:55:00Z",
+        })}
+      />
+    )
+
+    await act(() =>
+      vi.advanceTimersByTimeAsync(ESCALATED_POLL_INTERVAL_MS + 100)
+    )
+
+    expect(getMessagesSince).toHaveBeenCalledWith({
+      data: { token: "token", cursor: "2026-11-07T15:55:00Z" },
+    })
+    expect(
+      screen.getByText("Hola, soy Laura de la administración.")
+    ).toBeTruthy()
   })
 })

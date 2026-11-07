@@ -2,7 +2,11 @@ import "@tanstack/react-start/server-only"
 import { randomUUID } from "node:crypto"
 import { createUIMessageStream, createUIMessageStreamResponse } from "ai"
 import { z } from "zod"
-import { isHumanHandoffKeyword, runNegotiationTurn } from "@agente/agent"
+import {
+  MAX_TURNS_PER_NEGOTIATION,
+  isHumanHandoffKeyword,
+  runNegotiationTurn,
+} from "@agente/agent"
 import { createConfiguredModel } from "@agente/agent/model"
 
 import {
@@ -133,11 +137,26 @@ export async function handleDebtorChat({
       : await getConversationHistory(negotiation.id)
     const persistence = createNegotiationPersistence(negotiation)
 
-    if (humanRequested) {
-      // La reserva de humano ya cambió el control de forma atómica.
-      await persistence.logEvent("escalated", {
-        reason: "debtor_requested_human",
-      })
+    const debtorTurnsCount =
+      history.filter((row) => row.role === "debtor").length +
+      (history.some((row) => row.id === messageId) ? 0 : 1)
+    const turnLimitReached =
+      !humanRequested && debtorTurnsCount > MAX_TURNS_PER_NEGOTIATION
+
+    if (humanRequested || turnLimitReached) {
+      if (turnLimitReached) {
+        await persistence.escalate("max_turns_exceeded")
+        await persistence.logEvent("escalated", {
+          reason: "max_turns_exceeded",
+          debtor_turns_count: debtorTurnsCount,
+          max_turns: MAX_TURNS_PER_NEGOTIATION,
+        })
+      } else {
+        // La reserva de humano ya cambió el control de forma atómica.
+        await persistence.logEvent("escalated", {
+          reason: "debtor_requested_human",
+        })
+      }
       const id = randomUUID()
       const saved = await persistAgentResponse(negotiation, id, [
         { type: "text", text: HUMAN_HANDOFF_MESSAGE },
@@ -198,7 +217,12 @@ export async function handleDebtorChat({
         AbortSignal.timeout(120_000),
       ]),
     })
-    const response = negotiationStreamResponse(result, negotiation, controller)
+    const response = negotiationStreamResponse(
+      result,
+      negotiation,
+      controller,
+      persistence
+    )
     streaming = true
     return response
   } catch {

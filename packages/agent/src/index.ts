@@ -31,6 +31,10 @@ import { z } from "zod"
 
 export const SYSTEM_PROMPT_VERSION = "0.1.0"
 export const MAX_STEPS_PER_TURN = 5
+export const MAX_TURNS_PER_NEGOTIATION = 20
+
+export const GUARDRAIL_SAFE_FALLBACK_MESSAGE =
+  "Disculpá, no pude confirmar con exactitud los montos en esa respuesta. Para evitar cualquier confusión, verificá los importes oficiales en la tarjeta de propuesta o pedime que consulte nuevamente las opciones de pago."
 
 // ---------------------------------------------------------------------------
 // Tipos de dominio e interfaces de inyección (sin acoplamiento a la DB)
@@ -817,4 +821,191 @@ export async function runNegotiationTurn({
     systemPromptVersion: SYSTEM_PROMPT_VERSION,
     tools,
   })
+}
+
+// ---------------------------------------------------------------------------
+// Validación post-generación de cifras (Guardrail §3.3-3 — SEM-38)
+// ---------------------------------------------------------------------------
+
+export interface ExtractedNumericMention {
+  raw: string
+  kind: "amount_cents" | "percentage"
+  value: number
+}
+
+/**
+ * Extrae menciones de montos en pesos (`$ 172.200`, `$158.000,50`, `ARS 20.000`)
+ * y porcentajes (`50%`, `100 %`) del texto generado por el modelo.
+ */
+export function extractNumericMentions(
+  text: string
+): ExtractedNumericMention[] {
+  const mentions: ExtractedNumericMention[] = []
+
+  // Montos con símbolo `$` o prefijo `ARS` (ej. "$ 172.200", "$158.000,50", "ARS 28.400")
+  const amountRegex =
+    /(?:\$|ARS)\s*(\d{1,3}(?:\.\d{3})+|\d+)(?:,(\d{1,2}))?\b/gi
+  for (const match of text.matchAll(amountRegex)) {
+    const raw = match[0]
+    const integerPart = (match[1] ?? "").replace(/\./g, "")
+    const decimalPart = (match[2] ?? "").padEnd(2, "0")
+    const pesos = Number(integerPart)
+    const centsPart = decimalPart ? Number(decimalPart) : 0
+    if (Number.isSafeInteger(pesos) && Number.isSafeInteger(centsPart)) {
+      mentions.push({
+        raw,
+        kind: "amount_cents",
+        value: pesos * 100 + centsPart,
+      })
+    }
+  }
+
+  // Porcentajes enteros o decimales (ej. "50%", "100 %")
+  const pctRegex = /\b(\d{1,3})(?:[.,](\d{1,2}))?\s*%/g
+  for (const match of text.matchAll(pctRegex)) {
+    const raw = match[0]
+    const intVal = Number(match[1])
+    const decVal = match[2] ? Number(`0.${match[2]}`) : 0
+    const pct = intVal + decVal
+    if (Number.isFinite(pct)) {
+      mentions.push({
+        raw,
+        kind: "percentage",
+        value: pct,
+      })
+    }
+  }
+
+  return mentions
+}
+
+export interface AllowedTurnNumbers {
+  amountsCents: Set<number>
+  percentages: Set<number>
+}
+
+function collectOfferNumbers(
+  offer: FormattedOfferSummary | EvaluatedOffer | null | undefined,
+  amountsCents: Set<number>
+) {
+  if (!offer) return
+  amountsCents.add(offer.totalCents)
+  amountsCents.add(offer.downPaymentCents)
+  amountsCents.add(offer.waivedInterestCents)
+  amountsCents.add(offer.principalDiscountCents)
+  for (const item of offer.schedule) {
+    amountsCents.add(item.amount_cents)
+  }
+}
+
+/**
+ * Construye el conjunto de montos (en centavos) y porcentajes válidos a partir
+ * del contexto de la negociación y de las salidas de las tools invocadas en el turno.
+ */
+export function collectAllowedNumbersForTurn(
+  negotiation: Pick<AgentNegotiationContext, "debt" | "policy">,
+  toolOutputs: ReadonlyArray<unknown> = []
+): AllowedTurnNumbers {
+  const amountsCents = new Set<number>([0])
+  const percentages = new Set<number>([0, 100])
+
+  const bounds = getNegotiationBounds(negotiation.debt, negotiation.policy)
+  amountsCents.add(bounds.originalTotalCents)
+  amountsCents.add(bounds.principalCents)
+  amountsCents.add(bounds.interestCents)
+  amountsCents.add(bounds.minInstallmentAmountCents)
+
+  percentages.add(bounds.singlePaymentInterestWaiverPct)
+  percentages.add(bounds.maxInterestWaiverPct)
+  percentages.add(bounds.maxPrincipalDiscountPct)
+  percentages.add(bounds.minDownPaymentPct)
+
+  for (const plan of bounds.plans) {
+    amountsCents.add(plan.totalCents)
+    amountsCents.add(plan.waivedInterestCents)
+    amountsCents.add(plan.principalDiscountCents)
+    amountsCents.add(plan.minDownPaymentCents)
+    amountsCents.add(plan.maxDownPaymentCents)
+    amountsCents.add(plan.defaultDownPaymentCents)
+    amountsCents.add(plan.regularInstallmentCents)
+
+    const defaultEval = evaluateRequest(negotiation.debt, negotiation.policy, {
+      installments: plan.installments,
+    })
+    if (defaultEval.ok) {
+      collectOfferNumbers(defaultEval.offer, amountsCents)
+    }
+  }
+
+  function scanUnknown(value: unknown) {
+    if (!value || typeof value !== "object") return
+    if (Array.isArray(value)) {
+      for (const item of value) scanUnknown(item)
+      return
+    }
+    const record = value as Record<string, unknown>
+    for (const [key, fieldVal] of Object.entries(record)) {
+      if (typeof fieldVal === "number" && Number.isFinite(fieldVal)) {
+        if (key.endsWith("Cents") || key.endsWith("_cents")) {
+          amountsCents.add(Math.trunc(fieldVal))
+        } else if (key.endsWith("Pct") || key.endsWith("_pct")) {
+          percentages.add(fieldVal)
+        }
+      } else if (fieldVal && typeof fieldVal === "object") {
+        scanUnknown(fieldVal)
+      }
+    }
+  }
+
+  for (const output of toolOutputs) {
+    scanUnknown(output)
+  }
+
+  return { amountsCents, percentages }
+}
+
+export type GeneratedNumbersValidationResult =
+  | {
+      valid: true
+      mentions: ExtractedNumericMention[]
+    }
+  | {
+      valid: false
+      mentions: ExtractedNumericMention[]
+      mismatches: ExtractedNumericMention[]
+      safeText: string
+    }
+
+/**
+ * Valida que todo monto (`$ ...`) o porcentaje (`...%`) mencionado en el texto
+ * del modelo coincida con los valores permitidos por las tools y la política en ese turno.
+ */
+export function validateGeneratedNumbers(
+  text: string,
+  negotiation: Pick<AgentNegotiationContext, "debt" | "policy">,
+  toolOutputs: ReadonlyArray<unknown> = []
+): GeneratedNumbersValidationResult {
+  const mentions = extractNumericMentions(text)
+  if (mentions.length === 0) {
+    return { valid: true, mentions }
+  }
+
+  const allowed = collectAllowedNumbersForTurn(negotiation, toolOutputs)
+  const mismatches = mentions.filter((mention) => {
+    if (mention.kind === "amount_cents") {
+      return !allowed.amountsCents.has(mention.value)
+    }
+    return !allowed.percentages.has(mention.value)
+  })
+
+  if (mismatches.length === 0) {
+    return { valid: true, mentions }
+  }
+
+  return {
+    valid: false,
+    mentions,
+    mismatches,
+    safeText: GUARDRAIL_SAFE_FALLBACK_MESSAGE,
+  }
 }
