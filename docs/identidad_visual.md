@@ -1,19 +1,19 @@
 # Identidad Visual y Sistema de Diseño
 
-> Documento de referencia de branding para **pacta.ia** (Asistente Autónomo de Cobranzas B2B).
+> Documento de referencia de branding para **pacta.ai** (Asistente Autónomo de Cobranzas B2B).
 
 ![Landing page – modo oscuro](./assets/landing_screenshot.png)
 
 ---
 
-## Naming de Marca: pacta.ia
+## Naming de Marca: pacta.ai
 
-El nombre elegido para el producto es **pacta.ia**. Esta decisión verbal es el núcleo de la estrategia de Océano Azul y define el tono de toda la comunicación de la empresa.
+El nombre elegido para el producto es **pacta.ai**. Esta decisión verbal es el núcleo de la estrategia de Océano Azul y define el tono de toda la comunicación de la empresa.
 
-| Elemento    | Transmite y Justifica                                                                                                                                                                                                                                                                                                                                                   |
-| :---------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **"pacta"** | Proviene de la acción de _pactar_. Desplaza el foco del dolor de la "deuda" hacia la positividad del **acuerdo mutuo**. Transmite diplomacia, empatía y resolución pacífica, alejándose radicalmente del tono agresivo o punitivo de las cobranzas tradicionales. Le asegura al cliente que su vínculo institucional (con vecinos o familias de colegios) será cuidado. |
-| **".ai"**   | Posiciona al producto instantáneamente como una **herramienta tecnológica moderna**. Comunica que la negociación no requiere fricción humana manual, sino que es impulsada por Inteligencia Artificial autónoma, otorgándole un perfil de startup SaaS innovadora.                                                                                                      |
+| Elemento    | Transmite y Justifica                                                                                                                                                                                                                                                                                                                                              |
+| :---------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **"pacta"** | Proviene de la acción de _pactar_. Desplaza el foco del dolor de la "deuda" hacia la positividad del **acuerdo mutuo**. Transmite diplomacia, empatía y resolución pacífica, alejándose radicalmente del tono agresivo o punitivo de las cobranzas tradicionales. Le asegura al cliente que su vínculo institucional (con los vecinos del consorcio) será cuidado. |
+| **".ai"**   | Posiciona al producto instantáneamente como una **herramienta tecnológica moderna**. Comunica que la negociación no requiere fricción humana manual, sino que es impulsada por Inteligencia Artificial autónoma, otorgándole un perfil de startup SaaS innovadora.                                                                                                 |
 
 ---
 
@@ -59,7 +59,7 @@ El modo oscuro es la experiencia principal de la landing page.
 
 | Aspecto                        | Justificación                                                                                                                                                                                             |
 | :----------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Reducción de fatiga visual** | El público objetivo (administradores, tesoreros) pasa largas horas frente a pantallas gestionando planillas. El fondo oscuro reduce la emisión de luz y el cansancio ocular en sesiones prolongadas.      |
+| **Reducción de fatiga visual** | El público objetivo (administradores de consorcios) pasa largas horas frente a pantallas gestionando planillas. El fondo oscuro reduce la emisión de luz y el cansancio ocular en sesiones prolongadas.   |
 | **Jerarquía visual**           | Sobre fondo oscuro, las métricas del dashboard (`$8,4M`, `42 acuerdos`, `18 conversaciones`) brillan con mayor contraste, haciendo que los datos de valor sean lo primero que el ojo captura.             |
 | **Percepción premium**         | Las interfaces oscuras generan una sensación de sofisticación y profesionalismo tecnológico. Esto posiciona al producto lejos del aspecto "planilla de Excel" con el que compite en la mente del usuario. |
 | **Potencia del rosa**          | El primario magenta adquiere **máxima potencia visual** sobre fondos oscuros, haciendo que los botones CTA ("Probar el dashboard", "+ Nueva negociación") sean imposibles de ignorar.                     |
@@ -85,7 +85,7 @@ El modo claro se activa automáticamente cuando el sistema operativo del usuario
 | Aspecto                                  | Justificación                                                                                                                                                                                    |
 | :--------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Accesibilidad**                        | Algunos usuarios trabajan en ambientes muy iluminados (oficinas con luz natural) donde el modo oscuro puede dificultar la lectura. El modo claro garantiza legibilidad en todas las condiciones. |
-| **Impresión y reportes**                 | Si el usuario necesita capturar pantallas del dashboard para reportar al consorcio o al directorio del colegio, el modo claro genera impresiones más legibles y con menor consumo de tinta.      |
+| **Impresión y reportes**                 | Si el usuario necesita capturar pantallas del dashboard para reportar al consorcio, el modo claro genera impresiones más legibles y con menor consumo de tinta.                                  |
 | **Respeto a la preferencia del usuario** | Ofrecer ambos modos demuestra que el producto se adapta al usuario y no al revés, lo cual es coherente con la filosofía empática de la marca.                                                    |
 
 ---
@@ -129,7 +129,7 @@ La fuente elegida para todo el producto es **Geist Variable**, la familia tipogr
 | Uso                         | Peso           | Tracking            | Ejemplo                                                 |
 | :-------------------------- | :------------- | :------------------ | :------------------------------------------------------ |
 | **Título principal (hero)** | Semibold (600) | Compacto (negativo) | "Recuperá deuda sin convertir cada cobro en una pelea." |
-| **Nombre de marca**         | Semibold (600) | Compacto            | "pacta.ia"                                              |
+| **Nombre de marca**         | Semibold (600) | Compacto            | "pacta.ai"                                              |
 | **Cuerpo de texto**         | Regular (400)  | Normal              | Párrafos, descripciones, labels                         |
 | **Datos numéricos**         | Variable       | Normal              | "$8,4M", "42", "18"                                     |
 
@@ -147,22 +147,22 @@ La fuente elegida para todo el producto es **Geist Variable**, la familia tipogr
 
 ## 4. Logo e Isotipo Oficial
 
-![Logo Oficial pacta.ia](./assets/pacta_logo.jpg)
+![Logo Oficial pacta.ai](./assets/pacta_logo.jpg)
 
 ### 4.1 Composición
 
 El logo oficial se compone de dos elementos centrales:
 
 ```
-[ 🤝🏢 ]   pacta.ia
+[ 🤝🏢 ]   pacta.ai
    ↑          ↑
 isotipo    wordmark
 ```
 
-| Elemento                | Implementación y Descripción                                                                                                                                                                                                                                                                                                 |
-| :---------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Isotipo (App Icon)**  | Contenedor de bordes redondeados (`rounded-lg`) en color primario magenta (`#C31952`), en cuyo interior se integra una silueta lineal blanca que fusiona dos conceptos clave: el **apretón de manos** (el pacto / acuerdo alcanzado) y los **edificios institucionales** (consorcios, colegios y comunidades administradas). |
-| **Logotipo / Wordmark** | La denominación **"pacta.ia"** en minúsculas, con tipografía geométrica sans-serif limpia en blanco puro sobre fondo oscuro.                                                                                                                                                                                                 |
+| Elemento                | Implementación y Descripción                                                                                                                                                                                                                                                                         |
+| :---------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Isotipo (App Icon)**  | Contenedor de bordes redondeados (`rounded-lg`) en color primario magenta (`#C31952`), en cuyo interior se integra una silueta lineal blanca que fusiona dos conceptos clave: el **apretón de manos** (el pacto / acuerdo alcanzado) y los **edificios institucionales** (consorcios administrados). |
+| **Logotipo / Wordmark** | La denominación **"pacta.ai"** en minúsculas, con tipografía geométrica sans-serif limpia en blanco puro sobre fondo oscuro.                                                                                                                                                                         |
 
 ### 4.2 Comportamiento según el Contexto
 
@@ -175,12 +175,12 @@ isotipo    wordmark
 
 ### 4.3 Justificación Semiótica y de Diseño
 
-| Aspecto                         | Justificación Estratégica                                                                                                                                                                                                                                                                           |
-| :------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Fusión Handshake + Edificio** | Comunica la doble propuesta de valor al instante: la **solución de fondo** (el acuerdo pacífico, la mediación no confrontativa) aplicada al **sector objetivo** (propiedad horizontal, instituciones y comunidades). Rompe de inmediato con la iconografía punitiva de las cobranzas tradicionales. |
-| **Formato App Icon**            | El cuadrado redondeado otorga solidez, delimita el isotipo en cualquier plataforma (web, móvil, avatar de WhatsApp Business) y transmite una experiencia de producto digital nativo y moderno.                                                                                                      |
-| **Minúsculas ("pacta.ia")**     | El uso de caja baja en el wordmark aporta **cercanía, amabilidad y accesibilidad psicológica**, reforzando que no se trata de una corporación intimidante, sino de un facilitador de diálogo asistido por IA.                                                                                       |
-| **Sufijo ".ia"**                | Manifiesta explícitamente la base tecnológica de automatización inteligente y posiciona a la empresa en el estándar de startups globales de software.                                                                                                                                               |
+| Aspecto                         | Justificación Estratégica                                                                                                                                                                                                                                              |
+| :------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Fusión Handshake + Edificio** | Comunica la doble propuesta de valor al instante: la **solución de fondo** (el acuerdo pacífico, la mediación no confrontativa) aplicada al **sector objetivo** (propiedad horizontal). Rompe de inmediato con la iconografía punitiva de las cobranzas tradicionales. |
+| **Formato App Icon**            | El cuadrado redondeado otorga solidez, delimita el isotipo en cualquier plataforma (web, móvil, avatar de WhatsApp Business) y transmite una experiencia de producto digital nativo y moderno.                                                                         |
+| **Minúsculas ("pacta.ai")**     | El uso de caja baja en el wordmark aporta **cercanía, amabilidad y accesibilidad psicológica**, reforzando que no se trata de una corporación intimidante, sino de un facilitador de diálogo asistido por IA.                                                          |
+| **Sufijo ".ia"**                | Manifiesta explícitamente la base tecnológica de automatización inteligente y posiciona a la empresa en el estándar de startups globales de software.                                                                                                                  |
 
 ---
 
@@ -265,13 +265,13 @@ Todos los elementos de la interfaz usan esquinas redondeadas con una escala prog
 
 | Pilar                | Decisión                                      | Intención                                                  |
 | :------------------- | :-------------------------------------------- | :--------------------------------------------------------- |
-| **Naming**           | pacta.ia                                      | Enfoque en el pacto y resolución vs. dolor de la deuda     |
+| **Naming**           | pacta.ai                                      | Enfoque en el pacto y resolución vs. dolor de la deuda     |
 | **Color primario**   | Rosa / Magenta (`#C31952` / `#A21245`)        | Empatía, modernidad, diferenciación vs. competidores       |
 | **Colores neutros**  | Escala de grises sin saturación               | Legibilidad, jerarquía, protagonismo de los datos          |
 | **Tema por defecto** | Oscuro (con light automático)                 | Premium, anti-fatiga, contraste del rosa                   |
 | **Gradientes**       | Shader animado rosa-slate / rosa-lavanda      | Inmersión, identidad, transición narrativa                 |
 | **Tipografía**       | Geist Variable (Vercel)                       | Claridad técnica, datos financieros, coherencia tech       |
-| **Logo**             | App Icon (Handshake + Edificios) + "pacta.ia" | Mediación y acuerdo en comunidades + identidad tecnológica |
+| **Logo**             | App Icon (Handshake + Edificios) + "pacta.ai" | Mediación y acuerdo en comunidades + identidad tecnológica |
 | **Bordes**           | Redondeados progresivos (6-22px)              | Suavidad, accesibilidad, coherencia con el isotipo         |
 | **Responsividad**    | 3 breakpoints (mobile, tablet, desktop)       | Cobertura total de dispositivos del target                 |
 | **Tema adaptativo**  | Detección automática del SO                   | Respeto al usuario, coherencia con la filosofía empática   |

@@ -1,6 +1,6 @@
 ## **Stakeholders seleccionados**
 
-Para validar el MVP del **pacta.ia**, identificamos distintos grupos de stakeholders según su relación con el problema, su participación en el proceso de cobranza y su capacidad para aportar conocimiento relevante al desarrollo de la solución.
+Para validar el MVP de **pacta.ai**, identificamos distintos grupos de stakeholders según su relación con el problema, su participación en el proceso de cobranza y su capacidad para aportar conocimiento relevante al desarrollo de la solución.
 
 ### **1\. Administradores de consorcios**
 
@@ -23,11 +23,13 @@ Es uno de los principales stakeholders del proyecto. Actualmente realiza o super
 
 ---
 
-### **2\. Tesoreros o personal administrativo de colegios privados**
+### **2\. Tesoreros o personal administrativo de colegios privados** _(descartado para el MVP)_
+
+> **Nota:** este segmento se evaluó en la etapa inicial del proyecto y se entrevistó a una institución educativa (ver `ENTREVISTAS.md`, Entrevista 3). Luego de las entrevistas, el equipo decidió acotar el MVP solo a administraciones de consorcios. Se mantiene en este documento como registro del análisis realizado.
 
 **Rol:** cliente potencial y usuario directo.
 
-Constituyen el segundo segmento definido para el MVP. Su problemática es similar a la de los administradores de consorcios, aunque el contexto de cobranza es diferente, porque existe una relación continua entre la institución educativa y las familias.
+Fue el segundo segmento considerado inicialmente. Su problemática es similar a la de los administradores de consorcios, aunque el contexto de cobranza es diferente, porque existe una relación continua entre la institución educativa y las familias.
 
 **Qué necesitamos validar con ellos:**
 
@@ -40,7 +42,7 @@ Constituyen el segundo segmento definido para el MVP. Su problemática es simila
 - Cuándo una conversación debería pasar a intervención humana.
 - Qué riesgos observan en automatizar este proceso.
 
-**Prioridad:** Muy alta.
+**Prioridad:** Descartado para el MVP.
 
 ---
 
@@ -137,21 +139,21 @@ Para el MVP actual no necesitamos integrar necesariamente WhatsApp, ya que el ob
 
 ## **Clasificación**
 
-| Stakeholder                  | Tipo               | Interés    | Influencia | Prioridad de validación |
-| ---------------------------- | ------------------ | ---------- | ---------- | ----------------------- |
-| Administrador de consorcio   | Cliente / usuario  | Muy alto   | Muy alta   | Muy alta                |
-| Tesorero de colegio privado  | Cliente / usuario  | Muy alto   | Muy alta   | Muy alta                |
-| Persona morosa               | Usuario del agente | Muy alto   | Media      | Alta                    |
-| Profesional de cobranzas     | Experto de dominio | Alto       | Alta       | Alta                    |
-| Profesional legal/compliance | Experto de dominio | Medio/alto | Alta       | Alta                    |
-| Especialista en IA           | Experto técnico    | Alto       | Media/alta | Media/alta              |
-| Plataforma de mensajería     | Actor externo      | Medio      | Alta       | Media                   |
+| Stakeholder                  | Tipo                                       | Interés    | Influencia | Prioridad de validación |
+| ---------------------------- | ------------------------------------------ | ---------- | ---------- | ----------------------- |
+| Administrador de consorcio   | Cliente / usuario                          | Muy alto   | Muy alta   | Muy alta                |
+| Tesorero de colegio privado  | Cliente / usuario (descartado para el MVP) | Muy alto   | Muy alta   | Descartado para el MVP  |
+| Persona morosa               | Usuario del agente                         | Muy alto   | Media      | Alta                    |
+| Profesional de cobranzas     | Experto de dominio                         | Alto       | Alta       | Alta                    |
+| Profesional legal/compliance | Experto de dominio                         | Medio/alto | Alta       | Alta                    |
+| Especialista en IA           | Experto técnico                            | Alto       | Media/alta | Media/alta              |
+| Plataforma de mensajería     | Actor externo                              | Medio      | Alta       | Media                   |
 
 ## **Stakeholders prioritarios para esta primera etapa**
 
 Para la validación inicial del MVP proponemos concentrarnos principalmente en cuatro perspectivas:
 
-1. **Cliente:** administrador de consorcios y/o tesorero de colegio privado.
+1. **Cliente:** administrador de consorcios.
 2. **Usuario final:** persona que haya atravesado una situación de deuda o atraso de pagos.
 3. **Experto de dominio:** profesional con experiencia en cobranzas o administración financiera.
 4. **Experto de control:** profesional legal o de cumplimiento que pueda analizar los límites de una cobranza automatizada.
