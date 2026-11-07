@@ -336,8 +336,8 @@ Objetivo: **un deudor de seed negocia por chat y recibe ofertas siempre dentro d
 - [x] Tipos generados → `apps/platform/src/server/db/types.gen.ts` (`pnpm db:types`).
 - [x] Motor de reglas: utilidades monetarias en centavos, `getNegotiationBounds`, `evaluateRequest`, `buildSchedule`, `requiresHuman`, con tests exhaustivos (cuota mínima, anticipo, redondeo, quita 100 % en pago único, umbral de escalado). Objetivo ≥ 95 % de cobertura del paquete.
 - [x] `packages/agent`: system prompt versionado, tools de §3.2 con `inputSchema` Zod, `runNegotiationTurn({ negotiation, lastMessage, history, model, persistence })` sobre `streamText`.
-- [ ] `server/db/debtor-access.ts` y endpoint `POST /api/n/$token/chat`: valida token y estado, reconstruye el historial desde la DB, ejecuta el turno, persiste mensajes (`onFinish`), devuelve `toUIMessageStreamResponse()`.
-- [ ] Página `/n/$token` mínima con `useChat` (sin verificación todavía).
+- [x] `server/db/debtor-access.ts` y endpoint `POST /api/n/$token/chat`: valida token y estado, reconstruye el historial desde la DB, ejecuta el turno, persiste mensajes (`onFinish`), devuelve `toUIMessageStreamResponse()`.
+- [x] Página `/n/$token` mínima con `useChat` (sin verificación todavía).
 
 > **Paralelización:** motor de reglas (1 persona), agente + endpoint (2 personas), migraciones + seed (1 persona). La quinta persona puede adelantar la UI del chat del deudor.
 
@@ -345,7 +345,7 @@ Objetivo: **un deudor de seed negocia por chat y recibe ofertas siempre dentro d
 
 ### Sprint 2 — Portal del deudor completo
 
-- [ ] Pantalla de bienvenida (sin montos) → verificación de identidad → cookie firmada (D4); bloqueo tras N intentos.
+- [x] Pantalla de bienvenida (sin montos) → verificación de identidad → cookie firmada (D4); bloqueo tras N intentos.
 - [ ] Mensaje inicial determinístico (bot disclosure + aviso de privacidad).
 - [ ] **OfferCard** renderizada desde el `tool-propose_offer` part / DB, con botón "Acepto los términos del plan de pago".
 - [ ] `POST /api/n/$token/accept`: captura IP/UA, RPC `accept_offer`, `transcript_sha256`, genera acta HTML, devuelve link al acta.

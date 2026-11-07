@@ -10,11 +10,17 @@ import {
 import { createUIMessageStream, createUIMessageStreamResponse } from "ai"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { DebtorChat } from "./debtor-chat"
-import { getDebtorChatState } from "@/server/debtor-chat"
+import { getDebtorChatState, verifyIdentity } from "@/server/debtor-chat"
 import type { DebtorChatState } from "@/server/debtor-chat"
 import type { DebtorUIMessage } from "@/lib/debtor-chat"
 
-vi.mock("@/server/debtor-chat", () => ({ getDebtorChatState: vi.fn() }))
+vi.mock("@tanstack/react-start", () => ({
+  useServerFn: (fn: unknown) => fn,
+}))
+vi.mock("@/server/debtor-chat", () => ({
+  getDebtorChatState: vi.fn(),
+  verifyIdentity: vi.fn(),
+}))
 type AvailableState = Extract<DebtorChatState, { found: true }>
 function state(overrides: Partial<AvailableState> = {}): AvailableState {
   return {
@@ -22,7 +28,11 @@ function state(overrides: Partial<AvailableState> = {}): AvailableState {
     status: "pending",
     expired: false,
     expiresAt: new Date(Date.now() + 86400000).toISOString(),
+    verified: true,
     organizationName: "Administración demo",
+    debtorAlias: "Unidad 4B",
+    groupLabel: null,
+    remainingAttempts: 5,
     disclosure: "Soy el asistente virtual.",
     messages: [
       {
@@ -299,5 +309,32 @@ describe("chat del deudor", () => {
     await act(() => vi.advanceTimersByTimeAsync(1100))
     expect(screen.getByRole("heading", { name: "El link venció" })).toBeTruthy()
     expect(screen.queryByText("Mensaje anterior")).toBeNull()
+  })
+
+  it("muestra la pantalla de verificación cuando verified es false y pasa al chat al verificar", async () => {
+    vi.mocked(verifyIdentity).mockResolvedValue({ ok: true })
+    vi.mocked(getDebtorChatState).mockResolvedValue(
+      state({ verified: true, status: "active" })
+    )
+    render(
+      <DebtorChat
+        token="token"
+        initialState={state({ verified: false, messages: [], disclosure: "" })}
+      />
+    )
+    expect(
+      screen.getByRole("heading", { name: "Verificá tu identidad" })
+    ).toBeTruthy()
+    expect(screen.queryByText("Mensaje anterior")).toBeNull()
+
+    fireEvent.change(screen.getByLabelText("Últimos 3 dígitos del DNI"), {
+      target: { value: "123" },
+    })
+    fireEvent.click(screen.getByRole("button", { name: "Continuar al chat" }))
+
+    await screen.findByText("Mensaje anterior")
+    expect(verifyIdentity).toHaveBeenCalledWith({
+      data: { token: "token", dniLast3: "123" },
+    })
   })
 })

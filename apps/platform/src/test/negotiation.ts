@@ -9,6 +9,7 @@ export function negotiationFixture(
     status: "pending",
     updatedAt: "2026-11-04T00:00:00.000Z",
     verifiedAt: null,
+    verificationAttempts: 0,
     expiresAt: new Date(Date.now() + 86_400_000).toISOString(),
     debtId: "de000000-0000-4000-8000-000000000001",
     debt: {
@@ -17,7 +18,12 @@ export function negotiationFixture(
       principalCents: 10_000,
       interestCents: 500,
     },
-    debtor: { alias: "Unidad 4B", groupLabel: null },
+    debtor: {
+      id: "deb00000-0000-4000-8000-000000000001",
+      alias: "Unidad 4B",
+      groupLabel: null,
+      verificationHash: null,
+    },
     organization: {
       displayNameForDebtors: "Administración demo",
       kind: "consorcio",

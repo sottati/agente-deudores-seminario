@@ -68,6 +68,7 @@ export const auditEventLabel: Record<string, string> = {
   negotiation_cancelled: "Link cancelado",
   guardrail_violation: "Respuesta del agente bloqueada",
   offer_proposed: "Oferta propuesta",
+  verification_locked: "Link bloqueado por intentos fallidos",
 }
 
 export function installmentsLabel(installments: number) {

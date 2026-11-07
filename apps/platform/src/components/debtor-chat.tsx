@@ -1,11 +1,13 @@
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { useEffect, useMemo, useRef, useState } from "react"
+import { useServerFn } from "@tanstack/react-start"
 import { ArrowUp02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
 import { Bubble, BubbleContent } from "@/components/ui/bubble"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Message, MessageContent, MessageHeader } from "@/components/ui/message"
 import {
   MessageScroller,
@@ -23,19 +25,26 @@ import {
   messagePartsToText,
 } from "@/lib/debtor-chat"
 import type { DebtorUIMessage } from "@/lib/debtor-chat"
-import { getDebtorChatState } from "@/server/debtor-chat"
+import { getDebtorChatState, verifyIdentity } from "@/server/debtor-chat"
 import type { DebtorChatState } from "@/server/debtor-chat"
 
 type AvailableState = Extract<DebtorChatState, { found: true }>
 
 function initialMessages(state: AvailableState): DebtorUIMessage[] {
+  if (!state.verified || state.expired || state.status === "locked") {
+    return []
+  }
   return [
-    {
-      id: "bot-disclosure",
-      role: "assistant",
-      parts: [{ type: "text", text: state.disclosure }],
-      metadata: { authorRole: "system" },
-    },
+    ...(state.disclosure
+      ? [
+          {
+            id: "bot-disclosure",
+            role: "assistant" as const,
+            parts: [{ type: "text" as const, text: state.disclosure }],
+            metadata: { authorRole: "system" as const },
+          },
+        ]
+      : []),
     ...state.messages.map((message): DebtorUIMessage => ({
       id: message.id,
       role: message.role === "debtor" ? "user" : "assistant",
@@ -113,7 +122,9 @@ export function DebtorChat({
 
   const isBusy = status === "submitted" || status === "streaming"
   const canSend =
-    !state.expired && AGENT_ANSWERABLE_STATUSES.includes(state.status)
+    state.verified &&
+    !state.expired &&
+    AGENT_ANSWERABLE_STATUSES.includes(state.status)
 
   async function refreshState(failedMessage?: { id: string; text: string }) {
     if (reconciliation.current) return reconciliation.current
@@ -137,10 +148,13 @@ export function DebtorChat({
       } else {
         setState(next)
         setMessages(
-          next.expired || next.status === "locked" ? [] : initialMessages(next)
+          next.expired || next.status === "locked" || !next.verified
+            ? []
+            : initialMessages(next)
         )
         if (
           failedMessage &&
+          next.verified &&
           !next.messages.some((item) => item.id === failedMessage.id)
         ) {
           setInput((current) => current || failedMessage.text)
@@ -218,7 +232,18 @@ export function DebtorChat({
     return (
       <ChatStatus
         title="Conversación bloqueada"
-        description="Contactá a la administración para continuar."
+        description={`Se superó el número máximo de intentos de verificación de identidad. Contactá a ${state.organizationName} para continuar.`}
+      />
+    )
+  if (!state.verified)
+    return (
+      <IdentityVerificationGate
+        token={token}
+        organizationName={state.organizationName}
+        debtorAlias={state.debtorAlias}
+        groupLabel={state.groupLabel}
+        initialRemainingAttempts={state.remainingAttempts}
+        onVerifiedOrLocked={() => refreshState()}
       />
     )
 
@@ -407,5 +432,153 @@ export function ChatStatus({
       <h1 className="text-lg font-semibold">{title}</h1>
       <p className="max-w-sm text-sm text-muted-foreground">{description}</p>
     </div>
+  )
+}
+
+function IdentityVerificationGate({
+  token,
+  organizationName,
+  debtorAlias,
+  groupLabel,
+  initialRemainingAttempts,
+  onVerifiedOrLocked,
+}: {
+  token: string
+  organizationName: string
+  debtorAlias: string
+  groupLabel: string | null
+  initialRemainingAttempts: number
+  onVerifiedOrLocked: () => Promise<void>
+}) {
+  const verifyFn = useServerFn(verifyIdentity)
+  const [dniLast3, setDniLast3] = useState("")
+  const [pending, setPending] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [remainingAttempts, setRemainingAttempts] = useState(
+    initialRemainingAttempts
+  )
+
+  const sanitized = dniLast3.replace(/\D/g, "").slice(0, 3)
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (sanitized.length !== 3 || pending) return
+
+    setPending(true)
+    setError(null)
+    try {
+      const result = await verifyFn({
+        data: { token, dniLast3: sanitized },
+      })
+
+      if (!result.ok) {
+        if (result.locked) {
+          await onVerifiedOrLocked()
+          return
+        }
+        if (typeof result.remainingAttempts === "number") {
+          setRemainingAttempts(result.remainingAttempts)
+        }
+        setError(result.error)
+        return
+      }
+
+      await onVerifiedOrLocked()
+    } catch {
+      setError(
+        "No pudimos verificar tu identidad en este momento. Intentá de nuevo."
+      )
+    } finally {
+      setPending(false)
+    }
+  }
+
+  return (
+    <>
+      <header className="shrink-0 border-b px-4 py-4 sm:px-6">
+        <p className="truncate text-sm font-semibold">{organizationName}</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          Asistente virtual de pacta.ia
+        </p>
+      </header>
+
+      <div className="flex flex-1 flex-col items-center justify-center px-6 py-10">
+        <div className="w-full max-w-sm space-y-6">
+          <div className="space-y-2 text-center">
+            <h1 className="text-xl font-semibold tracking-tight">
+              Verificá tu identidad
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Hola. Estás ingresando al canal de atención automatizada de{" "}
+              <span className="font-medium text-foreground">
+                {organizationName}
+              </span>{" "}
+              para{" "}
+              <span className="font-medium text-foreground">
+                {debtorAlias}
+                {groupLabel ? ` (${groupLabel})` : ""}
+              </span>
+              .
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Para proteger tu privacidad y no exponer información a terceros,
+              ingresá los <strong>últimos 3 dígitos del DNI</strong> de la
+              persona titular antes de ver el detalle de la deuda.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label
+                htmlFor="dni-last-3"
+                className="block text-center text-xs font-medium text-muted-foreground"
+              >
+                Últimos 3 dígitos del DNI
+              </label>
+              <Input
+                id="dni-last-3"
+                name="dniLast3"
+                type="text"
+                inputMode="numeric"
+                pattern="\d{3}"
+                maxLength={3}
+                autoComplete="off"
+                autoFocus
+                placeholder="123"
+                value={sanitized}
+                onChange={(event) =>
+                  setDniLast3(event.target.value.replace(/\D/g, "").slice(0, 3))
+                }
+                disabled={pending}
+                className="h-11 text-center font-mono text-lg tracking-widest"
+              />
+            </div>
+
+            {error && (
+              <p
+                role="alert"
+                className="rounded-lg bg-destructive/10 px-3 py-2 text-center text-xs text-destructive"
+              >
+                {error}
+              </p>
+            )}
+
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full"
+              disabled={sanitized.length !== 3 || pending}
+            >
+              {pending ? "Verificando…" : "Continuar al chat"}
+            </Button>
+          </form>
+
+          <p className="text-center text-[11px] text-muted-foreground">
+            Intentos restantes: {remainingAttempts}. Este canal es operado por
+            un asistente virtual automatizado de pacta.ia.
+          </p>
+        </div>
+      </div>
+    </>
   )
 }
