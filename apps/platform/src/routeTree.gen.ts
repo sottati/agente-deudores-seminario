@@ -13,17 +13,19 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
+import { Route as SandboxRouteImport } from './routes/sandbox'
 import { Route as AuthedConfiguracionRouteImport } from './routes/_authed/configuracion'
 import { Route as AuthedDashboardRouteImport } from './routes/_authed/dashboard'
 import { Route as AuthedReglasRouteImport } from './routes/_authed/reglas'
+import { Route as ApiSandboxRouteImport } from './routes/api/sandbox'
 import { Route as NTokenRouteImport } from './routes/n/$token'
 import { Route as AuthedAcuerdosAgreementIdRouteImport } from './routes/_authed/acuerdos/$agreementId'
 import { Route as AuthedConversacionesIndexRouteImport } from './routes/_authed/conversaciones/index'
 import { Route as AuthedConversacionesNegotiationIdRouteImport } from './routes/_authed/conversaciones/$negotiationId'
 import { Route as AuthedDeudoresIndexRouteImport } from './routes/_authed/deudores/index'
 import { Route as AuthedDeudoresDebtorIdRouteImport } from './routes/_authed/deudores/$debtorId'
-import { Route as ApiNTokenChatRouteImport } from './routes/api/n/$token/chat'
 import { Route as ApiNTokenAcceptRouteImport } from './routes/api/n/$token/accept'
+import { Route as ApiNTokenChatRouteImport } from './routes/api/n/$token/chat'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -44,6 +46,11 @@ const PrivacidadRoute = PrivacidadRouteImport.update({
   path: '/privacidad',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SandboxRoute = SandboxRouteImport.update({
+  id: '/sandbox',
+  path: '/sandbox',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthedConfiguracionRoute = AuthedConfiguracionRouteImport.update({
   id: '/configuracion',
   path: '/configuracion',
@@ -58,6 +65,11 @@ const AuthedReglasRoute = AuthedReglasRouteImport.update({
   id: '/reglas',
   path: '/reglas',
   getParentRoute: () => AuthedRoute,
+} as any)
+const ApiSandboxRoute = ApiSandboxRouteImport.update({
+  id: '/api/sandbox',
+  path: '/api/sandbox',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const NTokenRoute = NTokenRouteImport.update({
   id: '/n/$token',
@@ -92,14 +104,14 @@ const AuthedDeudoresDebtorIdRoute = AuthedDeudoresDebtorIdRouteImport.update({
   path: '/deudores/$debtorId',
   getParentRoute: () => AuthedRoute,
 } as any)
-const ApiNTokenChatRoute = ApiNTokenChatRouteImport.update({
-  id: '/api/n/$token/chat',
-  path: '/api/n/$token/chat',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiNTokenAcceptRoute = ApiNTokenAcceptRouteImport.update({
   id: '/api/n/$token/accept',
   path: '/api/n/$token/accept',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiNTokenChatRoute = ApiNTokenChatRouteImport.update({
+  id: '/api/n/$token/chat',
+  path: '/api/n/$token/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -107,33 +119,37 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/privacidad': typeof PrivacidadRoute
+  '/sandbox': typeof SandboxRoute
   '/configuracion': typeof AuthedConfiguracionRoute
   '/dashboard': typeof AuthedDashboardRoute
   '/reglas': typeof AuthedReglasRoute
+  '/api/sandbox': typeof ApiSandboxRoute
   '/n/$token': typeof NTokenRoute
   '/acuerdos/$agreementId': typeof AuthedAcuerdosAgreementIdRoute
   '/conversaciones/$negotiationId': typeof AuthedConversacionesNegotiationIdRoute
   '/deudores/$debtorId': typeof AuthedDeudoresDebtorIdRoute
   '/conversaciones/': typeof AuthedConversacionesIndexRoute
   '/deudores/': typeof AuthedDeudoresIndexRoute
-  '/api/n/$token/chat': typeof ApiNTokenChatRoute
   '/api/n/$token/accept': typeof ApiNTokenAcceptRoute
+  '/api/n/$token/chat': typeof ApiNTokenChatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/privacidad': typeof PrivacidadRoute
+  '/sandbox': typeof SandboxRoute
   '/configuracion': typeof AuthedConfiguracionRoute
   '/dashboard': typeof AuthedDashboardRoute
   '/reglas': typeof AuthedReglasRoute
+  '/api/sandbox': typeof ApiSandboxRoute
   '/n/$token': typeof NTokenRoute
   '/acuerdos/$agreementId': typeof AuthedAcuerdosAgreementIdRoute
   '/conversaciones/$negotiationId': typeof AuthedConversacionesNegotiationIdRoute
   '/deudores/$debtorId': typeof AuthedDeudoresDebtorIdRoute
   '/conversaciones': typeof AuthedConversacionesIndexRoute
   '/deudores': typeof AuthedDeudoresIndexRoute
-  '/api/n/$token/chat': typeof ApiNTokenChatRoute
   '/api/n/$token/accept': typeof ApiNTokenAcceptRoute
+  '/api/n/$token/chat': typeof ApiNTokenChatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -141,17 +157,19 @@ export interface FileRoutesById {
   '/_authed': typeof AuthedRouteWithChildren
   '/login': typeof LoginRoute
   '/privacidad': typeof PrivacidadRoute
+  '/sandbox': typeof SandboxRoute
   '/_authed/configuracion': typeof AuthedConfiguracionRoute
   '/_authed/dashboard': typeof AuthedDashboardRoute
   '/_authed/reglas': typeof AuthedReglasRoute
+  '/api/sandbox': typeof ApiSandboxRoute
   '/n/$token': typeof NTokenRoute
   '/_authed/acuerdos/$agreementId': typeof AuthedAcuerdosAgreementIdRoute
   '/_authed/conversaciones/$negotiationId': typeof AuthedConversacionesNegotiationIdRoute
   '/_authed/deudores/$debtorId': typeof AuthedDeudoresDebtorIdRoute
   '/_authed/conversaciones/': typeof AuthedConversacionesIndexRoute
   '/_authed/deudores/': typeof AuthedDeudoresIndexRoute
-  '/api/n/$token/chat': typeof ApiNTokenChatRoute
   '/api/n/$token/accept': typeof ApiNTokenAcceptRoute
+  '/api/n/$token/chat': typeof ApiNTokenChatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -159,50 +177,56 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/privacidad'
+    | '/sandbox'
     | '/configuracion'
     | '/dashboard'
     | '/reglas'
+    | '/api/sandbox'
     | '/n/$token'
     | '/acuerdos/$agreementId'
     | '/conversaciones/$negotiationId'
     | '/deudores/$debtorId'
     | '/conversaciones/'
     | '/deudores/'
-    | '/api/n/$token/chat'
     | '/api/n/$token/accept'
+    | '/api/n/$token/chat'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/privacidad'
+    | '/sandbox'
     | '/configuracion'
     | '/dashboard'
     | '/reglas'
+    | '/api/sandbox'
     | '/n/$token'
     | '/acuerdos/$agreementId'
     | '/conversaciones/$negotiationId'
     | '/deudores/$debtorId'
     | '/conversaciones'
     | '/deudores'
-    | '/api/n/$token/chat'
     | '/api/n/$token/accept'
+    | '/api/n/$token/chat'
   id:
     | '__root__'
     | '/'
     | '/_authed'
     | '/login'
     | '/privacidad'
+    | '/sandbox'
     | '/_authed/configuracion'
     | '/_authed/dashboard'
     | '/_authed/reglas'
+    | '/api/sandbox'
     | '/n/$token'
     | '/_authed/acuerdos/$agreementId'
     | '/_authed/conversaciones/$negotiationId'
     | '/_authed/deudores/$debtorId'
     | '/_authed/conversaciones/'
     | '/_authed/deudores/'
-    | '/api/n/$token/chat'
     | '/api/n/$token/accept'
+    | '/api/n/$token/chat'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -210,9 +234,11 @@ export interface RootRouteChildren {
   AuthedRoute: typeof AuthedRouteWithChildren
   LoginRoute: typeof LoginRoute
   PrivacidadRoute: typeof PrivacidadRoute
+  SandboxRoute: typeof SandboxRoute
+  ApiSandboxRoute: typeof ApiSandboxRoute
   NTokenRoute: typeof NTokenRoute
-  ApiNTokenChatRoute: typeof ApiNTokenChatRoute
   ApiNTokenAcceptRoute: typeof ApiNTokenAcceptRoute
+  ApiNTokenChatRoute: typeof ApiNTokenChatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -245,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacidadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sandbox': {
+      id: '/sandbox'
+      path: '/sandbox'
+      fullPath: '/sandbox'
+      preLoaderRoute: typeof SandboxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authed/configuracion': {
       id: '/_authed/configuracion'
       path: '/configuracion'
@@ -265,6 +298,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/reglas'
       preLoaderRoute: typeof AuthedReglasRouteImport
       parentRoute: typeof AuthedRoute
+    }
+    '/api/sandbox': {
+      id: '/api/sandbox'
+      path: '/api/sandbox'
+      fullPath: '/api/sandbox'
+      preLoaderRoute: typeof ApiSandboxRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/n/$token': {
       id: '/n/$token'
@@ -308,18 +348,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDeudoresDebtorIdRouteImport
       parentRoute: typeof AuthedRoute
     }
-    '/api/n/$token/chat': {
-      id: '/api/n/$token/chat'
-      path: '/api/n/$token/chat'
-      fullPath: '/api/n/$token/chat'
-      preLoaderRoute: typeof ApiNTokenChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/n/$token/accept': {
       id: '/api/n/$token/accept'
       path: '/api/n/$token/accept'
       fullPath: '/api/n/$token/accept'
       preLoaderRoute: typeof ApiNTokenAcceptRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/n/$token/chat': {
+      id: '/api/n/$token/chat'
+      path: '/api/n/$token/chat'
+      fullPath: '/api/n/$token/chat'
+      preLoaderRoute: typeof ApiNTokenChatRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -356,9 +396,11 @@ const rootRouteChildren: RootRouteChildren = {
   AuthedRoute: AuthedRouteWithChildren,
   LoginRoute: LoginRoute,
   PrivacidadRoute: PrivacidadRoute,
+  SandboxRoute: SandboxRoute,
+  ApiSandboxRoute: ApiSandboxRoute,
   NTokenRoute: NTokenRoute,
-  ApiNTokenChatRoute: ApiNTokenChatRoute,
   ApiNTokenAcceptRoute: ApiNTokenAcceptRoute,
+  ApiNTokenChatRoute: ApiNTokenChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
