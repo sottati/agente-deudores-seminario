@@ -61,7 +61,11 @@ function PreviewSidebar() {
                   : "text-muted-foreground"
               )}
             >
-              <HugeiconsIcon icon={item.icon} className="size-4" strokeWidth={2} />
+              <HugeiconsIcon
+                icon={item.icon}
+                className="size-4"
+                strokeWidth={2}
+              />
               <span className="truncate">{item.title}</span>
             </div>
           ))}
@@ -74,7 +78,11 @@ function PreviewSidebar() {
             key={item.title}
             className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-muted-foreground"
           >
-            <HugeiconsIcon icon={item.icon} className="size-4" strokeWidth={2} />
+            <HugeiconsIcon
+              icon={item.icon}
+              className="size-4"
+              strokeWidth={2}
+            />
             <span className="truncate">{item.title}</span>
           </div>
         ))}

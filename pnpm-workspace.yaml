@@ -7,3 +7,4 @@ allowBuilds:
   lightningcss: true
   unrs-resolver: true
   msw: false
+  supabase: true

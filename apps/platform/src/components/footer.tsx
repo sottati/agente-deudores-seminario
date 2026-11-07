@@ -18,7 +18,7 @@ export function Footer() {
   return (
     <footer
       className={cn(
-        "relative z-10 w-full min-h-48 border-t",
+        "relative z-10 min-h-48 w-full border-t",
         isDark
           ? "border-white/10 bg-black text-white"
           : "border-border bg-muted text-foreground"

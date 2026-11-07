@@ -10,17 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthedConfiguracionRouteImport } from './routes/_authed/configuracion'
+import { Route as AuthedDashboardRouteImport } from './routes/_authed/dashboard'
+import { Route as AuthedReglasRouteImport } from './routes/_authed/reglas'
+import { Route as AuthedAcuerdosAgreementIdRouteImport } from './routes/_authed/acuerdos/$agreementId'
+import { Route as AuthedConversacionesIndexRouteImport } from './routes/_authed/conversaciones/index'
+import { Route as AuthedConversacionesNegotiationIdRouteImport } from './routes/_authed/conversaciones/$negotiationId'
+import { Route as AuthedDeudoresIndexRouteImport } from './routes/_authed/deudores/index'
+import { Route as AuthedDeudoresDebtorIdRouteImport } from './routes/_authed/deudores/$debtorId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const AuthedRoute = AuthedRouteImport.update({
+  id: '/_authed',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -28,34 +35,131 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthedConfiguracionRoute = AuthedConfiguracionRouteImport.update({
+  id: '/configuracion',
+  path: '/configuracion',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedDashboardRoute = AuthedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedReglasRoute = AuthedReglasRouteImport.update({
+  id: '/reglas',
+  path: '/reglas',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedAcuerdosAgreementIdRoute =
+  AuthedAcuerdosAgreementIdRouteImport.update({
+    id: '/acuerdos/$agreementId',
+    path: '/acuerdos/$agreementId',
+    getParentRoute: () => AuthedRoute,
+  } as any)
+const AuthedConversacionesIndexRoute =
+  AuthedConversacionesIndexRouteImport.update({
+    id: '/conversaciones/',
+    path: '/conversaciones/',
+    getParentRoute: () => AuthedRoute,
+  } as any)
+const AuthedConversacionesNegotiationIdRoute =
+  AuthedConversacionesNegotiationIdRouteImport.update({
+    id: '/conversaciones/$negotiationId',
+    path: '/conversaciones/$negotiationId',
+    getParentRoute: () => AuthedRoute,
+  } as any)
+const AuthedDeudoresIndexRoute = AuthedDeudoresIndexRouteImport.update({
+  id: '/deudores/',
+  path: '/deudores/',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedDeudoresDebtorIdRoute = AuthedDeudoresDebtorIdRouteImport.update({
+  id: '/deudores/$debtorId',
+  path: '/deudores/$debtorId',
+  getParentRoute: () => AuthedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/configuracion': typeof AuthedConfiguracionRoute
+  '/dashboard': typeof AuthedDashboardRoute
+  '/reglas': typeof AuthedReglasRoute
+  '/acuerdos/$agreementId': typeof AuthedAcuerdosAgreementIdRoute
+  '/conversaciones/$negotiationId': typeof AuthedConversacionesNegotiationIdRoute
+  '/deudores/$debtorId': typeof AuthedDeudoresDebtorIdRoute
+  '/conversaciones/': typeof AuthedConversacionesIndexRoute
+  '/deudores/': typeof AuthedDeudoresIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/configuracion': typeof AuthedConfiguracionRoute
+  '/dashboard': typeof AuthedDashboardRoute
+  '/reglas': typeof AuthedReglasRoute
+  '/acuerdos/$agreementId': typeof AuthedAcuerdosAgreementIdRoute
+  '/conversaciones/$negotiationId': typeof AuthedConversacionesNegotiationIdRoute
+  '/deudores/$debtorId': typeof AuthedDeudoresDebtorIdRoute
+  '/conversaciones': typeof AuthedConversacionesIndexRoute
+  '/deudores': typeof AuthedDeudoresIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/_authed': typeof AuthedRouteWithChildren
   '/login': typeof LoginRoute
+  '/_authed/configuracion': typeof AuthedConfiguracionRoute
+  '/_authed/dashboard': typeof AuthedDashboardRoute
+  '/_authed/reglas': typeof AuthedReglasRoute
+  '/_authed/acuerdos/$agreementId': typeof AuthedAcuerdosAgreementIdRoute
+  '/_authed/conversaciones/$negotiationId': typeof AuthedConversacionesNegotiationIdRoute
+  '/_authed/deudores/$debtorId': typeof AuthedDeudoresDebtorIdRoute
+  '/_authed/conversaciones/': typeof AuthedConversacionesIndexRoute
+  '/_authed/deudores/': typeof AuthedDeudoresIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/configuracion'
+    | '/dashboard'
+    | '/reglas'
+    | '/acuerdos/$agreementId'
+    | '/conversaciones/$negotiationId'
+    | '/deudores/$debtorId'
+    | '/conversaciones/'
+    | '/deudores/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login'
-  id: '__root__' | '/' | '/dashboard' | '/login'
+  to:
+    | '/'
+    | '/login'
+    | '/configuracion'
+    | '/dashboard'
+    | '/reglas'
+    | '/acuerdos/$agreementId'
+    | '/conversaciones/$negotiationId'
+    | '/deudores/$debtorId'
+    | '/conversaciones'
+    | '/deudores'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authed'
+    | '/login'
+    | '/_authed/configuracion'
+    | '/_authed/dashboard'
+    | '/_authed/reglas'
+    | '/_authed/acuerdos/$agreementId'
+    | '/_authed/conversaciones/$negotiationId'
+    | '/_authed/deudores/$debtorId'
+    | '/_authed/conversaciones/'
+    | '/_authed/deudores/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
+  AuthedRoute: typeof AuthedRouteWithChildren
   LoginRoute: typeof LoginRoute
 }
 
@@ -68,11 +172,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
+    '/_authed': {
+      id: '/_authed'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -82,12 +186,94 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authed/configuracion': {
+      id: '/_authed/configuracion'
+      path: '/configuracion'
+      fullPath: '/configuracion'
+      preLoaderRoute: typeof AuthedConfiguracionRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/dashboard': {
+      id: '/_authed/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthedDashboardRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/reglas': {
+      id: '/_authed/reglas'
+      path: '/reglas'
+      fullPath: '/reglas'
+      preLoaderRoute: typeof AuthedReglasRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/acuerdos/$agreementId': {
+      id: '/_authed/acuerdos/$agreementId'
+      path: '/acuerdos/$agreementId'
+      fullPath: '/acuerdos/$agreementId'
+      preLoaderRoute: typeof AuthedAcuerdosAgreementIdRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/conversaciones/': {
+      id: '/_authed/conversaciones/'
+      path: '/conversaciones'
+      fullPath: '/conversaciones/'
+      preLoaderRoute: typeof AuthedConversacionesIndexRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/conversaciones/$negotiationId': {
+      id: '/_authed/conversaciones/$negotiationId'
+      path: '/conversaciones/$negotiationId'
+      fullPath: '/conversaciones/$negotiationId'
+      preLoaderRoute: typeof AuthedConversacionesNegotiationIdRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/deudores/': {
+      id: '/_authed/deudores/'
+      path: '/deudores'
+      fullPath: '/deudores/'
+      preLoaderRoute: typeof AuthedDeudoresIndexRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/deudores/$debtorId': {
+      id: '/_authed/deudores/$debtorId'
+      path: '/deudores/$debtorId'
+      fullPath: '/deudores/$debtorId'
+      preLoaderRoute: typeof AuthedDeudoresDebtorIdRouteImport
+      parentRoute: typeof AuthedRoute
+    }
   }
 }
 
+interface AuthedRouteChildren {
+  AuthedConfiguracionRoute: typeof AuthedConfiguracionRoute
+  AuthedDashboardRoute: typeof AuthedDashboardRoute
+  AuthedReglasRoute: typeof AuthedReglasRoute
+  AuthedAcuerdosAgreementIdRoute: typeof AuthedAcuerdosAgreementIdRoute
+  AuthedConversacionesNegotiationIdRoute: typeof AuthedConversacionesNegotiationIdRoute
+  AuthedDeudoresDebtorIdRoute: typeof AuthedDeudoresDebtorIdRoute
+  AuthedConversacionesIndexRoute: typeof AuthedConversacionesIndexRoute
+  AuthedDeudoresIndexRoute: typeof AuthedDeudoresIndexRoute
+}
+
+const AuthedRouteChildren: AuthedRouteChildren = {
+  AuthedConfiguracionRoute: AuthedConfiguracionRoute,
+  AuthedDashboardRoute: AuthedDashboardRoute,
+  AuthedReglasRoute: AuthedReglasRoute,
+  AuthedAcuerdosAgreementIdRoute: AuthedAcuerdosAgreementIdRoute,
+  AuthedConversacionesNegotiationIdRoute:
+    AuthedConversacionesNegotiationIdRoute,
+  AuthedDeudoresDebtorIdRoute: AuthedDeudoresDebtorIdRoute,
+  AuthedConversacionesIndexRoute: AuthedConversacionesIndexRoute,
+  AuthedDeudoresIndexRoute: AuthedDeudoresIndexRoute,
+}
+
+const AuthedRouteWithChildren =
+  AuthedRoute._addFileChildren(AuthedRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
+  AuthedRoute: AuthedRouteWithChildren,
   LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport

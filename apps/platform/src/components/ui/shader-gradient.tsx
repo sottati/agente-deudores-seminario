@@ -218,7 +218,7 @@ void main() {
 `
 
 function isDev() {
-  return typeof process !== "undefined" && process.env?.NODE_ENV !== "production"
+  return typeof process !== "undefined" && process.env.NODE_ENV !== "production"
 }
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -297,7 +297,7 @@ export function createShaderGradient(
   const mouse = { x: 0.5, y: 0.5 }
   const targetMouse = { x: 0.5, y: 0.5 }
   let reduce = false
-  let dark = resolveDark(options.theme ?? "auto")
+  let dark = resolveDark(options.theme)
   options.onThemeChange?.(dark)
 
   const gl = canvas.getContext("webgl", {
@@ -318,11 +318,6 @@ export function createShaderGradient(
   }
 
   const program = gl.createProgram()
-  if (!program) {
-    gl.deleteShader(vs)
-    gl.deleteShader(fs)
-    return null
-  }
   gl.attachShader(program, vs)
   gl.attachShader(program, fs)
   gl.linkProgram(program)
@@ -394,7 +389,7 @@ export function createShaderGradient(
   mqReduce.addEventListener("change", onReduce)
 
   const syncTheme = () => {
-    const next = resolveDark(options.theme ?? "auto")
+    const next = resolveDark(options.theme)
     if (next === dark) return
     dark = next
     options.onThemeChange?.(dark)
@@ -430,7 +425,7 @@ export function createShaderGradient(
     const time = reduce ? frozenTime : (now - start) / 1000
     const paletteSrc = options.colors ?? (dark ? DARK_COLORS : LIGHT_COLORS)
     const palette = [0, 1, 2, 3].map((i) =>
-      hexToRgb(paletteSrc[i % paletteSrc.length] ?? LIGHT_COLORS[i]!)
+      hexToRgb(paletteSrc[i % paletteSrc.length] ?? LIGHT_COLORS[i])
     )
 
     mouse.x += (targetMouse.x - mouse.x) * 0.03
@@ -438,14 +433,14 @@ export function createShaderGradient(
 
     gl.uniform2f(uResolution, canvas.width, canvas.height)
     gl.uniform1f(uTime, time)
-    gl.uniform1f(uSpeed, reduce ? 0 : (options.speed ?? 0.14))
-    gl.uniform1f(uBlur, Math.min(1, Math.max(0, options.blur ?? 0.7)))
-    gl.uniform1f(uIntensity, Math.min(1, Math.max(0, options.intensity ?? 0.95)))
+    gl.uniform1f(uSpeed, reduce ? 0 : options.speed)
+    gl.uniform1f(uBlur, Math.min(1, Math.max(0, options.blur)))
+    gl.uniform1f(uIntensity, Math.min(1, Math.max(0, options.intensity)))
     gl.uniform1f(uDark, dark ? 1 : 0)
-    gl.uniform3f(uC1, palette[0]![0], palette[0]![1], palette[0]![2])
-    gl.uniform3f(uC2, palette[1]![0], palette[1]![1], palette[1]![2])
-    gl.uniform3f(uC3, palette[2]![0], palette[2]![1], palette[2]![2])
-    gl.uniform3f(uC4, palette[3]![0], palette[3]![1], palette[3]![2])
+    gl.uniform3f(uC1, palette[0][0], palette[0][1], palette[0][2])
+    gl.uniform3f(uC2, palette[1][0], palette[1][1], palette[1][2])
+    gl.uniform3f(uC3, palette[2][0], palette[2][1], palette[2][2])
+    gl.uniform3f(uC4, palette[3][0], palette[3][1], palette[3][2])
     gl.uniform2f(
       uMouse,
       options.interactive ? mouse.x : 0.5,
@@ -536,7 +531,6 @@ export function ShaderGradient({
       instanceRef.current = null
     }
     // Engine reads live options via setOptions; mount once.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

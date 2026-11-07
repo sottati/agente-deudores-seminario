@@ -101,7 +101,9 @@ export function DashboardOverview({
             >
               {metric.value}
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">{metric.detail}</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {metric.detail}
+            </p>
           </CardContent>
         </Card>
       ))}

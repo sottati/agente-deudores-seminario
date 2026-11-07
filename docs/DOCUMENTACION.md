@@ -6,46 +6,53 @@
 ---
 
 ### Estado Actual de la Implementación
-* **Estructura base:** Se ha configurado el repositorio bajo un esquema *monorepo* (usando `pnpm`).
-* **Frontend (MVP Mock):** Iniciado en `apps/platform` con React 19, Vite, TanStack Start (SSR) y shadcn/ui (Tailwind v4). Incluye Landing Page y la identidad visual (logo, colores y tema dark/light dinámico).
-* **Inteligencia Artificial:** *Pendiente.* (La capa del agente se alojará en `apps/agent`).
-* **Gestión Documental:** Relevamiento inicial completado. Documentos como el Marco Legal, Stakeholders, Uso de IA, Entrevistas e Identidad Visual ya están definidos y consolidados en el directorio `/docs`.
+
+- **Estructura base:** Se ha configurado el repositorio bajo un esquema _monorepo_ (usando `pnpm`) con CI (format check, lint, typecheck, tests y build).
+- **Frontend y Panel del Administrador:** Implementado en `apps/platform` con React 19, Vite, TanStack Start (SSR) y shadcn/ui (Tailwind v4). Incluye Landing Page, identidad visual, autenticación real con Supabase, protección de rutas (`_authed`) y pantallas de Deudores, Reglas del agente, Conversaciones, Acuerdos imprimibles y Configuración.
+- **Backend, Base de Datos y Motor de Reglas:** _En implementación_ según [PLAN_BACKEND.md](./PLAN_BACKEND.md). Esquema PostgreSQL con RLS multi-tenant, seed de desarrollo y tests pgTAP completados (`supabase/`). Motor determinístico de reglas implementado y testeado en `packages/negotiation-engine`. Capa del agente conversacional en `packages/agent` en curso. Decisiones de arquitectura registradas en [§5.4](#54-decisiones-de-arquitectura-del-backend).
+- **Gestión Documental:** Relevamiento inicial completado. Documentos como el Marco Legal, Stakeholders, Uso de IA, Entrevistas e Identidad Visual ya están definidos y consolidados en el directorio `/docs`.
 
 ---
 
 ## 1. Definición y Justificación del Problema
 
 ### 1.1 Contexto y Diagnóstico
-Actualmente existe un dolor operativo significativo en las administraciones de consorcios, colegios e instituciones intermedias debido a la **alta morosidad**. La gestión de cobranzas es un proceso **incómodo** y que **consume mucho tiempo**. 
+
+Actualmente existe un dolor operativo significativo en las administraciones de consorcios, colegios e instituciones intermedias debido a la **alta morosidad**. La gestión de cobranzas es un proceso **incómodo** y que **consume mucho tiempo**.
 
 Los métodos tradicionales (correos electrónicos genéricos o llamadas telefónicas directas) suelen generar **fricción** o son directamente **ignorados** por los deudores. Al no contar con capacidad humana suficiente para negociar planes de pago personalizados caso por caso, las intimaciones masivas presentan una **baja tasa de respuesta** y las llamadas generan desgaste y evasión. Actualmente, el seguimiento de la mora se realiza de forma **100% manual**, ciclo a ciclo.
 
 ### 1.2 Declaración del Problema
+
 > Los administradores de consorcios profesionales e independientes (carteras de 5 o más edificios en CABA y GBA) y los tesoreros de colegios privados medianos (más de 300 alumnos) enfrentan la dificultad de gestionar deudas vencidas de forma manual y mediante canales genéricos. Este contacto uno a uno mensual genera una baja tasa de respuesta, desgaste en la relación interpersonal, dilatación en el recupero de la mora, y afecta negativamente la liquidez y la capacidad operativa de las instituciones.
 
 ### 1.3 Árbol de Problemas
-*   **Causas Principales:**
-    *   Volumen de deudores superior a la capacidad de atención humana personalizada.
-    *   Uso de canales de contacto estáticos y genéricos (mail masivo o llamadas invasivas).
-    *   Seguimiento desorganizado mediante herramientas no especializadas (Excel, sistemas legacy, WhatsApp personal).
-*   **Problema Central:** Recupero de deuda vencida lento, costoso a nivel de tiempo y desgastante para quien ejecuta la cobranza.
-*   **Efectos:**
-    *   Baja tasa de respuesta e ignorancia de intimaciones.
-    *   Evasión del deudor y fricción interpersonal en comunidades cerradas (vecinos, familias de alumnos).
-    *   Impacto negativo en la liquidez y capacidad operativa de la institución.
+
+- **Causas Principales:**
+  - Volumen de deudores superior a la capacidad de atención humana personalizada.
+  - Uso de canales de contacto estáticos y genéricos (mail masivo o llamadas invasivas).
+  - Seguimiento desorganizado mediante herramientas no especializadas (Excel, sistemas legacy, WhatsApp personal).
+- **Problema Central:** Recupero de deuda vencida lento, costoso a nivel de tiempo y desgastante para quien ejecuta la cobranza.
+- **Efectos:**
+  - Baja tasa de respuesta e ignorancia de intimaciones.
+  - Evasión del deudor y fricción interpersonal en comunidades cerradas (vecinos, familias de alumnos).
+  - Impacto negativo en la liquidez y capacidad operativa de la institución.
 
 ---
 
 ## 2. Segmentación y Mercado Objetivo
 
 ### 2.1 Perfilado del Cliente
+
 El enfoque de segmentación se basa en comprender la problemática real y el estrés operativo de gestionar los cobros.
-*   **Geográfica:** Zonas urbanas de alta densidad en Argentina, con foco inicial en CABA y GBA.
-*   **Demográfica:** Profesionales de 30–60 años. Ocupación principal: administradores de consorcios matriculados y personal de tesorería/dirección en colegios privados e instituciones intermedias.
-*   **Psicográfica:** Profesionales que sufren de **estrés laboral** por la alta carga operativa y la presión del **flujo de caja**. Buscan profesionalizar la gestión manteniendo una **imagen empática** para evitar conflictos directos con vecinos o clientes.
-*   **Comportamiento:** Uso intensivo de planillas (Excel) o sistemas contables tradicionales. Dependencia de WhatsApp y teléfono como canales principales de seguimiento, de manera desestructurada.
+
+- **Geográfica:** Zonas urbanas de alta densidad en Argentina, con foco inicial en CABA y GBA.
+- **Demográfica:** Profesionales de 30–60 años. Ocupación principal: administradores de consorcios matriculados y personal de tesorería/dirección en colegios privados e instituciones intermedias.
+- **Psicográfica:** Profesionales que sufren de **estrés laboral** por la alta carga operativa y la presión del **flujo de caja**. Buscan profesionalizar la gestión manteniendo una **imagen empática** para evitar conflictos directos con vecinos o clientes.
+- **Comportamiento:** Uso intensivo de planillas (Excel) o sistemas contables tradicionales. Dependencia de WhatsApp y teléfono como canales principales de seguimiento, de manera desestructurada.
 
 ### 2.2 Mercado Objetivo Primario (Target)
+
 1.  **Administradores de consorcios** que gestionan carteras medias/grandes (5 o más edificios simultáneamente).
 2.  **Tesoreros de colegios privados** de tamaño mediano (más de 300 alumnos).
 
@@ -56,90 +63,120 @@ Ambos perfiles absorben personalmente la carga horaria y emocional de contactar 
 ## 3. Enfoque del Producto (MVP) y Casos de Uso
 
 ### 3.1 Definición del MVP
+
 El Producto Mínimo Viable (MVP) consiste en un **prototipo web que simula un entorno de mensajería**. Su objetivo es validar la eficacia de una negociación automatizada bajo reglas predefinidas.
-*   **Actor Administrador:** Carga una deuda y configura las **reglas de negociación permitidas** (ej. máximo de cuotas, quita de intereses).
-*   **Actor Deudor:** Interactúa en lenguaje natural para negociar su deuda.
-*   **Sistema:** Procesa las solicitudes del deudor y ofrece un **acuerdo formal** estrictamente dentro de las políticas configuradas por la administración.
+
+- **Actor Administrador:** Carga una deuda y configura las **reglas de negociación permitidas** (ej. máximo de cuotas, quita de intereses).
+- **Actor Deudor:** Interactúa en lenguaje natural para negociar su deuda.
+- **Sistema:** Procesa las solicitudes del deudor y ofrece un **acuerdo formal** estrictamente dentro de las políticas configuradas por la administración.
 
 ### 3.2 Propuesta de Valor
+
 El valor del sistema no radica únicamente en contar con un chatbot, sino en la integración armónica de la **deuda + las reglas de flexibilidad de la entidad + el diálogo**. Esto garantiza que el acuerdo sea trazable, automatizado y se mantenga dentro de los parámetros de la empresa, aliviando al personal del estrés de la negociación directa.
 
 ### 3.3 Alcance Excluido
+
 El producto **no es**:
-*   Un sistema de liquidación de expensas o cuotas mensuales regulares.
-*   Un portal de pago genérico.
-*   El enfoque está exclusivamente en la **negociación de deudas vencidas y la mora**, no en el alta de unidades funcionales ni la facturación recurrente.
+
+- Un sistema de liquidación de expensas o cuotas mensuales regulares.
+- Un portal de pago genérico.
+- El enfoque está exclusivamente en la **negociación de deudas vencidas y la mora**, no en el alta de unidades funcionales ni la facturación recurrente.
 
 ### 3.4 Casos de Uso Principales (Jobs to be Done)
-*   **Funcional:** Registrar deudas, aplicar reglas de flexibilidad y procesar deudores en paralelo para llegar a acuerdos escritos y trazables.
-*   **Emocional:** Disminuir el estrés de la carga operativa y la frustración de gestionar cobros manualmente sin obtener respuesta.
-*   **Social:** Preservar la relación interpersonal (evitar el rol del "vecino que persigue") manteniendo una imagen empática y profesional frente a la comunidad.
+
+- **Funcional:** Registrar deudas, aplicar reglas de flexibilidad y procesar deudores en paralelo para llegar a acuerdos escritos y trazables.
+- **Emocional:** Disminuir el estrés de la carga operativa y la frustración de gestionar cobros manualmente sin obtener respuesta.
+- **Social:** Preservar la relación interpersonal (evitar el rol del "vecino que persigue") manteniendo una imagen empática y profesional frente a la comunidad.
 
 ---
 
 ## 4. Investigación de Usuarios
 
 ### 4.1 Objetivo
-Resolver la siguiente premisa: *¿Cómo podríamos ayudar a un administrador de consorcios o tesorero, bajo presión de caja y con miedo al conflicto, a cerrar acuerdos de pago dentro de su política sin que cada mora se convierta en una confrontación manual?*
+
+Resolver la siguiente premisa: _¿Cómo podríamos ayudar a un administrador de consorcios o tesorero, bajo presión de caja y con miedo al conflicto, a cerrar acuerdos de pago dentro de su política sin que cada mora se convierta en una confrontación manual?_
 
 ### 4.2 Arquetipo de Usuario (Persona)
-*   **Perfil:** "El encargado de recuperar el mes".
-*   **Escenario:** Cierre de mes con saldos vencidos. Se ve obligado a usar el teléfono y WhatsApp personal para contactar deudores de manera desorganizada.
-*   **Motivaciones:** Recuperar la caja en positivo sin desgastar la relación con el deudor.
-*   **Frustraciones:** Evasión por parte del deudor, pérdida de tiempo, respuestas nulas a los correos, y el impacto emocional de la cobranza directa.
+
+- **Perfil:** "El encargado de recuperar el mes".
+- **Escenario:** Cierre de mes con saldos vencidos. Se ve obligado a usar el teléfono y WhatsApp personal para contactar deudores de manera desorganizada.
+- **Motivaciones:** Recuperar la caja en positivo sin desgastar la relación con el deudor.
+- **Frustraciones:** Evasión por parte del deudor, pérdida de tiempo, respuestas nulas a los correos, y el impacto emocional de la cobranza directa.
 
 ### 4.3 Mapa de Empatía (Resumen)
-*   **Piensa y siente:** Preocupación por cubrir costos fijos (proveedores, sueldos); considera que "cobrar es incómodo"; desea modernizar sus herramientas.
-*   **Esfuerzos:** Pierde tiempo en tareas repetitivas; las comunicaciones masivas no son efectivas.
-*   **Resultados esperados:** Acuerdos documentados, recupero de capital sin conflicto cara a cara y optimización del tiempo laboral.
+
+- **Piensa y siente:** Preocupación por cubrir costos fijos (proveedores, sueldos); considera que "cobrar es incómodo"; desea modernizar sus herramientas.
+- **Esfuerzos:** Pierde tiempo en tareas repetitivas; las comunicaciones masivas no son efectivas.
+- **Resultados esperados:** Acuerdos documentados, recupero de capital sin conflicto cara a cara y optimización del tiempo laboral.
 
 ---
 
 ## 5. Alcance y Arquitectura Tecnológica
 
 ### 5.1 Componentes del Sistema
-*   **Plataforma (SaaS):** Entorno multi-tenant donde el cliente inicia sesión, gestiona las carteras de deudores, configura el agente y visualiza métricas de recupero.
-*   **Agente Conversacional:** Motor de IA (Sandbox en etapa MVP) que gestiona el estado de la conversación y negocia mediante lenguaje natural.
+
+- **Plataforma (SaaS):** Entorno multi-tenant donde el cliente inicia sesión, gestiona las carteras de deudores, configura el agente y visualiza métricas de recupero.
+- **Agente Conversacional:** Motor de IA (Sandbox en etapa MVP) que gestiona el estado de la conversación y negocia mediante lenguaje natural.
 
 ### 5.2 Stack Tecnológico
-*   **Frontend / Plataforma:** React 19 + TanStack Start (Router + SSR) + Vite.
-*   **UI Components:** shadcn/ui, Base UI y Tailwind CSS v4 para el diseño de componentes, efectos (como `hero-shader-gradient`) y estilos estandarizados.
-*   **IA y Agente:** Vercel AI SDK implementando **GPT-5.6 Luna** *(Pendiente)*.
-*   **Backend / Auth:** Supabase (Auth + Base de datos relacional PostgreSQL) *(Pendiente)*.
 
-> **Decisión Técnica - Modelo de IA:** Se seleccionó **GPT-5.6 Luna** como modelo fundacional priorizando su robustez en el cumplimiento estricto de system prompts (guardrails) para evitar "alucinaciones" (como otorgar descuentos no permitidos por la administración), además de contar con excelentes capacidades de *Function Calling* y un balance ideal de costo/velocidad.
+- **Frontend / Plataforma:** React 19 + TanStack Start (Router + SSR) + Vite.
+- **UI Components:** shadcn/ui, Base UI y Tailwind CSS v4 para el diseño de componentes, efectos (como `hero-shader-gradient`) y estilos estandarizados.
+- **IA y Agente:** Vercel AI SDK implementando **GPT-5.6 Luna** _(En integración en `packages/agent`)_, respaldado por el motor determinístico `packages/negotiation-engine`.
+- **Backend / Auth:** Supabase (Auth + Base de datos relacional PostgreSQL con RLS multi-tenant).
+
+> **Decisión Técnica - Modelo de IA:** Se seleccionó **GPT-5.6 Luna** como modelo fundacional priorizando su robustez en el cumplimiento estricto de system prompts (guardrails) para evitar "alucinaciones" (como otorgar descuentos no permitidos por la administración), además de contar con excelentes capacidades de _Function Calling_ y un balance ideal de costo/velocidad.
 
 ### 5.3 Arquitectura de Monorepo
-El código se organiza para separar las responsabilidades lógicas entre la interfaz de usuario y el motor de IA, utilizando `pnpm` como gestor de paquetes de monorepo:
+
+El código se organiza para separar las responsabilidades lógicas entre la aplicación web (UI + servidor), el agente de IA y el motor de reglas, utilizando `pnpm` como gestor de paquetes de monorepo:
+
 ```text
 ├── apps/
-│   ├── platform/                 # Dashboard, configuración, landing (React, Vite)
-│   │   ├── src/
-│   │   ├── public/
-│   │   └── package.json
-│   └── agent/                    # Lógica del Agente e IA
+│   └── platform/                 # Landing, panel admin, chat del deudor y backend (server functions/routes de TanStack Start)
+│       ├── src/
+│       ├── public/
 │       └── package.json
+├── packages/
+│   ├── agent/                    # Agente conversacional: prompt, tools y orquestación (Vercel AI SDK)
+│   └── negotiation-engine/       # Motor de reglas determinístico (puro, sin IO)
+├── supabase/                     # Configuración, migraciones SQL y seed
+├── docs/                         # Documentación del proyecto
+├── tsconfig.base.json
 ├── pnpm-workspace.yaml
-├── package.json
-└── DOCUMENTACION.md
+└── package.json
 ```
+
+### 5.4 Decisiones de Arquitectura del Backend
+
+Detalle y alternativas evaluadas en [PLAN_BACKEND.md §1](./PLAN_BACKEND.md#1-decisiones-arquitectónicas).
+
+| #   | Decisión                                                                                                                                                                                      | Justificación                                                                                                                                                                           |
+| :-- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | El backend vive dentro de `apps/platform` (server functions y server routes de TanStack Start). El agente es una librería (`packages/agent`) en lugar de un servicio separado (`apps/agent`). | Un solo deploy, sesión compartida y tipos end‑to‑end para un equipo de 5. Al ser librería, en R2 se monta detrás de un webhook de WhatsApp sin reescribirse.                            |
+| D2  | Acceso a datos con supabase-js + `@supabase/ssr`, migraciones SQL con Supabase CLI y tipos generados.                                                                                         | El RLS se aplica con la sesión del usuario, cumpliendo el aislamiento de carteras exigido por el [Marco Legal](./MARCO_LEGAL.md).                                                       |
+| D3  | `organization_id` + Row Level Security desde el MVP, sin registro público (alta por seed o invitación) y un único rol de usuario.                                                             | Costo bajo ahora y migración cara después; requisito de la LPDP.                                                                                                                        |
+| D4  | El deudor accede por un link único tokenizado y debe verificar su identidad antes de ver montos; luego recibe una cookie firmada de corta duración.                                           | Evita exponer la deuda a terceros (Ley 6.171 CABA, Art. 26 LPDP). Es el mismo flujo que tendrá WhatsApp en R2.                                                                          |
+| D8  | El LLM se consume en la nube vía Vercel AI Gateway; el modelo se configura por variable de entorno.                                                                                           | Function calling confiable, deploy sin infraestructura de GPU y posibilidad de cambiar de modelo sin tocar código. La privacidad se mitiga minimizando datos personales en los prompts. |
 
 ---
 
 ## 6. Modelo de Negocios
 
 ### 6.1 Estructura de Ingresos
+
 Tras analizar distintas alternativas, el equipo se decantó por un **Modelo Mixto (Suscripción Base + Comisión por Éxito)**, dado que es el estándar más sólido para productos B2B de cobranzas y alinea los incentivos del proveedor con los del cliente.
 
 1.  **Suscripción Base Accesible (Ej. $15 USD/mes):**
-    *   **Qué cubre:** Mantenimiento de la infraestructura, acceso permanente al dashboard de métricas web, y los costos fijos de la línea de WhatsApp Business.
-    *   **Por qué:** Permite cubrir los costos operativos (servidores, tokens básicos del LLM GPT-5.6 Luna) y da previsibilidad financiera básica al proveedor.
+    - **Qué cubre:** Mantenimiento de la infraestructura, acceso permanente al dashboard de métricas web, y los costos fijos de la línea de WhatsApp Business.
+    - **Por qué:** Permite cubrir los costos operativos (servidores, tokens básicos del LLM GPT-5.6 Luna) y da previsibilidad financiera básica al proveedor.
 2.  **Comisión por Éxito (Ej. 1.5% - 3%):**
-    *   **Qué cubre:** Se cobra un porcentaje *solo* sobre el capital de mora efectivamente recuperado a través de la intervención del agente.
-    *   **Por qué:** Elimina la barrera de entrada y el riesgo principal para el cliente ("¿y si pago el software y el bot no cobra nada?"). Alinea el éxito del producto con el éxito financiero de la institución.
+    - **Qué cubre:** Se cobra un porcentaje _solo_ sobre el capital de mora efectivamente recuperado a través de la intervención del agente.
+    - **Por qué:** Elimina la barrera de entrada y el riesgo principal para el cliente ("¿y si pago el software y el bot no cobra nada?"). Alinea el éxito del producto con el éxito financiero de la institución.
 
 ### 6.2 Posicionamiento (Elevator Pitch)
-> "Actualmente, los administradores de comunidades y colegios sufren un gran desgaste cada cierre de mes al perseguir a los deudores uno por uno, enfrentándose a correos ignorados y llamadas incómodas que tensionan las relaciones y afectan la liquidez. 
+
+> "Actualmente, los administradores de comunidades y colegios sufren un gran desgaste cada cierre de mes al perseguir a los deudores uno por uno, enfrentándose a correos ignorados y llamadas incómodas que tensionan las relaciones y afectan la liquidez.
 > Hemos desarrollado un asistente autónomo de cobranzas B2B. El administrador simplemente carga la deuda y sus límites de negociación, y nuestro agente dialoga con el deudor en lenguaje natural para cerrar un acuerdo por escrito, siempre dentro de las políticas de la institución. El resultado es un mayor recupero de mora, de manera empática, trazable y sin confrontaciones manuales."
 
 ---
@@ -148,14 +185,15 @@ Tras analizar distintas alternativas, el equipo se decantó por un **Modelo Mixt
 
 ### 7.1 Grilla de Priorización
 
-| Prioridad | Esfuerzo | Impacto | Componentes Core |
-| :--- | :--- | :--- | :--- |
-| **Alta (MVP)** | Bajo/Medio | Alto | Chatbot web simulado, módulo de reglas de negociación, registro de deudas, emisión de acuerdo en texto. |
-| **Media (V2)** | Alto | Alto | Integración oficial con WhatsApp Business API, generación de links de pago dinámicos, carga masiva (CSV). |
-| **Baja (Futuro)**| Medio | Bajo | Dashboards avanzados predictivos, sincronización bidireccional vía API con sistemas contables ERP de terceros. |
-| **Excluido** | Alto | Negativo | Llamadas telefónicas robóticas (hostigamiento), desarrollo de un ERP completo de liquidación de expensas, score crediticio predictivo propio. |
+| Prioridad         | Esfuerzo   | Impacto  | Componentes Core                                                                                                                              |
+| :---------------- | :--------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Alta (MVP)**    | Bajo/Medio | Alto     | Chatbot web simulado, módulo de reglas de negociación, registro de deudas, emisión de acuerdo en texto.                                       |
+| **Media (V2)**    | Alto       | Alto     | Integración oficial con WhatsApp Business API, generación de links de pago dinámicos, carga masiva (CSV).                                     |
+| **Baja (Futuro)** | Medio      | Bajo     | Dashboards avanzados predictivos, sincronización bidireccional vía API con sistemas contables ERP de terceros.                                |
+| **Excluido**      | Alto       | Negativo | Llamadas telefónicas robóticas (hostigamiento), desarrollo de un ERP completo de liquidación de expensas, score crediticio predictivo propio. |
 
 ### 7.2 Plan de Lanzamientos (Releases)
+
 1.  **Release 1 (MVP - Sandbox):** Interfaz web simulada. Carga manual de parámetros. Diálogo de negociación asistida y emisión de acta de acuerdo de pago.
 2.  **Release 2 (Operación Real):** Integración con WhatsApp Cloud API para interacción real, arquitectura multi-tenant, importación masiva de deudores, y envíos de links de pago transaccionales.
 3.  **Release 3 (Ecosistema Integrado):** Omnicanalidad, conexión mediante API a software de gestión de expensas/colegios para conciliación automática de pagos.
@@ -165,19 +203,24 @@ Tras analizar distintas alternativas, el equipo se decantó por un **Modelo Mixt
 ## 8. Estrategia de Mercado y Posicionamiento
 
 ### 8.1 Diagnóstico Competitivo
-El mercado tradicional de recuperación de deuda se caracteriza por prácticas invasivas (estudios jurídicos, llamadas reiterativas, intimaciones). Este enfoque intimida al deudor, genera rechazo y daña la reputación de la entidad acreedora. 
+
+El mercado tradicional de recuperación de deuda se caracteriza por prácticas invasivas (estudios jurídicos, llamadas reiterativas, intimaciones). Este enfoque intimida al deudor, genera rechazo y daña la reputación de la entidad acreedora.
 
 ### 8.2 Diferenciación (Propuesta Estratégica)
+
 Nuestra solución busca abrir un nuevo segmento de mercado al redefinir la cobranza:
-*   **Elimina:** El hostigamiento, las llamadas invasivas y el involucramiento manual del administrador en discusiones.
-*   **Reduce:** El costo de gestión operativa y los tiempos de recuperación.
-*   **Incrementa:** La empatía, la flexibilidad paramétrica y el cuidado del vínculo institucional-vecinal.
-*   **Crea:** Un mediador digital asincrónico que ofrece a los deudores la posibilidad de autogestionar su regularización financiera sin fricción.
+
+- **Elimina:** El hostigamiento, las llamadas invasivas y el involucramiento manual del administrador en discusiones.
+- **Reduce:** El costo de gestión operativa y los tiempos de recuperación.
+- **Incrementa:** La empatía, la flexibilidad paramétrica y el cuidado del vínculo institucional-vecinal.
+- **Crea:** Un mediador digital asincrónico que ofrece a los deudores la posibilidad de autogestionar su regularización financiera sin fricción.
 
 ### 8.3 Barreras de Entrada
+
 El sistema posee ventajas sostenibles a mediano plazo:
-*   **Alineación Tecnológica y Cultural:** El producto combina automatización por IA con un tono conversacional altamente calibrado.
-*   **Renovación Constante:** El roadmap incluye automatizaciones más complejas (integración bancaria y contable) que elevarán los costos de cambio para el cliente, asegurando retención a largo plazo.
+
+- **Alineación Tecnológica y Cultural:** El producto combina automatización por IA con un tono conversacional altamente calibrado.
+- **Renovación Constante:** El roadmap incluye automatizaciones más complejas (integración bancaria y contable) que elevarán los costos de cambio para el cliente, asegurando retención a largo plazo.
 
 ---
 
@@ -186,6 +229,6 @@ El sistema posee ventajas sostenibles a mediano plazo:
 1.  **Validación de Datos:** Relevar métricas del sector inmobiliario/educativo para respaldar la magnitud del problema de la morosidad.
 2.  **Investigación de Usuarios:** Difundir y analizar la encuesta cuantitativa para validar perfiles y consolidar los mapas de empatía reales.
 3.  **Definiciones de Arquitectura:** Cerrar la selección del router web y la arquitectura exacta de Supabase para el Release 2.
-4.  **Guardrails de IA:** Implementar políticas de seguridad y *prompts* restrictivos para garantizar que el modelo no ofrezca descuentos o planes no autorizados.
+4.  **Guardrails de IA:** Implementar políticas de seguridad y _prompts_ restrictivos para garantizar que el modelo no ofrezca descuentos o planes no autorizados.
 5.  **Definición Comercial:** Estructurar el modelo financiero de los planes y unidades de créditos (costos de inferencia vs. rentabilidad por comisión).
 6.  **Gestión de Claves:** Implementar rotación y administración segura de variables de entorno para las APIs utilizadas en el proyecto.
