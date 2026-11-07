@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as AuthedConfiguracionRouteImport } from './routes/_authed/configuracion'
 import { Route as AuthedDashboardRouteImport } from './routes/_authed/dashboard'
 import { Route as AuthedReglasRouteImport } from './routes/_authed/reglas'
@@ -35,6 +36,11 @@ const AuthedRoute = AuthedRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadRoute = PrivacidadRouteImport.update({
+  id: '/privacidad',
+  path: '/privacidad',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthedConfiguracionRoute = AuthedConfiguracionRouteImport.update({
@@ -94,6 +100,7 @@ const ApiNTokenChatRoute = ApiNTokenChatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/privacidad': typeof PrivacidadRoute
   '/configuracion': typeof AuthedConfiguracionRoute
   '/dashboard': typeof AuthedDashboardRoute
   '/reglas': typeof AuthedReglasRoute
@@ -108,6 +115,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/privacidad': typeof PrivacidadRoute
   '/configuracion': typeof AuthedConfiguracionRoute
   '/dashboard': typeof AuthedDashboardRoute
   '/reglas': typeof AuthedReglasRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authed': typeof AuthedRouteWithChildren
   '/login': typeof LoginRoute
+  '/privacidad': typeof PrivacidadRoute
   '/_authed/configuracion': typeof AuthedConfiguracionRoute
   '/_authed/dashboard': typeof AuthedDashboardRoute
   '/_authed/reglas': typeof AuthedReglasRoute
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/privacidad'
     | '/configuracion'
     | '/dashboard'
     | '/reglas'
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/privacidad'
     | '/configuracion'
     | '/dashboard'
     | '/reglas'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authed'
     | '/login'
+    | '/privacidad'
     | '/_authed/configuracion'
     | '/_authed/dashboard'
     | '/_authed/reglas'
@@ -185,6 +197,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthedRoute: typeof AuthedRouteWithChildren
   LoginRoute: typeof LoginRoute
+  PrivacidadRoute: typeof PrivacidadRoute
   NTokenRoute: typeof NTokenRoute
   ApiNTokenChatRoute: typeof ApiNTokenChatRoute
 }
@@ -210,6 +223,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidad': {
+      id: '/privacidad'
+      path: '/privacidad'
+      fullPath: '/privacidad'
+      preLoaderRoute: typeof PrivacidadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authed/configuracion': {
@@ -315,6 +335,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthedRoute: AuthedRouteWithChildren,
   LoginRoute: LoginRoute,
+  PrivacidadRoute: PrivacidadRoute,
   NTokenRoute: NTokenRoute,
   ApiNTokenChatRoute: ApiNTokenChatRoute,
 }

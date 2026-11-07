@@ -326,6 +326,11 @@ describe("chat del deudor", () => {
       screen.getByRole("heading", { name: "Verificá tu identidad" })
     ).toBeTruthy()
     expect(screen.queryByText("Mensaje anterior")).toBeNull()
+    expect(
+      screen
+        .getByRole("link", { name: "Aviso de privacidad" })
+        .getAttribute("href")
+    ).toBe("/privacidad")
 
     fireEvent.change(screen.getByLabelText("Últimos 3 dígitos del DNI"), {
       target: { value: "123" },
@@ -333,6 +338,13 @@ describe("chat del deudor", () => {
     fireEvent.click(screen.getByRole("button", { name: "Continuar al chat" }))
 
     await screen.findByText("Mensaje anterior")
+    expect(
+      screen
+        .getByRole("link", {
+          name: "Ver aviso de privacidad y derechos sobre tus datos personales",
+        })
+        .getAttribute("href")
+    ).toBe("/privacidad")
     expect(verifyIdentity).toHaveBeenCalledWith({
       data: { token: "token", dniLast3: "123" },
     })

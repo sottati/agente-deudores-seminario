@@ -106,13 +106,23 @@ export type NegotiationTurnInputMessage =
 // Mensaje inicial determinístico (bot disclosure) y detector de pedido humano
 // ---------------------------------------------------------------------------
 
+export const DEFAULT_PRIVACY_NOTICE_PATH = "/privacidad"
+
+export interface BotDisclosureOptions {
+  privacyNoticeUrl?: string
+}
+
 export function buildBotDisclosureMessage(
-  organizationDisplayName: string
+  organizationDisplayName: string,
+  options: BotDisclosureOptions = {}
 ): string {
   const orgName = organizationDisplayName.trim() || "la administración"
+  const privacyNoticeUrl =
+    options.privacyNoticeUrl?.trim() || DEFAULT_PRIVACY_NOTICE_PATH
   return (
     `Hola, soy el asistente virtual automatizado de pacta.ia en representación de ${orgName}. ` +
-    `No soy una persona: si en algún momento preferís hablar con alguien de la administración, escribí "hablar con una persona".`
+    `No soy una persona: si en algún momento preferís hablar con alguien de la administración, escribí "hablar con una persona" o usá el botón en la parte superior. ` +
+    `Tus datos se tratan conforme a la Ley 25.326 de Protección de Datos Personales; podés consultar el aviso de privacidad en ${privacyNoticeUrl}.`
   )
 }
 
