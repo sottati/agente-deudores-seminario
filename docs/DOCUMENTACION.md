@@ -166,12 +166,14 @@ Detalle y alternativas evaluadas en [PLAN_BACKEND.md §1](./PLAN_BACKEND.md#1-de
 
 ### 6.1 Estructura de Ingresos
 
-El modelo de cobro combina dos componentes:
+El modelo de cobro combina dos componentes. Los valores son hipótesis iniciales para el MVP y se ajustan con la encuesta a administradores (preguntas 10 a 13).
 
 1.  **Abono mensual en pesos, escalonado por cantidad de consorcios administrados.**
+    - Hipótesis para el primer escalón: **ARS 23.500 por mes** (unos USD 15 al dólar oficial del BNA del 02/11/2026). Los escalones siguientes se definen con la encuesta.
+    - Referencia: los software de gestión de consorcios cobran un abono mensual por unidad funcional, de ARS 950 a 2.950 por UF (CONSO, agosto 2026). Una administración de 150 UF paga hoy entre ARS 140.000 y 440.000 por mes.
 2.  **Comisión porcentual sobre el monto efectivamente cobrado** de los acuerdos que cerró el agente (no sobre el acuerdo firmado: solo se cobra cuando el deudor paga).
-
-Los montos del abono y el porcentaje de comisión se definen a partir de la encuesta a administradores (preguntas 10 a 13); no se fijan antes de tener esa evidencia.
+    - Hipótesis: **3%**, dentro de un rango de 1,5% a 3% a validar.
+    - Referencia: la CAPHAI sugiere un arancel de ARS 161.000 por convenio de pago por deuda de expensas (tabla octubre/noviembre 2026). Con 3%, cobrar una deuda de ARS 1.000.000 cuesta ARS 30.000.
 
 **Alternativas descartadas:**
 
