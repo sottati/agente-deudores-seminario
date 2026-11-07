@@ -47,6 +47,27 @@ pnpm dev             # http://localhost:3000
 
 El chat admite `AI_PROVIDER=gateway` con `AI_GATEWAY_API_KEY`, o `AI_PROVIDER=openrouter` con `OPENROUTER_API_KEY`. En ambos casos configurá `AI_MODEL` con un modelo que soporte herramientas y streaming. Ver [la prueba de integración del agente](./packages/agent/README.md#prueba-de-humo-del-llm).
 
+### Sandbox de conversaciones manuales
+
+Con `pnpm dev`, abrí `/sandbox`. No requiere Supabase, Docker ni login. Usa el mismo prompt, herramientas, motor de negociación y control de cifras que el portal del deudor, con persistencia en memoria y datos ficticios.
+
+Configurá el proveedor, el modelo y su credencial en `apps/platform/.env.local`. Por ejemplo, para OpenRouter:
+
+```dotenv
+AI_PROVIDER=openrouter
+AI_MODEL=deepseek/deepseek-v4.1-flash-1017
+OPENROUTER_API_KEY=TU_API_KEY
+```
+
+El modelo debe existir en la cuenta del proveedor y soportar llamadas a herramientas. Reiniciá el servidor si cambiás esta configuración. Las llamadas usan la API real y consumen saldo del proveedor.
+
+1. Elegí un escenario o editá los montos en pesos, las cuotas, las quitas, el anticipo y el tono. Iniciá la conversación.
+2. Escribí como deudor. El panel lateral muestra las herramientas ejecutadas, sus entradas y salidas, eventos, tiempo total del turno y tokens. La respuesta se muestra al completar el turno y su validación de cifras.
+3. Aceptá una oferta para simular el cierre, o pedí hablar con una persona para probar la derivación. No se crean acuerdos reales ni se simulan respuestas de un administrador.
+4. Exportá la conversación como JSON antes de reiniciar con otros datos. Cada conversación conserva su política inicial; editar los campos requiere iniciar una nueva prueba.
+
+Las sesiones están aisladas, vencen tras dos horas de inactividad y se pierden al reiniciar el servidor, recargar módulos o la página. La API del sandbox responde 404 en producción. La simulación no prueba la verificación de identidad ni la persistencia transaccional de Supabase.
+
 Para una base local existente, aplicá las nuevas migraciones sin recrear los datos:
 
 ```bash
