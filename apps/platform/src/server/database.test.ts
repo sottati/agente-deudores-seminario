@@ -108,6 +108,15 @@ describe("migraciones y RPCs con PostgreSQL embebido", () => {
         "utf8"
       )
     )
+    await db.exec(
+      await readFile(
+        new URL(
+          "../../../../supabase/migrations/20261107000000_dashboard_views.sql",
+          import.meta.url
+        ),
+        "utf8"
+      )
+    )
     await db.exec(`
       insert into auth.users values ('${user}'), ('${otherUser}');
       insert into public.organizations (id,name,kind,display_name_for_debtors) values ('${org}','A','consorcio','A'), ('${otherOrg}','B','consorcio','B');
@@ -392,5 +401,106 @@ describe("migraciones y RPCs con PostgreSQL embebido", () => {
       { number: 1, amount_cents: 5000 },
       { number: 2, amount_cents: 5000 },
     ])
+  })
+
+  it("las vistas del dashboard calculan KPIs, recupero mensual, planes, acuerdos recientes y alertas respetando RLS", async () => {
+    await actor(user)
+    await db.query("select public.record_installment_payment($1,$2,true)", [
+      org,
+      installment1,
+    ])
+
+    await db.exec(`
+      insert into public.debts (id,organization_id,debtor_id,concept,principal_cents,due_date,status)
+      values ('de000000-0000-4000-8000-000000000009','${org}','d0000000-0000-4000-8000-000000000001','Extraordinaria',20000,'2026-02-01','in_negotiation');
+      insert into public.negotiations (id,organization_id,debt_id,status,policy_snapshot,token_hash,expires_at,created_by)
+      values ('a0000000-0000-4000-8000-000000000009','${org}','de000000-0000-4000-8000-000000000009','escalated','{}','token-esc','2030-01-01','${user}');
+      insert into public.audit_events (organization_id,negotiation_id,type,payload,actor_user_id)
+      values ('${org}','a0000000-0000-4000-8000-000000000009','out_of_policy_request','{"requested_installments":12,"max_installments":3}','${user}');
+    `)
+
+    const kpis = await db.query<{
+      recovered_cents: number
+      agreed_cents: number
+      agreements_count: number
+      active_conversations: number
+      awaiting_reply: number
+    }>(
+      "select recovered_cents::int, agreed_cents::int, agreements_count, active_conversations, awaiting_reply from public.v_dashboard_kpis"
+    )
+    expect(kpis.rows).toEqual([
+      {
+        recovered_cents: 5000,
+        agreed_cents: 10000,
+        agreements_count: 1,
+        active_conversations: 1,
+        awaiting_reply: 1,
+      },
+    ])
+
+    const monthly = await db.query<{
+      recovered_cents: number
+      agreed_cents: number
+    }>(
+      "select recovered_cents::int, agreed_cents::int from public.v_monthly_recovery order by month_start desc limit 6"
+    )
+    expect(monthly.rows).toHaveLength(6)
+    expect(monthly.rows[0]).toEqual({
+      recovered_cents: 5000,
+      agreed_cents: 10000,
+    })
+
+    const plans = await db.query<{ installments: number; count: number }>(
+      "select installments, count from public.v_agreements_by_plan"
+    )
+    expect(plans.rows).toEqual([{ installments: 2, count: 1 }])
+
+    const recent = await db.query<{
+      debtor_alias: string
+      amount_cents: number
+      installments: number
+      status: string
+    }>(
+      "select debtor_alias, amount_cents::int, installments, status from public.v_recent_agreements"
+    )
+    expect(recent.rows).toEqual([
+      {
+        debtor_alias: "Unidad",
+        amount_cents: 10000,
+        installments: 2,
+        status: "agreed",
+      },
+    ])
+
+    const attention = await db.query<{ kind: string }>(
+      "select kind from public.v_attention_items order by kind"
+    )
+    expect(attention.rows.map((r) => r.kind)).toEqual([
+      "escalated",
+      "out_of_policy_request",
+    ])
+
+    // Aislamiento RLS: otherUser solo ve su propia organización B y 0 filas de A.
+    await actor(otherUser)
+    const otherKpis = await db.query<{
+      organization_id: string
+      recovered_cents: number
+      agreements_count: number
+    }>(
+      "select organization_id, recovered_cents::int, agreements_count from public.v_dashboard_kpis"
+    )
+    expect(otherKpis.rows).toEqual([
+      {
+        organization_id: otherOrg,
+        recovered_cents: 0,
+        agreements_count: 0,
+      },
+    ])
+    expect(
+      (await db.query("select * from public.v_recent_agreements")).rows
+    ).toHaveLength(0)
+    expect(
+      (await db.query("select * from public.v_attention_items")).rows
+    ).toHaveLength(0)
   })
 })

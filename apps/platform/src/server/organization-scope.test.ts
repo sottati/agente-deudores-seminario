@@ -1,6 +1,13 @@
 import { createClient } from "@supabase/supabase-js"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { getDebtor, listDebtors } from "./debtors"
+import {
+  getAgreementsByPlan,
+  getAttentionItems,
+  getDashboardKpis,
+  getMonthlyRecovery,
+  listRecentAgreements,
+} from "./metrics"
 import { listNegotiableDebts, listNegotiations } from "./negotiations"
 
 vi.mock("./middleware", () => ({ authMiddleware: {} }))
@@ -61,6 +68,23 @@ describe("organización activa en el panel", () => {
   ])("lista únicamente la cartera activa", async ({ fn, data }) => {
     const result = (await invoke(fn, data)) as Array<{ id: string }>
     expect(result.map((row) => row.id)).toEqual(["row-a"])
+  })
+
+  it("filtra las vistas de métricas del dashboard por organization_id activo", async () => {
+    const fetchMock = vi.fn(async (input: string | URL) => {
+      const url = new URL(String(input))
+      expect(url.searchParams.get("organization_id")).toBe("eq.organization-a")
+      return Response.json([])
+    })
+    vi.stubGlobal("fetch", fetchMock)
+
+    await invoke(getDashboardKpis)
+    await invoke(getMonthlyRecovery, { months: 6 })
+    await invoke(getAgreementsByPlan, { period: "all" })
+    await invoke(listRecentAgreements, { limit: 3 })
+    await invoke(getAttentionItems)
+
+    expect(fetchMock).toHaveBeenCalledTimes(5)
   })
 
   it("un ID de otra cartera no atraviesa el contexto activo", async () => {

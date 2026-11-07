@@ -258,7 +258,70 @@ isOneToOne: false
                 }
           }
           Views: {
-            [_ in never]: never
+            "v_agreements_by_plan": {
+              Row: {
+                "count": number | null
+                "installments": number | null
+                "organization_id": string | null
+                "period": string | null
+                "total_cents": number | null
+              }
+              Relationships: []
+            }
+            "v_attention_items": {
+              Row: {
+                "concept": string | null
+                "debtor_alias": string | null
+                "detail": Json | null
+                "group_label": string | null
+                "kind": string | null
+                "negotiation_id": string | null
+                "occurred_at": string | null
+                "organization_id": string | null
+              }
+              Relationships: []
+            }
+            "v_dashboard_kpis": {
+              Row: {
+                "active_conversations": number | null
+                "agreed_cents": number | null
+                "agreements_count": number | null
+                "agreements_this_week": number | null
+                "awaiting_reply": number | null
+                "delta_vs_prev_month_pct": number | null
+                "organization_id": string | null
+                "recovered_cents": number | null
+              }
+              Relationships: []
+            }
+            "v_monthly_recovery": {
+              Row: {
+                "agreed_cents": number | null
+                "amount_cents": number | null
+                "month_start": string | null
+                "organization_id": string | null
+                "period": string | null
+                "recovered_cents": number | null
+              }
+              Relationships: []
+            }
+            "v_recent_agreements": {
+              Row: {
+                "activity_at": string | null
+                "agreement_id": string | null
+                "amount_cents": number | null
+                "concept": string | null
+                "debtor_alias": string | null
+                "debtor_full_name": string | null
+                "debtor_id": string | null
+                "group_label": string | null
+                "installments": number | null
+                "negotiation_id": string | null
+                "organization_id": string | null
+                "status": string | null
+              }
+              Relationships: []
+            }
           }
           Functions: {
             "record_installment_payment": { Args: { p_organization_id: string; p_installment_id: string; p_paid: boolean }; Returns: undefined }

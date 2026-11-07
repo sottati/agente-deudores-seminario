@@ -20,10 +20,36 @@ const dateTimeFormat = new Intl.DateTimeFormat("es-AR", {
   timeZone: TIME_ZONE,
 })
 
+const shortMonthFormat = new Intl.DateTimeFormat("es-AR", {
+  month: "short",
+  timeZone: "UTC",
+})
+
 const relativeFormat = new Intl.RelativeTimeFormat("es-AR", { numeric: "auto" })
 
 export function formatARS(cents: number) {
   return currency.format(cents / 100)
+}
+
+/** Formato compacto para tarjetas y ejes ("$ 8,4 M", "$ 186.400"). */
+export function formatCompactARS(cents: number) {
+  const pesos = cents / 100
+  if (Math.abs(pesos) >= 1_000_000) {
+    const millions = pesos / 1_000_000
+    return `$ ${millions.toLocaleString("es-AR", { maximumFractionDigits: 1 })} M`
+  }
+  return formatARS(cents)
+}
+
+/** "2026-09-01" o "2026-09" → "Sep". */
+export function formatShortMonth(value: string) {
+  const match = /^(\d{4})-(\d{2})/.exec(value)
+  if (!match) return value
+  const [, year, month] = match
+  const raw = shortMonthFormat
+    .format(Date.UTC(+year, +month - 1, 15))
+    .replace(/\.$/, "")
+  return raw.charAt(0).toUpperCase() + raw.slice(1)
 }
 
 /** Centavos → valor para un <input> de pesos ("186400" o "186400.5"). */
