@@ -1,6 +1,6 @@
 # Registro de Entrevistas - Trabajo de Campo
 
-Este documento contiene el registro de las entrevistas cualitativas realizadas a los stakeholders principales (potenciales clientes y usuarios) para validar las hipótesis del proyecto "pacta.ia".
+Este documento contiene el registro de las entrevistas cualitativas realizadas a los stakeholders principales (potenciales clientes y usuarios) para validar las hipótesis del proyecto "pacta.ai".
 
 ---
 
@@ -191,7 +191,7 @@ El objetivo principal de este espacio es comprender el funcionamiento real del �
 
 ### Contexto de la Entrevista y del Proyecto
 
-El proyecto pacta.ia está concebido para gestionar la morosidad en dos ámbitos: la
+El proyecto pacta.ai está concebido para gestionar la morosidad en dos ámbitos: la
 cobranza de expensas en consorcios y la cobranza de cuotas en instituciones
 educativas. Ambos comparten el mismo problema de fondo (seguimiento de deudores,
 negociación de planes de pago y registro formal de acuerdos) y la misma propuesta de
@@ -240,6 +240,6 @@ puntos clave. Ante este nuevo enfoque, la institución accedió a responder.
 
 - **Validación del Ámbito Educativo:** La entrevista confirma que el problema de cobranza y morosidad, y la lógica de negociación de planes de pago, aplican plenamente a las instituciones educativas. Esto valida que el ámbito de cuotas escolares forma parte del alcance del proyecto y comparte las mismas necesidades que el de consorcios.
 - **Validación del Canal:** Se confirma, una vez más, que WhatsApp es el canal dominante ("la preferencia es total") y que el mail prácticamente no se usa. Refuerza la decisión de centrar el producto en WhatsApp en ambos ámbitos.
-- **Dolor Operativo — Formalidad del registro:** Se menciona un problema concreto: el chat resta formalidad y dificulta dejar asentados los compromisos de pago. Esto valida una función central de pacta.ia: registrar cada pre-acuerdo con trazabilidad (código de referencia, fecha, responsable), convirtiendo una conversación informal en un acuerdo documentado.
+- **Dolor Operativo — Formalidad del registro:** Se menciona un problema concreto: el chat resta formalidad y dificulta dejar asentados los compromisos de pago. Esto valida una función central de pacta.ai: registrar cada pre-acuerdo con trazabilidad (código de referencia, fecha, responsable), convirtiendo una conversación informal en un acuerdo documentado.
 - **Validación del Enfoque "Human-in-the-Loop":** Se reafirma la necesidad de evaluación personalizada y de que un humano apruebe cada acuerdo. El criterio rígido no es viable en contextos sensibles; el sistema debe proponer dentro de reglas, pero habilitar la revisión humana.
 - **Insight crítico para el producto — El TONO del agente:** El mayor temor no es la automatización en sí, sino que el trato resulte frío o impersonal en un tema sensible. Esto es un requerimiento de diseño clave para el prompt del agente de IA: debe ser empático, cuidado y humano en su redacción, especialmente en las etapas previas a que intervenga una persona.

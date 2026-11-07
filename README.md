@@ -1,11 +1,11 @@
-# pacta.ia - Asistente Autónomo de Cobranzas B2B
+# pacta.ai - Asistente Autónomo de Cobranzas B2B
 
 > Proyecto de Seminario de Integración Profesional (TIF / SIP) - UADE
 
 ## Datos del Equipo
 
-- **Nombre del Grupo:** pacta.ia
-- **Nombre de Fantasía (MVP):** pacta.ia
+- **Nombre del Grupo:** pacta.ai
+- **Nombre de Fantasía (MVP):** pacta.ai
 - **Integrantes:**
   - Juan Cruz Elliff - Legajo: 1140086
   - Santiago Garbini - Legajo: 1188868
@@ -23,6 +23,7 @@
 - **Identidad Visual:** [identidad_visual.md](./docs/identidad_visual.md)
 - **Entrevistas y Trabajo de Campo:** [ENTREVISTAS.md](./docs/ENTREVISTAS.md)
 - **Uso de IA:** [USO_IA.md](./docs/USO_IA.md)
+- **Documentación completa en Google Docs:** [pacta.ai — Documentación del proyecto](https://docs.google.com/document/d/1h325o7If-BrOCULb2lgOeMStN_tv_Rl_j3p4bNaM8c8/edit) (mismo contenido que los `.md`, se mantienen sincronizados)
 
 ## Estructura del Repositorio (Monorepo)
 

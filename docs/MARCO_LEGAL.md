@@ -1,6 +1,6 @@
-# Marco Legal, Regulatorio y de Cumplimiento Normativo: pacta.ia
+# Marco Legal, Regulatorio y de Cumplimiento Normativo: pacta.ai
 
-> **Producto:** pacta.ia — Asistente Autónomo de Cobranzas B2B  
+> **Producto:** pacta.ai — Asistente Autónomo de Cobranzas B2B  
 > **Jurisdicción Principal:** República Argentina (con foco operativo en CABA y Provincia de Buenos Aires)  
 > **Ámbito de Aplicación:** Plataforma SaaS B2B, Inteligencia Artificial aplicada a la negociación, gestión de datos personales/crediticios y comunicaciones automatizadas multicanal.
 
@@ -8,14 +8,14 @@
 
 ## 1. Resumen Ejecutivo y Enfoque de Cumplimiento
 
-pacta.ia opera en la intersección de cuatro dominios altamente regulados:
+pacta.ai opera en la intersección de cuatro dominios altamente regulados:
 
 1. **Tratamiento y privacidad de datos personales y financieros.**
 2. **Prácticas de cobranza extrajudicial y defensa del consumidor.**
 3. **Gobernanza ética y legal de sistemas de Inteligencia Artificial.**
 4. **Validez probatoria de contratos y acuerdos electrónicos.**
 
-El diseño de la arquitectura del sistema, los flujos conversacionales del agente LLM y los términos contractuales del servicio deben regirse bajo el principio de **"Compliance by Design"** (Cumplimiento por Diseño), mitigando riesgos civiles, administrativos y reputacionales tanto para pacta.ia como para sus clientes (administraciones de consorcios y colegios privados).
+El diseño de la arquitectura del sistema, los flujos conversacionales del agente LLM y los términos contractuales del servicio deben regirse bajo el principio de **"Compliance by Design"** (Cumplimiento por Diseño), mitigando riesgos civiles, administrativos y reputacionales tanto para pacta.ai como para sus clientes (administraciones de consorcios).
 
 ---
 
@@ -48,7 +48,7 @@ Para facilitar la lectura y comprensión técnica-legal del presente documento, 
 | Sigla / Término | Definición y Contexto                                                                                                                                                                                                                      |
 | :-------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **ARCO**        | **Acceso, Rectificación, Cancelación y Oposición:** Conjunto de derechos fundamentales que la LPDP garantiza al titular del dato para controlar su información personal.                                                                   |
-| **DPA**         | **Data Processing Agreement (Acuerdo de Encargo de Tratamiento):** Contrato obligatorio entre el Responsable de los datos (cliente) y el Encargado (pacta.ia) que estipula alcances, límites y medidas de seguridad según el Art. 25 LPDP. |
+| **DPA**         | **Data Processing Agreement (Acuerdo de Encargo de Tratamiento):** Contrato obligatorio entre el Responsable de los datos (cliente) y el Encargado (pacta.ai) que estipula alcances, límites y medidas de seguridad según el Art. 25 LPDP. |
 | **NNyA**        | **Niñas, Niños y Adolescentes:** Sujetos de especial protección legal cuya información personal jamás puede ser expuesta en gestiones de cobranza escolar.                                                                                 |
 | **EIPD**        | **Evaluación de Impacto en la Protección de Datos:** Análisis preventivo de riesgos sobre la privacidad exigido en proyectos que incorporan Inteligencia Artificial.                                                                       |
 | **LLM**         | **Large Language Model (Modelo de Lenguaje Extenso):** Tipo de arquitectura de IA (ej. GPT-5.6 Luna) que impulsa el procesamiento de lenguaje natural y la negociación conversacional.                                                     |
@@ -67,22 +67,22 @@ Para facilitar la lectura y comprensión técnica-legal del presente documento, 
 
 ### 2.2 Roles y Responsabilidades en el Tratamiento de Datos
 
-- **El Cliente (Consorcio / Colegio):** Actúa como **Responsable de la Base de Datos** (Data Controller). Es el titular legítimo del vínculo jurídico con el deudor y quien determina la finalidad del tratamiento.
-- **pacta.ia (Plataforma):** Actúa formalmente como **Encargado del Tratamiento** (Data Processor) en los términos del Art. 25 de la Ley 25.326. Procesa datos por cuenta y orden del Responsable bajo un contrato de encargo de tratamiento (_Data Processing Agreement - DPA_).
+- **El Cliente (Consorcio):** Actúa como **Responsable de la Base de Datos** (Data Controller). Es el titular legítimo del vínculo jurídico con el deudor y quien determina la finalidad del tratamiento.
+- **pacta.ai (Plataforma):** Actúa formalmente como **Encargado del Tratamiento** (Data Processor) en los términos del Art. 25 de la Ley 25.326. Procesa datos por cuenta y orden del Responsable bajo un contrato de encargo de tratamiento (_Data Processing Agreement - DPA_).
 
 ### 2.3 Principios Rectores y Requisitos Operativos
 
-| Principio Legal                                                   | Requisito Operativo en pacta.ia                                                                                                                                                                                                                                                    |
+| Principio Legal                                                   | Requisito Operativo en pacta.ai                                                                                                                                                                                                                                                    |
 | :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Licitud y Finalidad (Art. 3 y 4 LPDP)**                         | Los datos de contacto, unidad funcional/matrícula y saldos adeudados solo pueden utilizarse para la gestión y regularización del crédito específico. Queda estrictamente prohibida la venta, cesión o reutilización de datos para perfilado crediticio comercial ajeno al cliente. |
-| **Calidad de los Datos (Art. 4 LPDP)**                            | pacta.ia debe asegurar mecanismos para que los saldos cargados sean exactos y se actualicen en tiempo real (evitar cobrar deudas ya canceladas).                                                                                                                                   |
+| **Calidad de los Datos (Art. 4 LPDP)**                            | pacta.ai debe asegurar mecanismos para que los saldos cargados sean exactos y se actualicen en tiempo real (evitar cobrar deudas ya canceladas).                                                                                                                                   |
 | **Seguridad de la Información (Art. 9 LPDP y Res. AAIP 47/2018)** | Cifrado en tránsito (TLS 1.3) y en reposo (AES-256) en bases de datos PostgreSQL (Supabase). Aislamiento estricto de carteras mediante _Row Level Security_ (RLS) en entornos multi-tenant.                                                                                        |
-| **Confidencialidad y Secreto (Art. 10 LPDP)**                     | Deber de confidencialidad absoluto aplicable al personal de pacta.ia y reflejado en los acuerdos de servicio con proveedores tecnológicos.                                                                                                                                         |
+| **Confidencialidad y Secreto (Art. 10 LPDP)**                     | Deber de confidencialidad absoluto aplicable al personal de pacta.ai y reflejado en los acuerdos de servicio con proveedores tecnológicos.                                                                                                                                         |
 | **Derechos ARCO (Acceso, Rectificación, Cancelación, Oposición)** | La plataforma debe proveer una vía accesible para que el titular de los datos ejerza sus derechos de acceso o rectificación ante el responsable.                                                                                                                                   |
 
 ### 2.4 Tratamiento de Datos Crediticios y Morosidad (Art. 26 LPDP)
 
-- El Art. 26 regula los servicios de información crediticia. pacta.ia **no es una central de riesgo crediticio** (como Veraz o Nosis), sino un gestor de cobranzas privado.
+- El Art. 26 regula los servicios de información crediticia. pacta.ai **no es una central de riesgo crediticio** (como Veraz o Nosis), sino un gestor de cobranzas privado.
 - **Prohibición de exposición indebida:** No se pueden divulgar datos de morosidad a terceros no legitimados. El agente conversacional jamás debe revelar montos o estatus de deuda en mensajes abiertos o a personas distintas al titular validado.
 
 ### 2.5 Transferencia Internacional de Datos
@@ -105,11 +105,11 @@ La gestión de mora extrajudicial está sujeta a estrictos controles contra el h
 
 ### 3.2 Prohibiciones Críticas que Limitan al Agente de IA (Guardrails Legales)
 
-| Práctica Prohibida por Ley                             | Guardrail Implementado en pacta.ia                                                                                                                                                                                   |
+| Práctica Prohibida por Ley                             | Guardrail Implementado en pacta.ai                                                                                                                                                                                   |
 | :----------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Trato Indigno y Acoso (Art. 8 bis Ley 24.240)**      | El modelo tiene prohibido usar lenguaje intimidatorio, hostil o sarcástico. Su tono debe ser invariablemente empático, neutral y propositivo.                                                                        |
 | **Simulación de Acciones Judiciales Falsas**           | La IA no debe simular ser un juzgado, estudio jurídico externo o emitir amenazas de embargo inminente si no existe mandato formal. Todo mensaje debe identificarse claramente como mediación extrajudicial amistosa. |
-| **Exposición y Afectación del Honor (Ley 6.171 CABA)** | Prohibición absoluta de notificar la deuda a terceros (empleadores, familiares, vecinos de consorcio o compañeros de colegio). La interacción inicia siempre requiriendo verificación de identidad previa.           |
+| **Exposición y Afectación del Honor (Ley 6.171 CABA)** | Prohibición absoluta de notificar la deuda a terceros (empleadores, familiares u otros vecinos del consorcio). La interacción inicia siempre requiriendo verificación de identidad previa.                           |
 | **Hostigamiento y Frecuencia de Contacto**             | Límites operativos de cadencia: máximo de 1 a 2 mensajes semanales por canal. Prohibición de contactar en horarios inhábiles (restringido a días hábiles de 9:00 a 19:00 hs, según estándares de CABA).              |
 
 ---
@@ -124,7 +124,7 @@ La gestión de mora extrajudicial está sujeta a estrictos controles contra el h
 ### 4.2 Requisitos de Cumplimiento para el Agente Autónomo
 
 ```
-               CICLO DE GOBERNANZA DE IA EN pacta.ia
+               CICLO DE GOBERNANZA DE IA EN pacta.ai
   ┌─────────────────────────────────────────────────────────────┐
   │ 1. Transparencia Algorítmica (Bot Disclosure obligatorio)   │
   ├─────────────────────────────────────────────────────────────┤
@@ -140,11 +140,11 @@ La gestión de mora extrajudicial está sujeta a estrictos controles contra el h
 
 - El usuario tiene derecho a saber que está interactuando con un sistema automatizado.
 - **Regla de producto:** El mensaje inicial de bienvenida debe declarar explícitamente:  
-  _"Hola, soy el asistente virtual automatizado de pacta.ia en representación de [Nombre de la Administración]..."_. Está prohibido engañar al usuario haciéndose pasar por un empleado humano.
+  _"Hola, soy el asistente virtual automatizado de pacta.ai en representación de [Nombre de la Administración]..."_. Está prohibido engañar al usuario haciéndose pasar por un empleado humano.
 
 #### 2. Responsabilidad por "Alucinaciones" y Ofertas Vinculantes
 
-- Según el CCCN (Art. 972), la oferta dirigida a persona determinada es vinculante para quien la emite una vez aceptada. Si el LLM "alucina" y concede un descuento del 90% no autorizado por la política, el consorcio o colegio podría verse comprometido legalmente frente a un deudor de buena fe.
+- Según el CCCN (Art. 972), la oferta dirigida a persona determinada es vinculante para quien la emite una vez aceptada. Si el LLM "alucina" y concede un descuento del 90% no autorizado por la política, el consorcio podría verse comprometido legalmente frente a un deudor de buena fe.
 - **Medida de mitigación:**
   - Uso de _Function Calling_ estricto y validación por backend determinístico: el LLM **no calcula números ni decide descuentos de forma libre**, sino que consulta una función que valida los topes máximos autorizados por la administración.
   - Cláusula en el acuerdo preliminar indicando que el plan queda supeditado a la homologación administrativa si excede los parámetros estándar.
@@ -180,27 +180,29 @@ La gestión de mora extrajudicial está sujeta a estrictos controles contra el h
 ### 6.1 Administraciones de Consorcios (Propiedad Horizontal)
 
 - **Código Civil y Comercial de la Nación (Arts. 2037 a 2072):**
-  - La expensa común posee fuerza ejecutiva (Art. 2048 CCCN). La gestión extrajudicial mediada por pacta.ia no interrumpe los plazos de prescripción ni obstaculiza la emisión del certificado de deuda por expensas en caso de fracaso de la negociación.
+  - La expensa común posee fuerza ejecutiva (Art. 2048 CCCN). La gestión extrajudicial mediada por pacta.ai no interrumpe los plazos de prescripción ni obstaculiza la emisión del certificado de deuda por expensas en caso de fracaso de la negociación.
 - **Ley N° 941 de la Ciudad Autónoma de Buenos Aires (Registro Público de Administradores - RPA):**
   - Exige al administrador rendir cuentas claras y gestionar fondos exclusivamente en la cuenta bancaria oficial del consorcio.
-  - **Regla para pacta.ia:** Los links de pago o transferencias gestionadas por la plataforma deben acreditar fondos **directamente en la cuenta bancaria del consorcio acreedor**, jamás en cuentas intermediarias de pacta.ia que puedan interpretarse como retención o desvío de fondos.
+  - **Regla para pacta.ai:** Los links de pago o transferencias gestionadas por la plataforma deben acreditar fondos **directamente en la cuenta bancaria del consorcio acreedor**, jamás en cuentas intermediarias de pacta.ai que puedan interpretarse como retención o desvío de fondos.
 
-### 6.2 Colegios Privados e Instituciones Educativas
+### 6.2 Colegios Privados e Instituciones Educativas _(fuera del alcance del MVP)_
+
+> **Nota:** este segmento se evaluó en la etapa inicial del proyecto. Luego de las entrevistas, el equipo decidió acotar el MVP solo a administraciones de consorcios. La normativa se mantiene como registro del análisis realizado.
 
 - **Protección de Menores de Edad (Ley N° 26.061 de Protección Integral de los Derechos de Niñas, Niños y Adolescentes):**
   - Está **terminantemente prohibido** involucrar a los alumnos en el reclamo de deudas, retener boletines o certificados escolares, o exhibir listas públicas de morosidad escolar (violación directa del derecho a la educación e intimidad).
   - El único sujeto pasivo de la cobranza es el padre, madre o tutor firmante del contrato de matrícula.
 - **Decreto Nacional N° 2417/93 (Aranceles de la Enseñanza Privada):**
-  - Regula la mora y los intereses admisibles en colegios de enseñanza pública de gestión privada. Las tasas de interés y cuotas negociadas por pacta.ia deben ajustarse a los topes fijados por la autoridad ministerial competente.
+  - Regula la mora y los intereses admisibles en colegios de enseñanza pública de gestión privada. Las tasas de interés y cuotas negociadas por pacta.ai deben ajustarse a los topes fijados por la autoridad ministerial competente.
 
 ---
 
 ## 7. Políticas de Plataforma y Mensajería (WhatsApp / Meta)
 
-Al operar a través de la API oficial de WhatsApp Business (Meta Cloud API), pacta.ia debe cumplir de manera ineludible con los términos contractuales del canal:
+Al operar a través de la API oficial de WhatsApp Business (Meta Cloud API), pacta.ai debe cumplir de manera ineludible con los términos contractuales del canal:
 
 1. **Meta WhatsApp Business Messaging Policy:**
-   - **Opt-in previo:** El cliente (consorcio/colegio) debe contar con el consentimiento del usuario para ser contactado por WhatsApp en virtud de la relación contractual preexistente.
+   - **Opt-in previo:** El cliente (consorcio) debe contar con el consentimiento del usuario para ser contactado por WhatsApp en virtud de la relación contractual preexistente.
    - **Templates aprobados:** Las notificaciones salientes de mora deben usar plantillas preaprobadas por Meta bajo la categoría _Utility_ (Servicio) o _Marketing_, evitando términos catalogados como spam o cobranza coercitiva.
 2. **Prevención de Bloqueo de Número:** Mensajería intrusiva provocará reportes de usuarios por "Spam" o "Acoso", lo que causaría la suspensión de la cuenta oficial de WhatsApp. La empatía del mensaje y la baja frecuencia son requisitos tanto legales como técnicos de supervivencia del canal.
 
@@ -208,7 +210,7 @@ Al operar a través de la API oficial de WhatsApp Business (Meta Cloud API), pac
 
 ## 8. Matriz de Riesgos y Controles de Mitigación
 
-| Riesgo Legal                                    | Probabilidad | Impacto | Control / Mitigación Técnica en pacta.ia                                                                                  |
+| Riesgo Legal                                    | Probabilidad | Impacto | Control / Mitigación Técnica en pacta.ai                                                                                  |
 | :---------------------------------------------- | :----------: | :-----: | :------------------------------------------------------------------------------------------------------------------------ |
 | **Denuncia por Trato Indigno (Art. 8 bis LDC)** |    Media     |  Alto   | _Tone Guardrails_ estrictos en el prompt; monitoreo de sentimiento; prohibición de términos legales amenazantes.          |
 | **Alucinación de acuerdos no autorizados**      |    Media     | Crítico | Backend determinístico con validación de reglas de negocio (_Function Calling_ con rangos rígidos).                       |
@@ -223,6 +225,6 @@ Al operar a través de la API oficial de WhatsApp Business (Meta Cloud API), pac
 
 Para el lanzamiento formal de la plataforma, se deberán redactar los siguientes instrumentos legales vinculantes:
 
-1. **Términos y Condiciones de Uso (SaaS B2B):** Delimitación de responsabilidad de pacta.ia como proveedor de software de mediación, estableciendo que la legitimidad del crédito y los datos cargados son responsabilidad exclusiva del cliente.
-2. **Acuerdo de Procesamiento de Datos (DPA):** Cláusula que formaliza a pacta.ia como encargado del tratamiento bajo la Ley 25.326, detallando medidas de seguridad y obligaciones de notificación de incidentes en 72 horas.
+1. **Términos y Condiciones de Uso (SaaS B2B):** Delimitación de responsabilidad de pacta.ai como proveedor de software de mediación, estableciendo que la legitimidad del crédito y los datos cargados son responsabilidad exclusiva del cliente.
+2. **Acuerdo de Procesamiento de Datos (DPA):** Cláusula que formaliza a pacta.ai como encargado del tratamiento bajo la Ley 25.326, detallando medidas de seguridad y obligaciones de notificación de incidentes en 72 horas.
 3. **Aviso de Privacidad al Deudor:** Texto accesible mediante link en la primera interacción conversacional, explicando quién es el responsable de sus datos, para qué se usan y cómo ejercer derechos ARCO.
