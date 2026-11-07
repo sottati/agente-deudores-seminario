@@ -10,9 +10,8 @@ Este documento contiene el registro de las entrevistas cualitativas realizadas a
 
 - **Nombre y Apellido:** Claudia Bea
 - **Cargo/Rol en la administración:** Administradora de Consorcio
-- **Administración / Empresa:** Consorcio San Juan (Av. San Juan 1896)
+- **Administración / Empresa:** Consorcio San Juan
 - **Cantidad de unidades gestionadas:** 36 unidades
-- **Teléfono:** +54 9 11 6359-4365
 - **Fecha de realización:** 15/09/2026
 
 > **Perfil frente al target:** administra 1 consorcio de 36 unidades. Queda fuera del target definido (administraciones con 5 o más edificios), así que sus respuestas se toman como indicio, no como validación.
@@ -76,8 +75,6 @@ _(Opciones dadas: A. Suscripción fija, B. Comisión por éxito, C. Pago por uso
 - **Nombre de la Administración / Institución:** ByG Consorcios
 - **Nombre del Entrevistado:** Verónica Gindre
 - **Cargo / Rol:** Administradora
-- **Teléfono:** +54 9 11 3848-5023
-- **Correo electrónico:** bygconsorcios@gmail.com
 - **Fecha de la Entrevista:** 09/10/2026
 
 > **Perfil frente al target:** administra 25 consorcios (unas 1.100 unidades funcionales). Está dentro del target definido.
@@ -191,7 +188,6 @@ El objetivo principal de este espacio es comprender el funcionamiento real del �
 
 - **Institución:** Instituto Rosa Anchorena de Ibáñez (A-133)
 - **Contacto:** María Florencia Darosniski — Directora
-- **Correo electrónico:** rosaanchorena@yahoo.com.ar
 - **Fecha del contacto:** 13/10/2026
 - **Modalidad:** Consulta cualitativa por correo electrónico.
 
