@@ -13,10 +13,15 @@ import type {
   EvaluatedOffer,
   NegotiationPolicy,
   PolicySnapshotRow,
+  ScheduleItem,
 } from "@agente/negotiation-engine"
 
 import { debtorVerificationHash, sha256Hex } from "./crypto"
 import { AGENT_ANSWERABLE_STATUSES } from "@/lib/debtor-chat"
+import {
+  AGREEMENT_TEMPLATE_VERSION,
+  renderAgreementDocumentHtml,
+} from "../agreement-document"
 import type { Database, Json, Tables } from "./types.gen"
 
 type JsonObject = NonNullable<Json>
@@ -73,11 +78,13 @@ export type ResolvedNegotiation = {
   }
   debtor: {
     id: string
+    fullName: string
     alias: string
     groupLabel: string | null
     verificationHash: string | null
   }
   organization: {
+    name: string
     displayNameForDebtors: string
     kind: Database["public"]["Enums"]["organization_kind"]
   }
@@ -115,8 +122,8 @@ export async function resolveNegotiationByToken(
     .select(
       `id, organization_id, status, verified_at, verification_attempts, expires_at, updated_at, policy_snapshot, debt_id,
        debts!inner(concept, due_date, principal_cents, interest_cents,
-         debtors!inner(id, alias, group_label, verification_hash)),
-       organizations!inner(display_name_for_debtors, kind)`
+         debtors!inner(id, full_name, alias, group_label, verification_hash)),
+       organizations!inner(name, display_name_for_debtors, kind)`
     )
     .eq("token_hash", tokenHash)
     .maybeSingle()
@@ -146,11 +153,13 @@ export async function resolveNegotiationByToken(
     },
     debtor: {
       id: debtor.id,
+      fullName: debtor.full_name,
       alias: debtor.alias,
       groupLabel: debtor.group_label,
       verificationHash: debtor.verification_hash,
     },
     organization: {
+      name: organization.name,
       displayNameForDebtors: organization.display_name_for_debtors,
       kind: organization.kind,
     },
@@ -506,4 +515,468 @@ export async function verifyDebtorIdentity(
         ? "Los dígitos ingresados no coinciden. Te queda 1 intento."
         : `Los dígitos ingresados no coinciden. Te quedan ${remainingAttempts} intentos.`,
   }
+}
+
+export type PersistedDebtorOffer = {
+  id: string
+  installments: number
+  downPaymentCents: number
+  waivedInterestCents: number
+  totalCents: number
+  schedule: ScheduleItem[]
+  status: Database["public"]["Enums"]["offer_status"]
+  validUntil: string
+  engineVersion: string
+  createdAt: string
+}
+
+export type PersistedDebtorAgreement = {
+  id: string
+  offerId: string
+  acceptedAt: string
+  acceptanceIp: string | null
+  userAgent: string | null
+  transcriptSha256: string
+  templateVersion: string
+  documentHtml: string | null
+  installments: number
+  downPaymentCents: number
+  waivedInterestCents: number
+  totalCents: number
+  schedule: ScheduleItem[]
+  engineVersion: string
+}
+
+function parseOfferSchedule(raw: unknown): ScheduleItem[] {
+  if (!Array.isArray(raw)) return []
+  return raw.filter(
+    (item): item is ScheduleItem =>
+      !!item &&
+      typeof item === "object" &&
+      !Array.isArray(item) &&
+      typeof (item as ScheduleItem).number === "number" &&
+      typeof (item as ScheduleItem).due_date === "string" &&
+      typeof (item as ScheduleItem).amount_cents === "number"
+  )
+}
+
+/**
+ * Obtiene la oferta propuesta vigente o la oferta aceptada de la negociación
+ * desde la base de datos (nunca desde el texto del modelo, PLAN_BACKEND D7).
+ */
+export async function getNegotiationOffersForDebtor(
+  negotiation: Pick<ResolvedNegotiation, "id" | "organizationId">
+): Promise<{
+  proposedOffer: PersistedDebtorOffer | null
+  acceptedAgreement: PersistedDebtorAgreement | null
+}> {
+  const supabase = createServiceClient()
+  const { data, error } = await supabase
+    .from("offers")
+    .select(
+      `id, installments, down_payment_cents, waived_interest_cents, total_cents,
+       schedule, status, valid_until, engine_version, created_at,
+       agreements(id, accepted_at, acceptance_ip, user_agent, transcript_sha256, template_version, document_html)`
+    )
+    .eq("negotiation_id", negotiation.id)
+    .eq("organization_id", negotiation.organizationId)
+    .in("status", ["proposed", "accepted"])
+    .order("created_at", { ascending: false })
+
+  if (error) throw new Error(error.message)
+
+  let proposedOffer: PersistedDebtorOffer | null = null
+  let acceptedAgreement: PersistedDebtorAgreement | null = null
+
+  for (const row of data) {
+    const schedule = parseOfferSchedule(row.schedule)
+    if (row.status === "proposed" && !proposedOffer) {
+      proposedOffer = {
+        id: row.id,
+        installments: row.installments,
+        downPaymentCents: row.down_payment_cents,
+        waivedInterestCents: row.waived_interest_cents,
+        totalCents: row.total_cents,
+        schedule,
+        status: row.status,
+        validUntil: row.valid_until,
+        engineVersion: row.engine_version,
+        createdAt: row.created_at,
+      }
+    }
+    if (row.status === "accepted" && !acceptedAgreement) {
+      const agreement = row.agreements.at(0)
+      if (agreement) {
+        acceptedAgreement = {
+          id: agreement.id,
+          offerId: row.id,
+          acceptedAt: agreement.accepted_at,
+          acceptanceIp: agreement.acceptance_ip,
+          userAgent: agreement.user_agent,
+          transcriptSha256: agreement.transcript_sha256,
+          templateVersion: agreement.template_version,
+          documentHtml: agreement.document_html,
+          installments: row.installments,
+          downPaymentCents: row.down_payment_cents,
+          waivedInterestCents: row.waived_interest_cents,
+          totalCents: row.total_cents,
+          schedule,
+          engineVersion: row.engine_version,
+        }
+      }
+    }
+  }
+
+  return { proposedOffer, acceptedAgreement }
+}
+
+/**
+ * Calcula el SHA-256 determinístico del transcript de la negociación a partir
+ * de los mensajes almacenados en DB ordenados cronológicamente (PLAN_BACKEND D11).
+ */
+export function computeTranscriptSha256(
+  messages: ReadonlyArray<
+    Pick<Tables<"messages">, "id" | "role" | "parts" | "created_at">
+  >
+): string {
+  const canonical = JSON.stringify(
+    messages.map((m) => ({
+      id: m.id,
+      role: m.role,
+      created_at: m.created_at,
+      parts: m.parts,
+    }))
+  )
+  return sha256Hex(canonical)
+}
+
+/**
+ * Revalida determinísticamente que una oferta persistida respete los límites
+ * numéricos del `policy_snapshot` de la negociación (PLAN_BACKEND §3.3-6).
+ */
+export function isOfferWithinPolicySnapshot(
+  negotiation: Pick<ResolvedNegotiation, "debt" | "policySnapshot">,
+  offer: Pick<
+    PersistedDebtorOffer,
+    | "installments"
+    | "downPaymentCents"
+    | "waivedInterestCents"
+    | "totalCents"
+    | "schedule"
+  >
+): boolean {
+  const policy = snapshotToPolicy(negotiation.policySnapshot)
+  const principalCents = Math.max(
+    0,
+    Math.trunc(negotiation.debt.principalCents)
+  )
+  const interestCents = Math.max(0, Math.trunc(negotiation.debt.interestCents))
+
+  if (principalCents <= 0 || interestCents < 0) return false
+  if (
+    policy.escalateAboveAmountCents !== null &&
+    policy.escalateAboveAmountCents > 0 &&
+    principalCents + interestCents >= policy.escalateAboveAmountCents
+  ) {
+    return false
+  }
+
+  const maxInstallments = Math.max(
+    1,
+    Math.min(24, Math.trunc(policy.maxInstallments))
+  )
+  if (
+    !Number.isInteger(offer.installments) ||
+    offer.installments < 1 ||
+    offer.installments > maxInstallments
+  ) {
+    return false
+  }
+
+  const maxWaiverPct =
+    offer.installments === 1
+      ? policy.singlePaymentInterestWaiverPct
+      : policy.maxInterestWaiverPct
+  const maxWaivedInterestCents = Math.floor(
+    (interestCents * Math.min(100, Math.max(0, Math.trunc(maxWaiverPct)))) / 100
+  )
+  if (
+    offer.waivedInterestCents < 0 ||
+    offer.waivedInterestCents > maxWaivedInterestCents
+  ) {
+    return false
+  }
+
+  const maxPrincipalDiscountCents = Math.floor(
+    (principalCents *
+      Math.min(100, Math.max(0, Math.trunc(policy.maxPrincipalDiscountPct)))) /
+      100
+  )
+  const minAllowedTotalCents =
+    principalCents -
+    maxPrincipalDiscountCents +
+    (interestCents - offer.waivedInterestCents)
+  const maxAllowedTotalCents = principalCents + interestCents
+  if (
+    offer.totalCents <= 0 ||
+    offer.totalCents < minAllowedTotalCents ||
+    offer.totalCents > maxAllowedTotalCents
+  ) {
+    return false
+  }
+
+  if (offer.schedule.length !== offer.installments) return false
+  const scheduleSum = offer.schedule.reduce(
+    (sum, item) => sum + item.amount_cents,
+    0
+  )
+  if (scheduleSum !== offer.totalCents) return false
+
+  const minInstallmentCents = Math.max(
+    0,
+    Math.trunc(policy.minInstallmentAmountCents)
+  )
+  for (let i = 0; i < offer.schedule.length; i++) {
+    const item = offer.schedule[i]
+    if (item.number !== i + 1 || item.amount_cents <= 0) return false
+    if (offer.installments > 1 && item.amount_cents < minInstallmentCents) {
+      return false
+    }
+  }
+
+  if (offer.installments === 1) {
+    return offer.downPaymentCents === offer.totalCents
+  }
+
+  const minDownPctCents = Math.ceil(
+    (offer.totalCents *
+      Math.min(100, Math.max(0, Math.trunc(policy.minDownPaymentPct)))) /
+      100
+  )
+  const minDownPayment = Math.max(1, minDownPctCents, minInstallmentCents)
+  if (
+    offer.downPaymentCents < minDownPayment ||
+    offer.downPaymentCents !== offer.schedule[0]?.amount_cents
+  ) {
+    return false
+  }
+
+  return true
+}
+
+export type AcceptNegotiationOfferResult =
+  | {
+      ok: true
+      agreementId: string
+      acceptedAt: string
+      transcriptSha256: string
+      documentHtml: string
+    }
+  | {
+      ok: false
+      status: number
+      error: string
+    }
+
+/**
+ * Acepta una oferta propuesta por el agente en una negociación verificada:
+ * 1. Obtiene la oferta de la DB, verifica estado (`proposed`), vigencia (`valid_until`)
+ *    y la revalida contra `policy_snapshot` (§3.3-6).
+ * 2. Calcula `transcript_sha256` sobre el historial de `messages`.
+ * 3. Genera el acta HTML imprimible desde la plantilla versionada (D11).
+ * 4. Ejecuta el RPC transaccional `accept_offer`.
+ */
+export async function acceptNegotiationOffer({
+  negotiation,
+  offerId,
+  acceptanceIp,
+  userAgent,
+}: {
+  negotiation: ResolvedNegotiation
+  offerId?: string
+  acceptanceIp: string | null
+  userAgent: string | null
+}): Promise<AcceptNegotiationOfferResult> {
+  if (
+    negotiation.status !== "offer_pending" &&
+    negotiation.status !== "active"
+  ) {
+    return {
+      ok: false,
+      status: 409,
+      error:
+        negotiation.status === "agreed"
+          ? "Esta negociación ya cuenta con un acuerdo confirmado."
+          : "La negociación no admite aceptar ofertas en su estado actual.",
+    }
+  }
+
+  const supabase = createServiceClient()
+  let query = supabase
+    .from("offers")
+    .select(
+      "id, installments, down_payment_cents, waived_interest_cents, total_cents, schedule, status, valid_until, engine_version, created_at"
+    )
+    .eq("negotiation_id", negotiation.id)
+    .eq("organization_id", negotiation.organizationId)
+
+  if (offerId) {
+    query = query.eq("id", offerId)
+  } else {
+    query = query
+      .eq("status", "proposed")
+      .order("created_at", { ascending: false })
+      .limit(1)
+  }
+
+  const { data: rows, error: offerError } = await query
+  if (offerError) throw new Error(offerError.message)
+  const offerRow = rows.at(0)
+  if (!offerRow) {
+    return {
+      ok: false,
+      status: 404,
+      error: "No encontramos una oferta activa para aceptar.",
+    }
+  }
+
+  if (offerRow.status !== "proposed") {
+    return {
+      ok: false,
+      status: 409,
+      error: "Esta oferta ya fue reemplazada o aceptada.",
+    }
+  }
+
+  const validUntilMs = Date.parse(offerRow.valid_until)
+  if (!Number.isFinite(validUntilMs) || validUntilMs <= Date.now()) {
+    return {
+      ok: false,
+      status: 410,
+      error:
+        "La vigencia de esta oferta venció. Pedile una nueva propuesta al asistente.",
+    }
+  }
+
+  const schedule = parseOfferSchedule(offerRow.schedule)
+  const offer: PersistedDebtorOffer = {
+    id: offerRow.id,
+    installments: offerRow.installments,
+    downPaymentCents: offerRow.down_payment_cents,
+    waivedInterestCents: offerRow.waived_interest_cents,
+    totalCents: offerRow.total_cents,
+    schedule,
+    status: offerRow.status,
+    validUntil: offerRow.valid_until,
+    engineVersion: offerRow.engine_version,
+    createdAt: offerRow.created_at,
+  }
+
+  if (!isOfferWithinPolicySnapshot(negotiation, offer)) {
+    return {
+      ok: false,
+      status: 422,
+      error:
+        "La oferta no supera la validación contra la política de la organización.",
+    }
+  }
+
+  const history = await getConversationHistory(negotiation.id)
+  const transcriptSha256 = computeTranscriptSha256(history)
+  const acceptedAtPreview = new Date().toISOString()
+
+  const documentHtml = renderAgreementDocumentHtml({
+    organization: {
+      name: negotiation.organization.name,
+      displayNameForDebtors: negotiation.organization.displayNameForDebtors,
+    },
+    debtor: {
+      fullName: negotiation.debtor.fullName,
+      alias: negotiation.debtor.alias,
+      groupLabel: negotiation.debtor.groupLabel,
+    },
+    debt: negotiation.debt,
+    offer: {
+      id: offer.id,
+      installments: offer.installments,
+      downPaymentCents: offer.downPaymentCents,
+      waivedInterestCents: offer.waivedInterestCents,
+      totalCents: offer.totalCents,
+      schedule: offer.schedule,
+      engineVersion: offer.engineVersion,
+    },
+    evidence: {
+      acceptedAt: acceptedAtPreview,
+      acceptanceIp,
+      userAgent,
+      transcriptSha256,
+      templateVersion: AGREEMENT_TEMPLATE_VERSION,
+    },
+    policySnapshot: negotiation.policySnapshot,
+  })
+
+  const { data: rpcResult, error: rpcError } = await supabase.rpc(
+    "accept_offer",
+    {
+      p_organization_id: negotiation.organizationId,
+      p_negotiation_id: negotiation.id,
+      p_offer_id: offer.id,
+      p_acceptance_ip: acceptanceIp,
+      p_user_agent: userAgent,
+      p_transcript_sha256: transcriptSha256,
+      p_document_html: documentHtml,
+      p_template_version: AGREEMENT_TEMPLATE_VERSION,
+    }
+  )
+
+  if (rpcError) {
+    return {
+      ok: false,
+      status: 409,
+      error:
+        rpcError.message || "No se pudo registrar la aceptación del acuerdo.",
+    }
+  }
+
+  const parsed = z
+    .object({ agreement_id: z.uuid(), accepted_at: z.string() })
+    .parse(rpcResult)
+
+  return {
+    ok: true,
+    agreementId: parsed.agreement_id,
+    acceptedAt: parsed.accepted_at,
+    transcriptSha256,
+    documentHtml,
+  }
+}
+
+/**
+ * Obtiene los mensajes posteriores a un cursor (`created_at`) junto con el
+ * estado actual de la negociación y la oferta/acuerdo vigente (PLAN_BACKEND D9, §5).
+ */
+export async function getMessagesSinceForDebtor(
+  negotiation: Pick<ResolvedNegotiation, "id" | "organizationId">,
+  cursor?: string
+): Promise<{
+  messages: Pick<Tables<"messages">, "id" | "role" | "parts" | "created_at">[]
+  nextCursor: string | null
+}> {
+  const supabase = createServiceClient()
+  let query = supabase
+    .from("messages")
+    .select("id, role, parts, created_at")
+    .eq("negotiation_id", negotiation.id)
+    .eq("organization_id", negotiation.organizationId)
+    .order("created_at", { ascending: true })
+    .order("id", { ascending: true })
+
+  if (cursor) {
+    query = query.gt("created_at", cursor)
+  }
+
+  const { data, error } = await query
+  if (error) throw new Error(error.message)
+  const nextCursor = data.at(-1)?.created_at ?? cursor ?? null
+  return { messages: data, nextCursor }
 }

@@ -20,11 +20,13 @@ export function negotiationFixture(
     },
     debtor: {
       id: "deb00000-0000-4000-8000-000000000001",
+      fullName: "Marina Gutiérrez",
       alias: "Unidad 4B",
       groupLabel: null,
       verificationHash: null,
     },
     organization: {
+      name: "Consorcios del Sur",
       displayNameForDebtors: "Administración demo",
       kind: "consorcio",
     },

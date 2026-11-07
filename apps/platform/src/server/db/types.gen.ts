@@ -266,6 +266,7 @@ isOneToOne: false
             "claim_negotiation_turn": { Args: { p_organization_id: string; p_negotiation_id: string; p_expected_updated_at: string; p_turn_id: string; p_message_id: string; p_parts: Json; p_human_requested: boolean }; Returns: Json }
             "release_negotiation_turn": { Args: { p_organization_id: string; p_negotiation_id: string; p_turn_id: string }; Returns: undefined }
             "persist_negotiation_response": { Args: { p_turn_id: string; p_organization_id: string; p_negotiation_id: string; p_expected_updated_at: string; p_allow_escalated: boolean; p_message_id: string; p_parts: Json }; Returns: Json }
+            "accept_offer": { Args: { p_organization_id: string; p_negotiation_id: string; p_offer_id: string; p_acceptance_ip: string | null; p_user_agent: string | null; p_transcript_sha256: string; p_document_html: string; p_template_version: string }; Returns: Json }
             "is_member":
 { Args: { "org": string }; Returns: boolean
                            }

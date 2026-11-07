@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start"
 import { ArrowUp02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
+import { Badge } from "@/components/ui/badge"
 import { Bubble, BubbleContent } from "@/components/ui/bubble"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,14 +22,27 @@ import { Textarea } from "@/components/ui/textarea"
 import {
   AGENT_ANSWERABLE_STATUSES,
   createChatMessageId,
+  extractProposedOfferFromParts,
   isNegotiationExpired,
   messagePartsToText,
 } from "@/lib/debtor-chat"
 import type { DebtorUIMessage } from "@/lib/debtor-chat"
-import { getDebtorChatState, verifyIdentity } from "@/server/debtor-chat"
-import type { DebtorChatState } from "@/server/debtor-chat"
+import { formatARS, formatDate, formatDateTime } from "@/lib/format"
+import { installmentsLabel } from "@/lib/labels"
+import {
+  getDebtorChatState,
+  getMessagesSince,
+  verifyIdentity,
+} from "@/server/debtor-chat"
+import type {
+  DebtorAgreementView,
+  DebtorChatState,
+  DebtorOfferView,
+} from "@/server/debtor-chat"
 
 type AvailableState = Extract<DebtorChatState, { found: true }>
+
+export const ESCALATED_POLL_INTERVAL_MS = 5_000
 
 function initialMessages(state: AvailableState): DebtorUIMessage[] {
   if (!state.verified || state.expired || state.status === "locked") {
@@ -66,11 +80,16 @@ export function DebtorChat({
   const [refreshing, setRefreshing] = useState(false)
   const [unavailable, setUnavailable] = useState(false)
   const [refreshError, setRefreshError] = useState(false)
+  const [accepting, setAccepting] = useState(false)
+  const [acceptError, setAcceptError] = useState<string | null>(null)
   const sending = useRef(false)
   const pendingMessage = useRef<{ id: string; text: string } | undefined>(
     undefined
   )
   const reconciliation = useRef<Promise<void> | null>(null)
+  const cursorRef = useRef<string | null>(
+    initialState.cursor ?? initialState.messages.at(-1)?.createdAt ?? null
+  )
 
   const transport = useMemo(
     () =>
@@ -98,8 +117,14 @@ export function DebtorChat({
     transport,
     onFinish: ({ message, isAbort, isError, finishReason }) => {
       const nextStatus = message.metadata?.negotiationStatus
-      if (nextStatus)
-        setState((current) => ({ ...current, status: nextStatus }))
+      const extractedOffer = extractProposedOfferFromParts(message.parts)
+      if (nextStatus || extractedOffer) {
+        setState((current) => ({
+          ...current,
+          status: nextStatus ?? current.status,
+          proposedOffer: extractedOffer ?? current.proposedOffer,
+        }))
+      }
       if (
         isAbort ||
         isError ||
@@ -119,6 +144,21 @@ export function DebtorChat({
       void refreshState(pendingMessage.current)
     },
   })
+
+  const streamedOffer = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const offer = extractProposedOfferFromParts(messages[i]?.parts)
+      if (offer) return offer
+    }
+    return null
+  }, [messages])
+
+  const activeOffer: DebtorOfferView | null =
+    state.status === "agreed"
+      ? null
+      : (streamedOffer ?? state.proposedOffer ?? null)
+  const activeAgreement: DebtorAgreementView | null =
+    state.acceptedAgreement ?? null
 
   const isBusy = status === "submitted" || status === "streaming"
   const canSend =
@@ -146,6 +186,8 @@ export function DebtorChat({
         setUnavailable(true)
         setMessages([])
       } else {
+        cursorRef.current =
+          next.cursor ?? next.messages.at(-1)?.createdAt ?? cursorRef.current
         setState(next)
         setMessages(
           next.expired || next.status === "locked" || !next.verified
@@ -166,6 +208,79 @@ export function DebtorChat({
       setRefreshing(false)
     }
   }
+
+  // Polling cada ~5 s cuando la conversación está en `escalated` (PLAN_BACKEND D9, SEM-39).
+  useEffect(() => {
+    if (!state.verified || state.expired || state.status !== "escalated") return
+    let cancelled = false
+    const interval = setInterval(async () => {
+      if (reconciliation.current) return
+      try {
+        const update = await getMessagesSince({
+          data: { token, cursor: cursorRef.current ?? undefined },
+        })
+        if (cancelled) return
+        if (!update.found) {
+          setUnavailable(true)
+          setMessages([])
+          return
+        }
+        if (update.expired || update.status === "locked" || !update.verified) {
+          setState((current) => ({
+            ...current,
+            status: update.status,
+            expired: update.expired,
+            verified: update.verified,
+            messages: [],
+          }))
+          setMessages([])
+          return
+        }
+        if (update.nextCursor) {
+          cursorRef.current = update.nextCursor
+        }
+        if (update.messages.length > 0) {
+          setMessages((current) => {
+            const existingIds = new Set(current.map((m) => m.id))
+            const incoming = update.messages
+              .filter((m) => !existingIds.has(m.id))
+              .map((message): DebtorUIMessage => ({
+                id: message.id,
+                role: message.role === "debtor" ? "user" : "assistant",
+                parts: [{ type: "text", text: message.text }],
+                metadata: { authorRole: message.role },
+              }))
+            return incoming.length > 0 ? [...current, ...incoming] : current
+          })
+        }
+        setState((current) => {
+          const mergedMessages =
+            update.messages.length > 0
+              ? [
+                  ...current.messages,
+                  ...update.messages.filter(
+                    (m) => !current.messages.some((item) => item.id === m.id)
+                  ),
+                ]
+              : current.messages
+          return {
+            ...current,
+            status: update.status,
+            messages: mergedMessages,
+            proposedOffer: update.proposedOffer ?? current.proposedOffer,
+            acceptedAgreement:
+              update.acceptedAgreement ?? current.acceptedAgreement,
+          }
+        })
+      } catch {
+        // Silencioso en polling periódico; el botón Actualizar sigue disponible.
+      }
+    }, ESCALATED_POLL_INTERVAL_MS)
+    return () => {
+      cancelled = true
+      clearInterval(interval)
+    }
+  }, [state.verified, state.expired, state.status, token, setMessages])
 
   useEffect(() => {
     if (state.expired) return
@@ -192,6 +307,7 @@ export function DebtorChat({
       !trimmed ||
       isBusy ||
       refreshing ||
+      accepting ||
       reconciliation.current ||
       refreshError ||
       sending.current ||
@@ -203,6 +319,7 @@ export function DebtorChat({
     pendingMessage.current = { id, text: trimmed }
     setInput("")
     clearError()
+    setAcceptError(null)
     try {
       await sendMessage({
         id,
@@ -211,6 +328,60 @@ export function DebtorChat({
       })
     } finally {
       sending.current = false
+    }
+  }
+
+  async function acceptCurrentOffer(offer: DebtorOfferView) {
+    if (accepting || isBusy || refreshing) return
+    setAccepting(true)
+    setAcceptError(null)
+    try {
+      const res = await fetch(`/api/n/${encodeURIComponent(token)}/accept`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ offerId: offer.id }),
+      })
+      const payload = (await res.json().catch(() => null)) as {
+        ok?: boolean
+        agreementId?: string
+        acceptedAt?: string
+        transcriptSha256?: string
+        agreementUrl?: string
+        error?: string
+      } | null
+
+      if (!res.ok || !payload?.ok) {
+        setAcceptError(
+          payload?.error ??
+            "No pudimos registrar la aceptación del acuerdo. Intentá de nuevo."
+        )
+        return
+      }
+
+      const encodedToken = encodeURIComponent(token)
+      setState((current) => ({
+        ...current,
+        status: "agreed",
+        proposedOffer: null,
+        acceptedAgreement: {
+          id: payload.agreementId ?? offer.id,
+          offerId: offer.id,
+          acceptedAt: payload.acceptedAt ?? new Date().toISOString(),
+          transcriptSha256: payload.transcriptSha256 ?? "",
+          installments: offer.installments,
+          downPaymentCents: offer.downPaymentCents,
+          waivedInterestCents: offer.waivedInterestCents,
+          totalCents: offer.totalCents,
+          schedule: offer.schedule,
+          agreementUrl: payload.agreementUrl ?? `/api/n/${encodedToken}/accept`,
+        },
+      }))
+    } catch {
+      setAcceptError(
+        "No pudimos confirmar el acuerdo en este momento. Intentá de nuevo."
+      )
+    } finally {
+      setAccepting(false)
     }
   }
 
@@ -330,6 +501,26 @@ export function DebtorChat({
                   </p>
                 </MessageScrollerItem>
               )}
+              {activeOffer && state.status !== "agreed" && (
+                <MessageScrollerItem messageId={`offer-${activeOffer.id}`}>
+                  <OfferCard
+                    offer={activeOffer}
+                    canAccept={canSend && !isBusy && !refreshing}
+                    accepting={accepting}
+                    error={acceptError}
+                    onAccept={() => void acceptCurrentOffer(activeOffer)}
+                  />
+                </MessageScrollerItem>
+              )}
+              {state.status === "agreed" && (
+                <MessageScrollerItem messageId="agreement-summary">
+                  <AgreedTerminalCard
+                    token={token}
+                    organizationName={state.organizationName}
+                    agreement={activeAgreement}
+                  />
+                </MessageScrollerItem>
+              )}
             </MessageScrollerContent>
           </MessageScrollerViewport>
           <MessageScrollerButton />
@@ -339,11 +530,21 @@ export function DebtorChat({
       <footer className="shrink-0 border-t bg-background px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
         {!canSend && (
           <div className="mb-3 flex items-center justify-between gap-3 rounded-lg bg-muted px-3 py-2">
-            <p role="status" className="text-xs text-muted-foreground">
-              {state.status === "escalated"
-                ? "La conversación está en manos de la administración."
-                : "Esta negociación ya está cerrada."}
-            </p>
+            <div className="min-w-0">
+              <p role="status" className="text-xs font-medium text-foreground">
+                {state.status === "escalated"
+                  ? "La conversación está en manos de la administración."
+                  : state.status === "agreed"
+                    ? "Acuerdo de pago confirmado."
+                    : "Esta negociación ya está cerrada."}
+              </p>
+              {state.status === "escalated" && (
+                <p className="text-[11px] text-muted-foreground">
+                  Recibirás los mensajes de la administración en este mismo chat
+                  automáticamente.
+                </p>
+              )}
+            </div>
             <Button
               size="sm"
               variant="ghost"
@@ -453,6 +654,190 @@ export function ChatStatus({
       <h1 className="text-lg font-semibold">{title}</h1>
       <p className="max-w-sm text-sm text-muted-foreground">{description}</p>
     </div>
+  )
+}
+
+export function OfferCard({
+  offer,
+  canAccept,
+  accepting,
+  error,
+  onAccept,
+}: {
+  offer: DebtorOfferView
+  canAccept: boolean
+  accepting: boolean
+  error: string | null
+  onAccept: () => void
+}) {
+  const isSinglePayment = offer.installments === 1
+  return (
+    <section
+      aria-label="Propuesta de plan de pago"
+      className="rounded-xl border border-primary/25 bg-card p-4 shadow-sm sm:p-5"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-2 border-b pb-3">
+        <div>
+          <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+            Propuesta formal de pago
+          </p>
+          <h2 className="mt-0.5 text-base font-semibold">
+            {installmentsLabel(offer.installments)} ·{" "}
+            <span className="tabular-nums">{formatARS(offer.totalCents)}</span>
+          </h2>
+        </div>
+        <Badge variant="secondary">
+          Vigente hasta {formatDateTime(offer.validUntil)}
+        </Badge>
+      </div>
+
+      <dl className="mt-3 grid gap-1.5 text-sm">
+        <div className="flex justify-between gap-4">
+          <dt className="text-muted-foreground">Modalidad</dt>
+          <dd className="font-medium">
+            {installmentsLabel(offer.installments)}
+          </dd>
+        </div>
+        {!isSinglePayment && (
+          <div className="flex justify-between gap-4">
+            <dt className="text-muted-foreground">Anticipo (cuota 1)</dt>
+            <dd className="tabular-nums">
+              {formatARS(offer.downPaymentCents)}
+            </dd>
+          </div>
+        )}
+        {offer.waivedInterestCents > 0 && (
+          <div className="flex justify-between gap-4">
+            <dt className="text-muted-foreground">Quita de intereses</dt>
+            <dd className="font-medium text-emerald-600 tabular-nums dark:text-emerald-400">
+              - {formatARS(offer.waivedInterestCents)}
+            </dd>
+          </div>
+        )}
+        <div className="flex justify-between gap-4 border-t pt-1.5 font-semibold">
+          <dt>Total a pagar</dt>
+          <dd className="tabular-nums">{formatARS(offer.totalCents)}</dd>
+        </div>
+      </dl>
+
+      {offer.schedule.length > 0 && (
+        <div className="mt-4">
+          <h3 className="mb-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+            Cronograma de vencimientos
+          </h3>
+          <ul className="divide-y rounded-lg border bg-muted/40 text-xs">
+            {offer.schedule.map((item) => (
+              <li
+                key={item.number}
+                className="flex items-center justify-between gap-3 px-3 py-2"
+              >
+                <span>
+                  Cuota {item.number} · {formatDate(item.due_date)}
+                </span>
+                <span className="font-medium tabular-nums">
+                  {formatARS(item.amount_cents)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {error && (
+        <p
+          role="alert"
+          className="mt-3 rounded-lg bg-destructive/10 px-3 py-2 text-xs text-destructive"
+        >
+          {error}
+        </p>
+      )}
+
+      <div className="mt-4">
+        <Button
+          type="button"
+          size="lg"
+          className="w-full"
+          disabled={!canAccept || accepting}
+          onClick={onAccept}
+        >
+          {accepting
+            ? "Confirmando acuerdo…"
+            : "Acepto los términos del plan de pago"}
+        </Button>
+      </div>
+    </section>
+  )
+}
+
+function AgreedTerminalCard({
+  token,
+  organizationName,
+  agreement,
+}: {
+  token: string
+  organizationName: string
+  agreement: DebtorAgreementView | null
+}) {
+  const agreementUrl =
+    agreement?.agreementUrl ?? `/api/n/${encodeURIComponent(token)}/accept`
+
+  return (
+    <section
+      aria-label="Acuerdo de pago confirmado"
+      className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4 shadow-sm sm:p-5"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-2 border-b border-emerald-500/20 pb-3">
+        <div>
+          <p className="text-xs font-semibold tracking-wide text-emerald-700 uppercase dark:text-emerald-400">
+            Acuerdo registrado
+          </p>
+          <h2 className="mt-0.5 text-base font-semibold">
+            {agreement
+              ? `${installmentsLabel(agreement.installments)} por ${formatARS(agreement.totalCents)}`
+              : `Plan de pago acordado con ${organizationName}`}
+          </h2>
+        </div>
+        <Badge variant="default">Confirmado</Badge>
+      </div>
+
+      {agreement && (
+        <>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Aceptado el {formatDateTime(agreement.acceptedAt)}. Podés descargar
+            o imprimir tu comprobante con el detalle completo de cuotas y
+            evidencia criptográfica.
+          </p>
+          {agreement.schedule.length > 0 && (
+            <ul className="mt-3 divide-y rounded-lg border bg-background/80 text-xs">
+              {agreement.schedule.map((item) => (
+                <li
+                  key={item.number}
+                  className="flex items-center justify-between gap-3 px-3 py-2"
+                >
+                  <span>
+                    Cuota {item.number} · {formatDate(item.due_date)}
+                  </span>
+                  <span className="font-medium tabular-nums">
+                    {formatARS(item.amount_cents)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )}
+
+      <div className="mt-4">
+        <a
+          href={agreementUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90"
+        >
+          Ver e imprimir acta de acuerdo
+        </a>
+      </div>
+    </section>
   )
 }
 

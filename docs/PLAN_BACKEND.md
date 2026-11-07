@@ -347,11 +347,11 @@ Objetivo: **un deudor de seed negocia por chat y recibe ofertas siempre dentro d
 
 - [x] Pantalla de bienvenida (sin montos) → verificación de identidad → cookie firmada (D4); bloqueo tras N intentos.
 - [x] Mensaje inicial determinístico (bot disclosure + aviso de privacidad).
-- [ ] **OfferCard** renderizada desde el `tool-propose_offer` part / DB, con botón "Acepto los términos del plan de pago".
-- [ ] `POST /api/n/$token/accept`: captura IP/UA, RPC `accept_offer`, `transcript_sha256`, genera acta HTML, devuelve link al acta.
-- [ ] Botón permanente "Hablar con una persona" + interceptor de palabra clave antes del LLM.
-- [ ] Validador post‑generación de cifras (§3.3‑3) y límites de pasos/turnos.
-- [ ] Estados terminales (acordado, escalado, vencido, bloqueado) con UI clara; polling de mensajes en `escalated`.
+- [x] **OfferCard** renderizada desde el `tool-propose_offer` part / DB, con botón "Acepto los términos del plan de pago".
+- [x] `POST /api/n/$token/accept`: captura IP/UA, RPC `accept_offer`, `transcript_sha256`, genera acta HTML, devuelve link al acta.
+- [x] Botón permanente "Hablar con una persona" + interceptor de palabra clave antes del LLM.
+- [x] Validador post‑generación de cifras (§3.3‑3) y límites de pasos/turnos.
+- [x] Estados terminales (acordado, escalado, vencido, bloqueado) con UI clara; polling de mensajes en `escalated`.
 
 **Criterio:** flujo completo deudor: link → verificación → negociación → aceptación → acta con evidencia.
 
