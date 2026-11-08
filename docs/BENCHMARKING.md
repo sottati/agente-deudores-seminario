@@ -64,7 +64,7 @@ Estudio de las alternativas que hoy usan las administraciones de consorcios para
 
 ## 4. Conclusiones: el espacio en blanco
 
-1. **El espacio libre es la negociación.** Las alternativas automatizan el aviso y el cobro, pero ninguna automatiza la conversación para llegar a un acuerdo de pago dentro de reglas aprobadas. pacta.ai se concentra ahí.
+1. **Hipótesis: el espacio libre es la negociación.** Entre las alternativas relevadas, ninguna automatiza la conversación para llegar a un acuerdo de pago dentro de reglas aprobadas; automatizan el aviso y el cobro. pacta.ai se concentra ahí. La hipótesis se valida con la encuesta y el análisis de no clientes.
 2. **pacta.ai no compite en gestión contable ni en cobro.** Esos factores ya los cubren los software de gestión y las plataformas de cobro, y el cliente ya los paga. pacta.ai se posiciona como complemento: toma la deuda que el software ya calcula y la convierte en un acuerdo.
 3. **Riesgo competitivo:** Adminia Manager (agente IA por WhatsApp) y Mi Consorcio (IA que sugiere planes de pago) son los más cercanos y podrían sumar negociación. La defensa de pacta.ai es la especialización: reglas aprobadas, trazabilidad del acuerdo y derivación a una persona, más la integración con esos mismos software (Release 3).
 4. **Matriz ERIC:** qué hace pacta.ai con cada factor de la curva, en [ERIC.md](./ERIC.md).
