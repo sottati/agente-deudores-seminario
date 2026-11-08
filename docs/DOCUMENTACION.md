@@ -28,15 +28,55 @@ Los métodos tradicionales (correos electrónicos genéricos o llamadas telefón
 
 ### 1.3 Árbol de Problemas
 
-- **Causas Principales:**
-  - Volumen de deudores superior a la capacidad de atención humana personalizada.
-  - Uso de canales de contacto estáticos y genéricos (mail masivo o llamadas invasivas).
-  - Seguimiento desorganizado mediante herramientas no especializadas (Excel, sistemas legacy, WhatsApp personal).
-- **Problema Central:** Recupero de deuda vencida lento, costoso a nivel de tiempo y desgastante para quien ejecuta la cobranza.
-- **Efectos:**
-  - Baja tasa de respuesta e ignorancia de intimaciones.
-  - Evasión del deudor y fricción interpersonal en comunidades cerradas (vecinos del consorcio).
-  - Impacto negativo en la liquidez y capacidad operativa de la institución.
+Método de la Clase 03: causas → problema central → efectos. Cada punto indica de dónde sale: entrevistas ([ENTREVISTAS.md](./ENTREVISTAS.md)), benchmarking ([BENCHMARKING.md](./BENCHMARKING.md)) o datos de mercado. Lo que todavía no tiene evidencia se marca como hipótesis y se valida con la encuesta y la entrevista con el experto.
+
+![Árbol de problemas](./assets/arbol_problemas.png)
+
+**Problema central:** el recupero de la deuda vencida es lento, consume tiempo del equipo y es desgastante para la administración.
+
+**En el formato de la Clase 03:**
+
+> Las administraciones con 5 o más consorcios en CABA y GBA tienen el problema de recuperar la deuda de expensas en forma lenta y manual cuando deben contactar y negociar con cada deudor uno por uno, lo que genera horas de trabajo, desgaste con los vecinos y menos liquidez para el consorcio.
+
+**Causas**
+
+| #   | Causa                                                                              | Evidencia                                                                                                                                      |
+| --- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| C1  | Seguimiento uno a uno y repetitivo: hay más deudores que personas para atenderlos. | Entrevista 2: 4 personas reparten su tiempo entre cobranzas, proveedores, atención al vecino y legales.                                        |
+| C2  | El deudor se atrasa por desorganización o porque no puede pagar todo junto.        | Entrevista 2 (no siempre es falta de solvencia; a veces es desorganización). Entrevista 1 (acuerdos en cuotas cuando no tiene el monto total). |
+| C3  | Canales genéricos o invasivos (mail masivo, llamadas).                             | Hipótesis. En la Entrevista 2, el canal más efectivo es la carta documento, que ya es una intimación formal. Se valida con la encuesta.        |
+| C4  | Las quitas de intereses las aprueba el Consejo o la Asamblea, caso por caso.       | Entrevista 2.                                                                                                                                  |
+| C5  | El software de gestión calcula la deuda, pero no negocia.                          | Benchmarking.                                                                                                                                  |
+
+**Efectos**
+
+| #   | Efecto                                                                                         | Evidencia                                                                                                  |
+| --- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| E1  | Horas del equipo dedicadas a cobrar.                                                           | Entrevista 2: "insistencia y seguimiento continuo". Falta medir cuántas horas (pregunta 5 de la encuesta). |
+| E2  | Desgaste del vínculo con el vecino.                                                            | Hipótesis. Indicio: en las Entrevistas 2 y 3 preocupa que el trato sea rígido o frío.                      |
+| E3  | La deuda escala a carta documento y legales, con honorarios y gastos a cargo de la unidad.     | Entrevista 2.                                                                                              |
+| E4  | La deuda crece con el interés por mora (4,8% mensual en CABA) y es más difícil de regularizar. | iProfesional (marzo 2026).                                                                                 |
+| E5  | Menos liquidez del consorcio: el 19% de las UF tiene deuda de expensas.                        | ConsorcioAbierto, citado por iProfesional y BAE Negocios (marzo 2026).                                     |
+
+**Preguntas de la Clase 03**
+
+| Pregunta                              | Respuesta                                                                                                                                                                                         |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ¿Existe el problema?                  | Sí. El 19% de las UF tiene deuda de expensas, y la Entrevista 2 (target) describe la cobranza como un seguimiento continuo y desgastante.                                                         |
+| ¿A quién afecta?                      | A la administración (cliente), al consorcio (liquidez) y al deudor (la deuda crece).                                                                                                              |
+| ¿Dónde?                               | CABA y GBA. En CABA hay 122.561 consorcios (DG Rentas GCBA, agosto 2023).                                                                                                                         |
+| ¿Qué magnitud tiene?                  | 19% de las UF con deuda; en los barrios que monitorea ConsorcioAbierto, la deuda equivale al 23% de lo liquidado (junio 2025). La mora sube con obras extraordinarias y en verano (Entrevista 2). |
+| ¿Qué pasa si se resuelve? (hipótesis) | Menos horas de seguimiento, acuerdos dentro de reglas aprobadas en menos tiempo, menos casos derivados a legales y más liquidez para el consorcio.                                                |
+
+**Dónde actúa pacta.ai**
+
+- **C1:** conversa con cada deudor, a cualquier hora, sin sumar personas al equipo.
+- **C2:** le recuerda la deuda y le ofrece un plan en cuotas.
+- **C3:** chat web con tono empático (WhatsApp en el Release 2).
+- **C4:** aplica reglas que el Consejo o la Asamblea aprobaron de antemano, en lugar de decidir caso por caso.
+- **C5:** negocia sobre la deuda que el software de gestión ya calculó.
+
+Fuentes de los datos: ver la sección 5 de [BENCHMARKING.md](./BENCHMARKING.md) y [Pequeñas Noticias — 122.561 consorcios en CABA](https://www.pequenasnoticias.com.ar/NotasDeTapa/2023/NotaDeTapa0760.asp).
 
 ---
 
