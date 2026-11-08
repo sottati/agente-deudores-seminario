@@ -62,3 +62,4 @@ Los tests de la plataforma ejecutan las migraciones y verifican los RPCs y RLS c
 | `pnpm db:reset`                  | Recrea la base local aplicando migraciones y seed          |
 | `pnpm db:types`                  | Regenera los tipos TypeScript desde el esquema local       |
 | `pnpm smoke:llm`                 | Verifica que la API key y el modelo configurados respondan |
+| `pnpm evals:llm`                 | Corre los evals del agente contra el modelo real           |

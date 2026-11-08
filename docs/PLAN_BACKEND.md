@@ -376,7 +376,7 @@ Objetivo: **un deudor de seed negocia por chat y recibe ofertas siempre dentro d
 
 - [ ] Reemplazar los arrays mock del dashboard por `loader` + `useSuspenseQuery` contra las server fns de §5; estados vacíos y skeletons ([skeleton.tsx](../apps/platform/src/components/ui/skeleton.tsx)).
 - [ ] [dashboard-preview.tsx](../apps/platform/src/components/dashboard-preview.tsx) de la landing sigue con datos mock: separar componentes presentacionales (reciben props) para reutilizarlos en ambos lados.
-- [ ] **Evals del agente**: ~20 escenarios (cooperativo, pide 12 cuotas, pide quita total, agresivo, prompt injection "ignorá tus reglas", tercero que no es el titular, pide humano). Assert: nunca se crea una oferta fuera de política, siempre hay disclosure, se escala cuando corresponde. Con `MockLanguageModel` en CI y con el modelo real on‑demand.
+- [x] **Evals del agente** ([packages/agent/evals](../packages/agent/evals)): ~20 escenarios (cooperativo, pide 12 cuotas, pide quita total, agresivo, prompt injection "ignorá tus reglas", tercero que no es el titular, pide humano). Assert: nunca se crea una oferta fuera de política, siempre hay disclosure, se escala cuando corresponde. Con `MockLanguageModel` en CI y con el modelo real on‑demand.
 - [ ] Tests de integración de `/chat` y `/accept` con Supabase local.
 - [ ] Rate limit y tamaño máximo de mensaje en `/chat`.
 - [ ] Logging estructurado + registro de tokens consumidos por negociación (insumo para el modelo de costos de [§6](./DOCUMENTACION.md#L129-L140)).

@@ -1,0 +1,45 @@
+name: Agent evals (modelo real)
+
+# On-demand: corre los escenarios de packages/agent/evals contra el modelo configurado.
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "IDs de escenarios separados por coma (vacío = todos)"
+        required: false
+        default: ""
+      repeat:
+        description: "Repeticiones por escenario"
+        required: false
+        default: "1"
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      AI_PROVIDER: ${{ vars.AI_PROVIDER }}
+      AI_MODEL: ${{ vars.AI_MODEL }}
+      AI_GATEWAY_API_KEY: ${{ secrets.AI_GATEWAY_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      EVAL_ONLY: ${{ inputs.only }}
+      EVAL_REPEAT: ${{ inputs.repeat }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Correr evals
+        run: |
+          args=(--repeat "$EVAL_REPEAT" --json "$GITHUB_WORKSPACE/evals-report.json")
+          if [ -n "$EVAL_ONLY" ]; then args+=(--only "$EVAL_ONLY"); fi
+          pnpm evals:llm "${args[@]}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evals-report
+          path: evals-report.json
+          if-no-files-found: ignore

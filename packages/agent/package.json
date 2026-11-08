@@ -9,7 +9,8 @@
   "scripts": {
     "test": "vitest run --passWithNoTests",
     "typecheck": "tsc --noEmit",
-    "smoke": "tsx --env-file-if-exists=../../apps/platform/.env.local scripts/smoke.ts"
+    "smoke": "tsx --env-file-if-exists=../../apps/platform/.env.local scripts/smoke.ts",
+    "evals": "tsx --env-file-if-exists=../../apps/platform/.env.local scripts/evals.ts"
   },
   "dependencies": {
     "@agente/negotiation-engine": "workspace:*",
