@@ -67,13 +67,21 @@ Este perfil absorbe personalmente la carga horaria y emocional de contactar deud
 
 El Producto Mínimo Viable (MVP) consiste en un **prototipo web que simula un entorno de mensajería**. Su objetivo es validar la eficacia de una negociación automatizada bajo reglas predefinidas.
 
-- **Actor Administrador:** Carga una deuda y configura las **reglas de negociación permitidas** (ej. máximo de cuotas, quita de intereses).
+- **Actor Administrador:** Carga una deuda y configura las **reglas de negociación permitidas** (ej. máximo de cuotas, quita de intereses), según lo aprobado por el Consejo de Administración o la Asamblea.
 - **Actor Deudor:** Interactúa en lenguaje natural para negociar su deuda.
 - **Sistema:** Procesa las solicitudes del deudor y ofrece un **acuerdo formal** estrictamente dentro de las políticas configuradas por la administración.
 
 ### 3.2 Propuesta de Valor
 
-El valor del sistema no radica únicamente en contar con un chatbot, sino en la integración armónica de la **deuda + las reglas de flexibilidad de la entidad + el diálogo**. Esto garantiza que el acuerdo sea trazable, automatizado y se mantenga dentro de los parámetros de la empresa, aliviando al personal del estrés de la negociación directa.
+El valor del sistema no radica únicamente en contar con un chatbot, sino en la integración de la **deuda + las reglas de negociación aprobadas por el consorcio + el diálogo**.
+
+- **Para la administración:** delega el contacto y la negociación inicial con cada deudor (la tarea que más trabajo le ahorraría, según la Entrevista 1) y recibe acuerdos trazables, sin tener que confrontar a los vecinos.
+- **Para el consorcio:** el agente solo ofrece las condiciones que aprobó el Consejo de Administración o la Asamblea. La administración las carga en la plataforma y el agente no puede salirse de ellas.
+- **Para el deudor:** un canal claro y respetuoso para entender su deuda y proponer un plan de pago, con derivación a una persona cuando lo necesita.
+
+**Quién define las reglas:** según la Entrevista 2, la administración no decide por sí sola las quitas ni la reducción de intereses: las autoriza el Consejo de Administración o la Asamblea. Por eso el producto no reemplaza esa decisión; ejecuta de forma automatizada y trazable las condiciones ya aprobadas, y cualquier pedido fuera de ellas se deriva a una persona.
+
+Así, cada acuerdo queda registrado y dentro de lo aprobado, y el personal se libera del desgaste de la negociación directa.
 
 ### 3.3 Alcance Excluido
 
