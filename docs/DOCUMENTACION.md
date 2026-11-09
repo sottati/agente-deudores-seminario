@@ -50,23 +50,23 @@ Método de la Clase 03: causas → problema central → efectos. Cada punto indi
 
 **Efectos**
 
-| #   | Efecto                                                                                         | Evidencia                                                                                                  |
-| --- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| E1  | Horas del equipo dedicadas a cobrar.                                                           | Entrevista 2: "insistencia y seguimiento continuo". Falta medir cuántas horas (pregunta 5 de la encuesta). |
-| E2  | Desgaste del vínculo con el vecino.                                                            | Hipótesis. Indicio: en las Entrevistas 2 y 3 preocupa que el trato sea rígido o frío.                      |
-| E3  | La deuda escala a carta documento y legales, con honorarios y gastos a cargo de la unidad.     | Entrevista 2.                                                                                              |
-| E4  | La deuda crece con el interés por mora (4,8% mensual en CABA) y es más difícil de regularizar. | iProfesional (marzo 2026).                                                                                 |
-| E5  | Menos liquidez del consorcio: el 19% de las UF tiene deuda de expensas.                        | ConsorcioAbierto, citado por iProfesional y BAE Negocios (marzo 2026).                                     |
+| #   | Efecto                                                                                                       | Evidencia                                                                                                  |
+| --- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| E1  | Horas del equipo dedicadas a cobrar.                                                                         | Entrevista 2: "insistencia y seguimiento continuo". Falta medir cuántas horas (pregunta 5 de la encuesta). |
+| E2  | Desgaste del vínculo con el vecino.                                                                          | Hipótesis. Indicio: en las Entrevistas 2 y 3 preocupa que el trato sea rígido o frío.                      |
+| E3  | La deuda escala a carta documento y legales, con honorarios y gastos a cargo de la unidad.                   | Entrevista 2.                                                                                              |
+| E4  | La deuda crece con el interés por mora (4,8% mensual en CABA) y es más difícil de regularizar.               | iProfesional (marzo 2026).                                                                                 |
+| E5  | Menos liquidez del consorcio: el 15% de las UF de CABA y el 16% de las de Provincia tiene deuda de expensas. | ConsorcioAbierto, citado por Infobae (agosto 2026).                                                        |
 
 **Preguntas de la Clase 03**
 
-| Pregunta                              | Respuesta                                                                                                                                                                                         |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ¿Existe el problema?                  | Sí. El 19% de las UF tiene deuda de expensas, y la Entrevista 2 (target) describe la cobranza como un seguimiento continuo y desgastante.                                                         |
-| ¿A quién afecta?                      | A la administración (cliente), al consorcio (liquidez) y al deudor (la deuda crece).                                                                                                              |
-| ¿Dónde?                               | CABA y GBA. En CABA hay 122.561 consorcios (DG Rentas GCBA, agosto 2023).                                                                                                                         |
-| ¿Qué magnitud tiene?                  | 19% de las UF con deuda; en los barrios que monitorea ConsorcioAbierto, la deuda equivale al 23% de lo liquidado (junio 2025). La mora sube con obras extraordinarias y en verano (Entrevista 2). |
-| ¿Qué pasa si se resuelve? (hipótesis) | Menos horas de seguimiento, acuerdos dentro de reglas aprobadas en menos tiempo, menos casos derivados a legales y más liquidez para el consorcio.                                                |
+| Pregunta                              | Respuesta                                                                                                                                                                                                                           |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ¿Existe el problema?                  | Sí. El 15% de las UF de CABA y el 16% de las de Provincia tiene deuda de expensas (ConsorcioAbierto, agosto 2026), y la Entrevista 2 (target) describe la cobranza como un seguimiento continuo y desgastante.                      |
+| ¿A quién afecta?                      | A la administración (cliente), al consorcio (liquidez) y al deudor (la deuda crece).                                                                                                                                                |
+| ¿Dónde?                               | CABA y GBA. En CABA hay 122.561 consorcios (DG Rentas GCBA, agosto 2023).                                                                                                                                                           |
+| ¿Qué magnitud tiene?                  | 15% de las UF de CABA y 16% de las de Provincia con deuda; en los barrios que monitorea ConsorcioAbierto, la deuda equivale al 23% de lo liquidado (junio 2025). La mora sube con obras extraordinarias y en verano (Entrevista 2). |
+| ¿Qué pasa si se resuelve? (hipótesis) | Menos horas de seguimiento, acuerdos dentro de reglas aprobadas en menos tiempo, menos casos derivados a legales y más liquidez para el consorcio.                                                                                  |
 
 **Dónde actúa pacta.ai**
 
@@ -230,7 +230,7 @@ El modelo de cobro combina dos componentes. Los valores son hipótesis iniciales
 - _Precio por conversación o por mensaje:_ hace impredecible el gasto mensual del administrador y penaliza que el agente insista o negocie en varios turnos.
 - _Cobro en USD:_ los administradores cobran honorarios y expensas en ARS; fijar el precio en dólares traslada riesgo cambiario al cliente en cada ajuste.
 
-**Justificación (secuencia de la Estrategia del Océano Azul: utilidad → precio → costo → adopción):**
+**Justificación:**
 
 - **Utilidad:** El agente automatiza el contacto con el deudor y la negociación inicial, la etapa que en la Entrevista 1 se señaló como la que más trabajo ahorraría. Ninguno de los software de consorcios relevados ofrece negociar planes de pago.
 - **Precio:** Queda por debajo de las alternativas actuales: el arancel por convenio manual y el abono de un software de gestión.
@@ -239,7 +239,40 @@ El modelo de cobro combina dos componentes. Los valores son hipótesis iniciales
 
 **Riesgo abierto:** La comisión se calcula sobre fondos del consorcio, no del administrador. Según la Entrevista 2, las excepciones las autoriza el Consejo de Administración o la Asamblea, por lo que cobrarla podría requerir esa aprobación. Se valida con la encuesta (preguntas 10 a 13).
 
-### 6.2 Posicionamiento (Elevator Pitch)
+### 6.2 Costos del MVP
+
+| Concepto                     | Costo                                                                                                                          | Fuente                               |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------ |
+| Hosting (Vercel Pro)         | USD 20 por mes                                                                                                                 | Vercel                               |
+| Base de datos (Supabase Pro) | USD 25 por mes                                                                                                                 | Supabase                             |
+| IA (GPT-5.6 Luna)            | ~USD 0,015 por negociación. Una administración de 150 UF con 15% de morosidad (unos 23 deudores) genera unos USD 0,35 por mes. | OpenAI y estimación propia (ver 6.1) |
+| **Total fijo**               | **≈ USD 45 por mes**                                                                                                           |                                      |
+
+No incluye sueldos, marketing, impuestos ni costos de cobro: en el TIF el equipo trabaja sin costo. En una operación real esos costos se suman y mueven el punto de equilibrio.
+
+### 6.3 Punto de Equilibrio
+
+Con el abono del primer escalón (ARS 23.500, unos USD 15), **4 administraciones** cubren la infraestructura: 4 × USD 15 = USD 60, frente a unos USD 46 de costo (fijo más IA). La comisión queda como margen: cada ARS 1.000.000 recuperado aporta ARS 30.000.
+
+### 6.4 Tamaño de Mercado
+
+- **Consorcios en CABA:** 122.561 (DG Rentas GCBA, agosto 2023).
+- **Administradores activos en CABA:** 8.505, según el CSV del Registro Público de Administradores que el GCBA publica en BA Data (corte 25/02/2026). Fuente secundaria: un repositorio público que procesa ese dataset.
+- **Administraciones con 5 o más consorcios (target):** no hay dato oficial. Se estima con la encuesta (pregunta 2).
+- **Referencia:** ConsorcioAbierto, la plataforma más grande relevada, trabaja con unos 15.000 consorcios (Infobae, agosto 2026) y unos 1.500 administradores (El Cronista, agosto 2025).
+- **GBA:** no se encontró un dato público de inscriptos en el registro provincial de administradores (Ley 14.701).
+- **Objetivo del año 1:** 30 administraciones, un 0,35% de los administradores activos de CABA. Es una meta del equipo, no una proyección.
+
+### 6.5 Crecimiento
+
+- **Release 2 — WhatsApp:** es el canal que más usan las administraciones según las 3 entrevistas. Suma USD 0,012–0,03 por la plantilla del primer contacto.
+- **Release 3 — Integración con software de gestión:** además de una función, puede ser un canal de venta a los clientes de esos software.
+- **Nuevas zonas:** GBA y otras ciudades con alta densidad de consorcios.
+- **Nuevos segmentos:** colegios privados, descartados para el MVP después de las entrevistas.
+
+**Fuentes de la sección 6:** [Vercel — plan Pro](https://vercel.com/docs/plans/pro-plan), [Supabase — precios](https://supabase.com/pricing), [OpenAI — GPT-5.6 Luna](https://developers.openai.com/api/docs/models/gpt-5.6-luna), [Pequeñas Noticias — 122.561 consorcios en CABA](https://www.pequenasnoticias.com.ar/NotasDeTapa/2023/NotaDeTapa0760.asp), [Repositorio sobre el registro de administradores de CABA](https://github.com/PabloAlaniz/administradores-consorcios-caba), [Infobae — morosidad en expensas (agosto 2026)](https://www.infobae.com/economia/2026/08/19/la-morosidad-en-las-expensas-alcanzo-el-15-en-caba-y-el-16-en-la-provincia-de-buenos-aires/), [El Cronista — ConsorcioAbierto](https://www.cronista.com/apertura/emprendedoress/una-startup-argentina-puso-las-expensas-bajo-control-y-conquisto-a-manu-ginobili).
+
+### 6.6 Posicionamiento (Elevator Pitch)
 
 > "Actualmente, los administradores de consorcios sufren un gran desgaste cada cierre de mes al perseguir a los deudores uno por uno, enfrentándose a correos ignorados y llamadas incómodas que tensionan las relaciones y afectan la liquidez.
 > Hemos desarrollado un asistente autónomo de cobranzas B2B. El administrador simplemente carga la deuda y sus límites de negociación, y nuestro agente dialoga con el deudor en lenguaje natural para cerrar un acuerdo por escrito, siempre dentro de las políticas de la institución. El resultado es un mayor recupero de mora, de manera empática, trazable y sin confrontaciones manuales."

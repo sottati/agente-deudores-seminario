@@ -8,7 +8,7 @@ Estudio de las alternativas que hoy usan las administraciones de consorcios para
 
 ## 1. Contexto del mercado
 
-- **Morosidad:** según un relevamiento de ConsorcioAbierto sobre consorcios de CABA y Provincia de Buenos Aires, el 19% de las unidades funcionales tiene deuda de expensas; antes rondaba el 17% (marzo 2026). En los barrios que monitorea, la deuda equivale en promedio al 23% de lo liquidado (junio 2025).
+- **Morosidad:** según el último relevamiento de ConsorcioAbierto (unos 15.000 consorcios usuarios de su plataforma), el 15% de las unidades funcionales de CABA y el 16% de las de Provincia de Buenos Aires tiene deuda de expensas (Infobae, agosto 2026). En marzo de 2026, el mismo relevamiento informaba 19% para CABA y Provincia en conjunto. En los barrios que monitorea, la deuda equivale en promedio al 23% de lo liquidado (junio 2025).
 - **Interés por mora:** ronda el 4,8% mensual en CABA y el 6,1% en Provincia de Buenos Aires (iProfesional, marzo 2026).
 - **Cómo se cobra hoy:** diálogo, intimación por escrito, propuesta de plan de pagos y, como último recurso, juicio ejecutivo. El certificado de deuda debe aprobarlo el Consejo de Propietarios, si existe.
 
@@ -85,5 +85,6 @@ Estudio de las alternativas que hoy usan las administraciones de consorcios para
 - [iProUP — Chau a Tus Deudas (octubre 2025)](https://www.iproup.com/index.php/startups/61352-argentinos-crean-una-ia-para-cancelar-tu-deuda-con-descuento-como-funciona)
 - [Ámbito — Uno de cada cuatro propietarios no paga expensas (junio 2025)](https://www.ambito.com/real-estate/uno-cada-cuatro-propietarios-no-paga-expensas-como-enfrentan-los-consorcios-la-morosidad-n6154597)
 - [iProfesional — Suben las deudas de expensas (marzo 2026)](https://www.iprofesional.com/economia/450289-suben-las-deudas-de-expensas-el-dato-que-enciende-las-alarmas-en-el-amba)
+- [Infobae — La morosidad en las expensas alcanzó el 15% en CABA y el 16% en Provincia (agosto 2026)](https://www.infobae.com/economia/2026/08/19/la-morosidad-en-las-expensas-alcanzo-el-15-en-caba-y-el-16-en-la-provincia-de-buenos-aires/)
 - [BAE Negocios — La morosidad alcanza el 19%](https://www.baenegocios.com/amp/la-deuda-por-expensas-crece-y-la-morosidad-alcanza-el-19/)
 - [Propietaria — Honorarios CAPHAI](https://propietaria.com.ar/blog/honorarios-administrador-de-consorcios/)
