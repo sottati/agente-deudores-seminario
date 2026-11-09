@@ -153,10 +153,16 @@ export async function runScenario(
       }
 ): Promise<EvalResult> {
   const scripted = options.mode === "mock" ? createScriptedModel() : null
+  // El sandbox exige un usuario del panel; los evals no pasan por Supabase.
+  const authorize = async () => "eval-user"
   const handler = createSandboxHandler(
     options.mode === "mock"
-      ? { env: { NODE_ENV: "test" }, model: () => scripted!.model }
-      : { env: { ...options.env, NODE_ENV: "test" }, model: options.model }
+      ? { env: { NODE_ENV: "test" }, model: () => scripted!.model, authorize }
+      : {
+          env: { ...options.env, NODE_ENV: "test" },
+          model: options.model,
+          authorize,
+        }
   )
   const failures: string[] = []
   const modelCallsPerTurn: number[] = []

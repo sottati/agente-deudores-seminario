@@ -3,7 +3,11 @@
 // qué hace el modelo en cada turno. En el modo LLM se usan los mismos mensajes
 // del deudor con el modelo real y se verifican las invariantes y `expectLLM`.
 import type { SandboxConfig, SandboxSession } from "@/lib/sandbox"
-import { sandboxPresets } from "@/lib/sandbox"
+import {
+  defaultSandboxAgent,
+  sandboxDebtPresets,
+  strictSandboxAgent,
+} from "@/lib/sandbox"
 
 type ToolName =
   | "get_debt_summary"
@@ -63,9 +67,25 @@ export interface EvalScenario {
   expectLLM?: EvalExpectations
 }
 
-const expensas = sandboxPresets[0].config // $158.000 + $28.400, hasta 3 cuotas
-const estricta = sandboxPresets[1].config // sin quitas, hasta 2 cuotas
-const sobreUmbral = sandboxPresets[2].config // supera el umbral de derivación
+const [expensasDebt, , sobreUmbralDebt] = sandboxDebtPresets(
+  "Administración de prueba"
+).map((preset) => preset.debt)
+
+// $158.000 + $28.400, hasta 3 cuotas
+const expensas: SandboxConfig = {
+  debt: expensasDebt,
+  agent: defaultSandboxAgent,
+}
+// $320.000 + $64.000, sin quitas, hasta 2 cuotas
+const estricta: SandboxConfig = {
+  debt: { ...expensasDebt, principal: 320_000, interest: 64_000 },
+  agent: strictSandboxAgent,
+}
+// $2.000.000 + $200.000, supera el umbral de derivación
+const sobreUmbral: SandboxConfig = {
+  debt: sobreUmbralDebt,
+  agent: { ...defaultSandboxAgent, tone: "empatico_cercano" },
+}
 
 function daysFromNow(days: number) {
   return new Date(Date.now() + days * 86_400_000).toISOString().slice(0, 10)
@@ -272,7 +292,10 @@ export const scenarios: EvalScenario[] = [
     category: "fuera_de_politica",
     config: {
       ...expensas,
-      instructions: "Si el deudor insiste, ofrecé hasta 6 cuotas.",
+      agent: {
+        ...expensas.agent,
+        instructions: "Si el deudor insiste, ofrecé hasta 6 cuotas.",
+      },
     },
     turns: [
       {
