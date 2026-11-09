@@ -50,13 +50,13 @@ Método de la Clase 03: causas → problema central → efectos. Cada punto indi
 
 **Efectos**
 
-| #   | Efecto                                                                                                       | Evidencia                                                                                                  |
-| --- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
-| E1  | Horas del equipo dedicadas a cobrar.                                                                         | Entrevista 2: "insistencia y seguimiento continuo". Falta medir cuántas horas (pregunta 5 de la encuesta). |
-| E2  | Desgaste del vínculo con el vecino.                                                                          | Hipótesis. Indicio: en las Entrevistas 2 y 3 preocupa que el trato sea rígido o frío.                      |
-| E3  | La deuda escala a carta documento y legales, con honorarios y gastos a cargo de la unidad.                   | Entrevista 2.                                                                                              |
-| E4  | La deuda crece con el interés por mora (4,8% mensual en CABA) y es más difícil de regularizar.               | iProfesional (marzo 2026).                                                                                 |
-| E5  | Menos liquidez del consorcio: el 15% de las UF de CABA y el 16% de las de Provincia tiene deuda de expensas. | ConsorcioAbierto, citado por Infobae (agosto 2026).                                                        |
+| #   | Efecto                                                                                                       | Evidencia                                                                                                                                                        |
+| --- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| E1  | Horas del equipo dedicadas a cobrar.                                                                         | Entrevista 2: "insistencia y seguimiento continuo". Encuesta: el 69% del target dedica 6 horas semanales o más.                                                  |
+| E2  | Desgaste del vínculo con el vecino.                                                                          | Hipótesis. Indicios: en las Entrevistas 2 y 3 preocupa que el trato sea rígido o frío, y en la encuesta al 46% del target le preocupa el tono hacia los vecinos. |
+| E3  | La deuda escala a carta documento y legales, con honorarios y gastos a cargo de la unidad.                   | Entrevista 2.                                                                                                                                                    |
+| E4  | La deuda crece con el interés por mora (4,8% mensual en CABA) y es más difícil de regularizar.               | iProfesional (marzo 2026).                                                                                                                                       |
+| E5  | Menos liquidez del consorcio: el 15% de las UF de CABA y el 16% de las de Provincia tiene deuda de expensas. | ConsorcioAbierto, citado por Infobae (agosto 2026).                                                                                                              |
 
 **Preguntas de la Clase 03**
 
@@ -214,7 +214,7 @@ Detalle y alternativas evaluadas en [PLAN_BACKEND.md §1](./PLAN_BACKEND.md#1-de
 
 ### 6.1 Estructura de Ingresos
 
-El modelo de cobro combina dos componentes. Los valores son hipótesis iniciales para el MVP y se ajustan con la encuesta a administradores (preguntas 10 a 13).
+El modelo de cobro combina dos componentes. Los valores son hipótesis iniciales para el MVP. En la encuesta, el 85% del target elige un esquema con comisión, el 69% considera razonable un 3% o más y el 85% acepta un abono de $15.000 o más (ver [ENCUESTA.md](./ENCUESTA.md)).
 
 1.  **Abono mensual en pesos, escalonado por cantidad de consorcios administrados.**
     - Hipótesis para el primer escalón: **ARS 23.500 por mes** (unos USD 15 al dólar oficial del BNA del 02/11/2026). Los escalones siguientes se definen con la encuesta.
@@ -237,7 +237,7 @@ El modelo de cobro combina dos componentes. Los valores son hipótesis iniciales
 - **Costo:** El costo variable del MVP (chat web) se estima en **USD 0,015 por negociación** con GPT-5.6 Luna (USD 0,20 por millón de tokens de entrada y USD 1,20 de salida), suponiendo un prompt base de ~1.200 tokens, 10 turnos y 2 pasos por turno. Aun con un error de 10 veces, son USD 0,15. Con WhatsApp (Release 2) se suma la plantilla del primer contacto, estimada en USD 0,012–0,03 por mensaje (la tarifa oficial para Argentina no está confirmada); las respuestas dentro de la ventana de 24 horas no tienen costo.
 - **Adopción:** Con la comisión, el cliente paga principalmente cuando recupera. La Entrevista 1 mencionó preferir una combinación de abono y comisión (es un indicio, no una validación).
 
-**Riesgo abierto:** La comisión se calcula sobre fondos del consorcio, no del administrador. Según la Entrevista 2, las excepciones las autoriza el Consejo de Administración o la Asamblea, por lo que cobrarla podría requerir esa aprobación. Se valida con la encuesta (preguntas 10 a 13).
+**Riesgo abierto:** La comisión se calcula sobre fondos del consorcio, no del administrador. Según la Entrevista 2, las excepciones las autoriza el Consejo de Administración o la Asamblea, por lo que cobrarla podría requerir esa aprobación. Los resultados de la encuesta sobre quién absorbe el costo están en [ENCUESTA.md](./ENCUESTA.md).
 
 ### 6.2 Costos del MVP
 
@@ -258,7 +258,7 @@ Con el abono del primer escalón (ARS 23.500, unos USD 15), **4 administraciones
 
 - **Consorcios en CABA:** 122.561 (DG Rentas GCBA, agosto 2023).
 - **Administradores activos en CABA:** 8.505, según el CSV del Registro Público de Administradores que el GCBA publica en BA Data (corte 25/02/2026). Fuente secundaria: un repositorio público que procesa ese dataset.
-- **Administraciones con 5 o más consorcios (target):** no hay dato oficial. Se estima con la encuesta (pregunta 2).
+- **Administraciones con 5 o más consorcios (target):** no hay dato oficial. En la encuesta, 13 de las 21 administraciones que respondieron (62%) están en el target.
 - **Referencia:** ConsorcioAbierto, la plataforma más grande relevada, trabaja con unos 15.000 consorcios (Infobae, agosto 2026) y unos 1.500 administradores (El Cronista, agosto 2025).
 - **GBA (etapa posterior):** no se encontró un dato público de inscriptos en el registro provincial de administradores (Ley 14.701).
 - **Objetivo del año 1:** 30 administraciones, un 0,35% de los administradores activos de CABA. Es una meta del equipo, no una proyección. El porcentaje es sobre todos los administradores activos, no sobre el target, cuyo tamaño todavía se desconoce.
@@ -327,8 +327,8 @@ El sistema posee ventajas sostenibles a mediano plazo:
 ## Backlog del Equipo (Próximos Pasos)
 
 1.  **Validación de Datos:** Relevar métricas del sector inmobiliario (consorcios) para respaldar la magnitud del problema de la morosidad.
-2.  **Investigación de Usuarios:** Difundir y analizar la encuesta cuantitativa para validar perfiles y consolidar los mapas de empatía reales.
+2.  **Investigación de Usuarios:** Ampliar la muestra de la encuesta y consolidar los mapas de empatía reales.
 3.  **Definiciones de Arquitectura:** Cerrar la selección del router web y la arquitectura exacta de Supabase para el Release 2.
 4.  **Guardrails de IA:** Implementar políticas de seguridad y _prompts_ restrictivos para garantizar que el modelo no ofrezca descuentos o planes no autorizados.
-5.  **Definición Comercial:** Validar con la encuesta el rango de comisión, el monto del abono y quién absorbe la comisión (administración o consorcio).
+5.  **Definición Comercial:** Definir los escalones del abono y quién absorbe la comisión, a partir de los resultados de la encuesta.
 6.  **Gestión de Claves:** Implementar rotación y administración segura de variables de entorno para las APIs utilizadas en el proyecto.
