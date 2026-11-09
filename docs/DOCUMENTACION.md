@@ -217,7 +217,7 @@ Detalle y alternativas evaluadas en [PLAN_BACKEND.md §1](./PLAN_BACKEND.md#1-de
 El modelo de cobro combina dos componentes. Los valores son hipótesis iniciales para el MVP. En la encuesta, el 85% del target elige un esquema con comisión, el 69% considera razonable un 3% o más y el 85% acepta un abono de $15.000 o más (ver [ENCUESTA.md](./ENCUESTA.md)).
 
 1.  **Abono mensual en pesos, escalonado por cantidad de consorcios administrados.**
-    - Hipótesis para el primer escalón: **ARS 23.500 por mes** (unos USD 15 al dólar oficial del BNA del 02/11/2026). Los escalones siguientes se definen con la encuesta.
+    - Escalones (hipótesis respaldada por la encuesta): 5 a 10 consorcios, **ARS 23.500 por mes** (unos USD 15 al dólar oficial del BNA del 02/11/2026); 11 a 25 consorcios, **ARS 45.000**; más de 25, **ARS 70.000**. Surgen de cruzar la cantidad de consorcios con el abono que cada administración consideró razonable.
     - Referencia: los software de gestión de consorcios cobran un abono mensual por unidad funcional, de ARS 950 a 2.950 por UF (CONSO, agosto 2026). Una administración de 150 UF paga hoy entre ARS 140.000 y 440.000 por mes.
 2.  **Comisión porcentual sobre el monto efectivamente cobrado** de los acuerdos que cerró el agente (no sobre el acuerdo firmado: solo se cobra cuando el deudor paga).
     - Hipótesis: **3%**, dentro de un rango de 1,5% a 3% a validar.
@@ -330,5 +330,5 @@ El sistema posee ventajas sostenibles a mediano plazo:
 2.  **Investigación de Usuarios:** Ampliar la muestra de la encuesta y consolidar los mapas de empatía reales.
 3.  **Definiciones de Arquitectura:** Cerrar la selección del router web y la arquitectura exacta de Supabase para el Release 2.
 4.  **Guardrails de IA:** Implementar políticas de seguridad y _prompts_ restrictivos para garantizar que el modelo no ofrezca descuentos o planes no autorizados.
-5.  **Definición Comercial:** Definir los escalones del abono y quién absorbe la comisión, a partir de los resultados de la encuesta.
+5.  **Definición Comercial:** Definir quién absorbe la comisión, a partir de los resultados de la encuesta.
 6.  **Gestión de Claves:** Implementar rotación y administración segura de variables de entorno para las APIs utilizadas en el proyecto.
