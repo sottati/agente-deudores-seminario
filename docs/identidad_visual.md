@@ -180,7 +180,7 @@ isotipo    wordmark
 | **Fusión Handshake + Edificio** | Comunica la doble propuesta de valor al instante: la **solución de fondo** (el acuerdo pacífico, la mediación no confrontativa) aplicada al **sector objetivo** (propiedad horizontal). Rompe de inmediato con la iconografía punitiva de las cobranzas tradicionales. |
 | **Formato App Icon**            | El cuadrado redondeado otorga solidez, delimita el isotipo en cualquier plataforma (web, móvil, avatar de WhatsApp Business) y transmite una experiencia de producto digital nativo y moderno.                                                                         |
 | **Minúsculas ("pacta.ai")**     | El uso de caja baja en el wordmark aporta **cercanía, amabilidad y accesibilidad psicológica**, reforzando que no se trata de una corporación intimidante, sino de un facilitador de diálogo asistido por IA.                                                          |
-| **Sufijo ".ia"**                | Manifiesta explícitamente la base tecnológica de automatización inteligente y posiciona a la empresa en el estándar de startups globales de software.                                                                                                                  |
+| **Sufijo ".ai"**                | Manifiesta explícitamente la base tecnológica de automatización inteligente y posiciona a la empresa en el estándar de startups globales de software.                                                                                                                  |
 
 ---
 
