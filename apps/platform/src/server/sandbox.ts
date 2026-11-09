@@ -15,7 +15,11 @@ import { createConfiguredModel } from "@agente/agent/model"
 import type { LanguageModel, ModelMessage } from "ai"
 import { evaluateRequest } from "@agente/negotiation-engine"
 import { z } from "zod"
-import { sandboxConfigSchema } from "@/lib/sandbox"
+import {
+  sandboxConfigSchema,
+  sandboxDebtInput,
+  sandboxPolicy,
+} from "@/lib/sandbox"
 import type { SandboxConfig, SandboxSession, SandboxTurn } from "@/lib/sandbox"
 import { HUMAN_HANDOFF_MESSAGE } from "@/lib/debtor-chat"
 
@@ -35,6 +39,7 @@ const requestSchema = z.discriminatedUnion("action", [
 ])
 
 type Session = {
+  ownerId: string
   view: SandboxSession
   context: AgentNegotiationContext
   history: ModelMessage[]
@@ -46,36 +51,31 @@ export function sandboxContext(
   config: SandboxConfig,
   id: string
 ): AgentNegotiationContext {
-  const now = new Date()
+  const { debt } = config
   return {
     id,
     organization: {
-      displayNameForDebtors: "Administración Demo",
+      displayNameForDebtors: debt.organizationName,
       kind: "consorcio",
     },
-    debtor: { alias: "Unidad 4B", groupLabel: "Consorcio de prueba" },
+    debtor: { alias: debt.debtorAlias, groupLabel: debt.groupLabel || null },
     debt: {
-      principalCents: Math.round(config.principal * 100),
-      interestCents: Math.round(config.interest * 100),
-      concept: "Expensas simuladas",
-      dueDate: now.toISOString().slice(0, 10),
+      ...sandboxDebtInput(debt),
+      concept: debt.concept,
+      dueDate: debt.dueDate,
     },
-    policy: {
-      maxInstallments: config.maxInstallments,
-      minDownPaymentPct: config.minDownPaymentPct,
-      minInstallmentAmountCents: Math.round(config.minInstallment * 100),
-      maxInterestWaiverPct: config.interestWaiverPct,
-      singlePaymentInterestWaiverPct: config.singlePaymentWaiverPct,
-      maxPrincipalDiscountPct: 0,
-      maxFirstDueDays: 15,
-      offerValidityHours: 72,
-      escalateAboveAmountCents: config.escalateAbove
-        ? Math.round(config.escalateAbove * 100)
-        : null,
-      tone: config.tone,
-      customInstructions: config.instructions,
-    },
+    policy: sandboxPolicy(config.agent),
   }
+}
+
+// Usuario del panel autenticado con la cookie de Supabase. Import dinámico:
+// los tests inyectan `authorize` y no necesitan el cliente de Supabase.
+async function authorizeAdmin(): Promise<string | null> {
+  const { createServerSupabase } = await import("./db/supabase-server")
+  const {
+    data: { user },
+  } = await createServerSupabase().auth.getUser()
+  return user?.id ?? null
 }
 
 // Cada instancia mantiene sesiones ficticias en memoria. No importa ni usa Supabase.
@@ -84,12 +84,14 @@ export function createSandboxHandler(
     env?: Record<string, string | undefined>
     model?: () => LanguageModel
     run?: typeof runNegotiationTurn
+    authorize?: (request: Request) => Promise<string | null>
   } = {}
 ) {
   const sessions = new Map<string, Session>()
   const env = options.env ?? process.env
   const model = options.model ?? (() => createConfiguredModel(env))
   const run = options.run ?? runNegotiationTurn
+  const authorize = options.authorize ?? authorizeAdmin
   const json = (body: unknown, status = 200) =>
     Response.json(body, {
       status,
@@ -103,7 +105,24 @@ export function createSandboxHandler(
   }): Promise<Response> {
     if (env.NODE_ENV === "production")
       return json({ error: "No encontrado." }, 404)
+    const ownerId = await authorize(request).catch(() => null)
+    if (!ownerId)
+      return json({ error: "Iniciá sesión para usar el sandbox." }, 401)
+    const sessionNotFound = () =>
+      json(
+        {
+          error:
+            "La sesión venció o el servidor se reinició. Iniciá otra prueba.",
+        },
+        404
+      )
     if (request.method === "GET") {
+      const sessionId = new URL(request.url).searchParams.get("sessionId")
+      if (sessionId) {
+        const session = sessions.get(sessionId)
+        if (!session || session.ownerId !== ownerId) return sessionNotFound()
+        return json(session.view)
+      }
       let configured = true
       try {
         model()
@@ -147,14 +166,16 @@ export function createSandboxHandler(
       const view: SandboxSession = {
         id,
         config,
-        disclosure: buildBotDisclosureMessage("Administración Demo"),
+        disclosure: buildBotDisclosureMessage(config.debt.organizationName),
         status: "active",
         turns: [],
         offer: null,
         model: env.AI_MODEL ?? "Sin configurar",
         provider: env.AI_PROVIDER ?? "gateway",
+        maxTurns: MAX_TURNS_PER_NEGOTIATION,
       }
       sessions.set(id, {
+        ownerId,
         view,
         context: sandboxContext(config, id),
         history: [],
@@ -165,14 +186,7 @@ export function createSandboxHandler(
     }
 
     const session = sessions.get(body.data.sessionId)
-    if (!session)
-      return json(
-        {
-          error:
-            "La sesión venció o el servidor se reinició. Iniciá otra prueba.",
-        },
-        404
-      )
+    if (!session || session.ownerId !== ownerId) return sessionNotFound()
     if (session.busy)
       return json({ error: "Esperá a que termine el turno actual." }, 409)
     if (session.view.status !== "active")

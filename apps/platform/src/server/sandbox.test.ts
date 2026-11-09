@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest"
 import { MockLanguageModelV4, simulateReadableStream } from "ai/test"
-import type { SandboxSession } from "@/lib/sandbox"
-import { sandboxPresets } from "@/lib/sandbox"
+import type { SandboxConfig, SandboxSession } from "@/lib/sandbox"
+import { defaultSandboxAgent, sandboxDebtPresets } from "@/lib/sandbox"
 import { GUARDRAIL_SAFE_FALLBACK_MESSAGE } from "@agente/agent"
-import { createSandboxHandler } from "./sandbox"
+import { createSandboxHandler, sandboxContext } from "./sandbox"
 
 vi.mock("@tanstack/react-start/server-only", () => ({}))
 
@@ -32,6 +32,27 @@ function textModel(answer: string) {
   })
 }
 
+const config: SandboxConfig = {
+  debt: sandboxDebtPresets("Administración Demo")[0].debt,
+  agent: defaultSandboxAgent,
+}
+
+// Por defecto, un administrador autenticado; cada test puede cambiarlo.
+function sandbox(
+  options: Parameters<typeof createSandboxHandler>[0] = {}
+): ReturnType<typeof createSandboxHandler> {
+  return createSandboxHandler({ authorize: async () => "admin-a", ...options })
+}
+
+function get(
+  handler: ReturnType<typeof createSandboxHandler>,
+  sessionId?: string
+) {
+  const url = new URL(`${origin}/api/sandbox`)
+  if (sessionId) url.searchParams.set("sessionId", sessionId)
+  return handler({ request: new Request(url) })
+}
+
 function post(
   handler: ReturnType<typeof createSandboxHandler>,
   body: unknown,
@@ -48,7 +69,7 @@ function post(
 async function start(handler: ReturnType<typeof createSandboxHandler>) {
   const response = await post(handler, {
     action: "start",
-    config: sandboxPresets[0].config,
+    config,
   })
   expect(response.status).toBe(200)
   return (await response.json()) as SandboxSession
@@ -56,24 +77,19 @@ async function start(handler: ReturnType<typeof createSandboxHandler>) {
 
 describe("sandbox de negociación", () => {
   it("deshabilita operaciones en producción y rechaza otros orígenes", async () => {
-    const production = createSandboxHandler({ env: { NODE_ENV: "production" } })
+    const production = sandbox({ env: { NODE_ENV: "production" } })
     expect(
       (
         await post(production, {
           action: "start",
-          config: sandboxPresets[0].config,
+          config,
         })
       ).status
     ).toBe(404)
-    const local = createSandboxHandler({ env: { NODE_ENV: "development" } })
+    const local = sandbox({ env: { NODE_ENV: "development" } })
     expect(
-      (
-        await post(
-          local,
-          { action: "start", config: sandboxPresets[0].config },
-          "https://otro.example"
-        )
-      ).status
+      (await post(local, { action: "start", config }, "https://otro.example"))
+        .status
     ).toBe(403)
   })
 
@@ -105,7 +121,7 @@ describe("sandbox de negociación", () => {
         })
       },
     })
-    const handler = createSandboxHandler({
+    const handler = sandbox({
       env: { NODE_ENV: "development", AI_MODEL: "test/model" },
       model: () => model,
     })
@@ -159,7 +175,7 @@ describe("sandbox de negociación", () => {
 
   it("corrige montos inventados y no los reintroduce en el historial del modelo", async () => {
     const model = textModel("Tu deuda es $ 999.999.")
-    const handler = createSandboxHandler({ env: {}, model: () => model })
+    const handler = sandbox({ env: {}, model: () => model })
     const a = await start(handler)
     const first = await post(handler, {
       action: "message",
@@ -184,7 +200,7 @@ describe("sandbox de negociación", () => {
     const factory = vi.fn(() => {
       throw new Error("Sin credencial")
     })
-    const handler = createSandboxHandler({ env: {}, model: factory })
+    const handler = sandbox({ env: {}, model: factory })
     const a = await start(handler)
     const response = await post(handler, {
       action: "message",
@@ -201,7 +217,7 @@ describe("sandbox de negociación", () => {
     const run = vi.fn(async () => {
       throw new Error("Provider unavailable")
     })
-    const handler = createSandboxHandler({
+    const handler = sandbox({
       env: {},
       model: () => textModel("Hola"),
       run,
@@ -237,7 +253,7 @@ describe("sandbox de negociación", () => {
       await wait
       return original(options)
     })
-    const handler = createSandboxHandler({ env: {}, model: () => model })
+    const handler = sandbox({ env: {}, model: () => model })
     const a = await start(handler)
     const pending = post(handler, {
       action: "message",
@@ -257,5 +273,81 @@ describe("sandbox de negociación", () => {
     ).toBe(409)
     release()
     expect((await (await pending).json()).turns).toHaveLength(1)
+  })
+
+  it("exige sesión del panel y aísla las simulaciones de cada usuario", async () => {
+    const anonymous = sandbox({
+      env: {},
+      authorize: async () => null,
+    })
+    expect((await get(anonymous)).status).toBe(401)
+    expect((await post(anonymous, { action: "start", config })).status).toBe(
+      401
+    )
+
+    let user = "admin-a"
+    const handler = sandbox({ env: {}, authorize: async () => user })
+    const a = await start(handler)
+    const own = await get(handler, a.id)
+    expect(own.status).toBe(200)
+    expect(((await own.json()) as SandboxSession).id).toBe(a.id)
+
+    user = "admin-b"
+    expect((await get(handler, a.id)).status).toBe(404)
+    expect(
+      (
+        await post(handler, {
+          action: "message",
+          sessionId: a.id,
+          text: "Quiero hablar con una persona",
+        })
+      ).status
+    ).toBe(404)
+  })
+
+  it("arma el contexto del agente con la deuda y las reglas configuradas", async () => {
+    const custom: SandboxConfig = {
+      debt: {
+        ...config.debt,
+        organizationName: "Administración Belgrano",
+        debtorAlias: "Lote 12",
+        groupLabel: "",
+        concept: "Cuotas sociales",
+        dueDate: "2026-09-01",
+      },
+      agent: {
+        ...defaultSandboxAgent,
+        maxPrincipalDiscountPct: 10,
+        maxFirstDueDays: 30,
+        offerValidityHours: 24,
+        escalateAbove: null,
+        instructions: "Aceptamos transferencia.",
+      },
+    }
+    const context = sandboxContext(custom, "id")
+    expect(context.organization.displayNameForDebtors).toBe(
+      "Administración Belgrano"
+    )
+    expect(context.debtor).toEqual({ alias: "Lote 12", groupLabel: null })
+    expect(context.debt).toMatchObject({
+      principalCents: 15_800_000,
+      interestCents: 2_840_000,
+      concept: "Cuotas sociales",
+      dueDate: "2026-09-01",
+    })
+    expect(context.policy).toMatchObject({
+      maxPrincipalDiscountPct: 10,
+      maxFirstDueDays: 30,
+      offerValidityHours: 24,
+      escalateAboveAmountCents: null,
+      minInstallmentAmountCents: 2_000_000,
+      customInstructions: "Aceptamos transferencia.",
+    })
+
+    const handler = sandbox({ env: {} })
+    const response = await post(handler, { action: "start", config: custom })
+    expect(((await response.json()) as SandboxSession).disclosure).toContain(
+      "Administración Belgrano"
+    )
   })
 })

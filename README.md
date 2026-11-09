@@ -47,9 +47,9 @@ pnpm dev             # http://localhost:3000
 
 El chat admite `AI_PROVIDER=gateway` con `AI_GATEWAY_API_KEY`, o `AI_PROVIDER=openrouter` con `OPENROUTER_API_KEY`. En ambos casos configurá `AI_MODEL` con un modelo que soporte herramientas y streaming. Ver [la prueba de integración del agente](./packages/agent/README.md#prueba-de-humo-del-llm).
 
-### Sandbox de conversaciones manuales
+### Simulador del agente (sandbox)
 
-Con `pnpm dev`, abrí `/sandbox`. No requiere Supabase, Docker ni login. Usa el mismo prompt, herramientas, motor de negociación y control de cifras que el portal del deudor, con persistencia en memoria y datos ficticios.
+Con `pnpm dev`, iniciá sesión en el panel y entrá a **Simulador del agente** en la barra lateral (`/sandbox`). El ítem y la ruta existen solo en desarrollo; la API responde 404 en producción. Usa el mismo prompt, herramientas, motor de negociación y control de cifras que el portal del deudor, con persistencia en memoria y datos ficticios: no crea deudores, negociaciones ni acuerdos en Supabase.
 
 Configurá el proveedor, el modelo y su credencial en `apps/platform/.env.local`. Por ejemplo, para OpenRouter:
 
@@ -61,12 +61,11 @@ OPENROUTER_API_KEY=TU_API_KEY
 
 El modelo debe existir en la cuenta del proveedor y soportar llamadas a herramientas. Reiniciá el servidor si cambiás esta configuración. Las llamadas usan la API real y consumen saldo del proveedor.
 
-1. Elegí un escenario o editá los montos en pesos, las cuotas, las quitas, el anticipo y el tono. Iniciá la conversación.
-2. Escribí como deudor. El panel lateral muestra las herramientas ejecutadas, sus entradas y salidas, eventos, tiempo total del turno y tokens. La respuesta se muestra al completar el turno y su validación de cifras.
-3. Aceptá una oferta para simular el cierre, o pedí hablar con una persona para probar la derivación. No se crean acuerdos reales ni se simulan respuestas de un administrador.
-4. Exportá la conversación como JSON antes de reiniciar con otros datos. Cada conversación conserva su política inicial; editar los campos requiere iniciar una nueva prueba.
+1. **Configuración** (`/sandbox`): definí la deuda simulada (administración, deudor, consorcio, concepto, vencimiento, capital e intereses) y las reglas del agente (cuotas, anticipo, cuota mínima, quitas, plazo de la primera cuota, vigencia de ofertas, umbral de derivación, tono e indicaciones). Las reglas arrancan con las guardadas en **Reglas del agente**; los cambios solo aplican a la simulación. El panel lateral muestra el margen de negociación que calcula el motor de reglas para esa combinación.
+2. **Conversación** (`/sandbox/$sessionId`): escribí como deudor. El chat usa `MessageScroller`; el panel lateral muestra las herramientas ejecutadas con sus entradas y salidas, los eventos, el tiempo, los tokens y las reglas de la simulación.
+3. Aceptá una oferta para simular el cierre, o pedí hablar con una persona para probar la derivación. **Reiniciar** arranca otra conversación con la misma configuración y **JSON** exporta la actual.
 
-Las sesiones están aisladas, vencen tras dos horas de inactividad y se pierden al reiniciar el servidor, recargar módulos o la página. La API del sandbox responde 404 en producción. La simulación no prueba la verificación de identidad ni la persistencia transaccional de Supabase.
+El último formulario se guarda en `sessionStorage` para volver a editarlo. Cada simulación pertenece al usuario que la creó, vence tras dos horas de inactividad y se pierde al reiniciar el servidor o recargar módulos. La simulación no prueba la verificación de identidad ni la persistencia transaccional de Supabase.
 
 ### Evals del agente
 

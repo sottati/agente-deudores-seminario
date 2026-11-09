@@ -5,9 +5,13 @@ import viteReact from "@vitejs/plugin-react"
 import tailwindcss from "@tailwindcss/vite"
 
 const config = defineConfig(({ mode }) => {
-  // Variables del LLM solo en el servidor; no usan el prefijo público VITE_.
+  // Variables privadas solo en el servidor; no usan el prefijo público VITE_.
   const env = loadEnv(mode, process.cwd(), "")
   for (const key of [
+    "SUPABASE_URL",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "NEGOTIATION_TOKEN_SECRET",
     "AI_PROVIDER",
     "AI_MODEL",
     "AI_GATEWAY_API_KEY",
