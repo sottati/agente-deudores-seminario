@@ -1,6 +1,6 @@
 # @agente/negotiation-engine
 
-Motor de reglas determinístico de pacta.ia. Toda cifra que ve el deudor (cuotas, anticipos, quitas, cronogramas) sale de este paquete, nunca del LLM.
+Motor de reglas determinístico de pacta.ai. Toda cifra que ve el deudor (cuotas, anticipos, quitas, cronogramas) sale de este paquete, nunca del LLM.
 
 - **Puro:** sin acceso a base de datos, red ni reloj implícito (las fechas se reciben por parámetro).
 - **Montos en centavos** (`number` entero), sin flotantes.

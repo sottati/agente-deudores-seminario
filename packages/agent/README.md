@@ -1,6 +1,6 @@
 # @agente/agent
 
-Agente conversacional de pacta.ia (system prompt, tools y orquestación con el Vercel AI SDK). Reemplaza a `apps/agent`: es una librería que consume `apps/platform` y que en R2 podrá montarse detrás de un webhook de WhatsApp sin reescribirse.
+Agente conversacional de pacta.ai (system prompt, tools y orquestación con el Vercel AI SDK). Reemplaza a `apps/agent`: es una librería que consume `apps/platform` y que en R2 podrá montarse detrás de un webhook de WhatsApp sin reescribirse.
 
 - **No accede a la base de datos:** recibe el modelo y las funciones de persistencia (`saveOffer`, `escalate`, `logEvent`) por parámetro. Así se testea con `MockLanguageModelV4` (`ai/test`) y sin Supabase.
 - **Nunca calcula montos (D7):** todas las cifras salen de `@agente/negotiation-engine` vía tools.

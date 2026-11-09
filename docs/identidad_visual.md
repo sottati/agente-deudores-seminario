@@ -147,7 +147,7 @@ La fuente elegida para todo el producto es **Geist Variable**, la familia tipogr
 
 ## 4. Logo e Isotipo Oficial
 
-![Logo Oficial pacta.ai](./assets/pacta_logo.jpg)
+![Logo Oficial pacta.ai](../assets/pacta_logo.jpg)
 
 ### 4.1 Composición
 

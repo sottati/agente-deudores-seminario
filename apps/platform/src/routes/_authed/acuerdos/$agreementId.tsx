@@ -23,7 +23,7 @@ import { getAgreement, setInstallmentPaid } from "@/server/agreements"
 export const Route = createFileRoute("/_authed/acuerdos/$agreementId")({
   loader: ({ params }) => getAgreement({ data: { id: params.agreementId } }),
   component: AgreementPage,
-  head: () => ({ meta: [{ title: "Acta de acuerdo | pacta.ia" }] }),
+  head: () => ({ meta: [{ title: "Acta de acuerdo | pacta.ai" }] }),
 })
 
 // Acta imprimible ("Guardar como PDF" desde el navegador), PLAN_BACKEND D11.
@@ -158,7 +158,7 @@ function AgreementPage() {
             <p>
               El deudor aceptó expresamente los términos mediante el botón
               "Acepto los términos del plan de pago" en el canal de negociación
-              de pacta.ia.
+              de pacta.ai.
             </p>
             <dl className="grid gap-1 break-all sm:grid-cols-[auto_1fr] sm:gap-x-4">
               <dt>Fecha y hora</dt>

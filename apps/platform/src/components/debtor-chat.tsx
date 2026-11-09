@@ -426,7 +426,7 @@ export function DebtorChat({
             {state.organizationName}
           </h1>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Asistente virtual de pacta.ia
+            Asistente virtual de pacta.ai
           </p>
         </div>
         <Button
@@ -463,7 +463,7 @@ export function DebtorChat({
                             ? "Vos"
                             : message.metadata?.authorRole === "admin"
                               ? "Administración"
-                              : "pacta.ia"}
+                              : "pacta.ai"}
                         </MessageHeader>
                         <Bubble
                           align={fromDebtor ? "end" : "start"}
@@ -904,7 +904,7 @@ function IdentityVerificationGate({
       <header className="shrink-0 border-b px-4 py-4 sm:px-6">
         <p className="truncate text-sm font-semibold">{organizationName}</p>
         <p className="mt-0.5 text-xs text-muted-foreground">
-          Asistente virtual de pacta.ia
+          Asistente virtual de pacta.ai
         </p>
       </header>
 
@@ -981,7 +981,7 @@ function IdentityVerificationGate({
 
           <p className="text-center text-[11px] text-muted-foreground">
             Intentos restantes: {remainingAttempts}. Este canal es operado por
-            un asistente virtual automatizado de pacta.ia ·{" "}
+            un asistente virtual automatizado de pacta.ai ·{" "}
             <a
               href="/privacidad"
               target="_blank"

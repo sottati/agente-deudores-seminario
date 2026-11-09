@@ -1,4 +1,4 @@
--- Esquema inicial de pacta.ia (PLAN_BACKEND §4).
+-- Esquema inicial de pacta.ai (PLAN_BACKEND §4).
 --
 -- Convenciones:
 --   * Montos en centavos (bigint), porcentajes enteros 0–100.

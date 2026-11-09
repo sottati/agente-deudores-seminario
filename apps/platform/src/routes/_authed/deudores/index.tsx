@@ -24,7 +24,7 @@ import { listDebtors } from "@/server/debtors"
 export const Route = createFileRoute("/_authed/deudores/")({
   loader: () => listDebtors(),
   component: DebtorsPage,
-  head: () => ({ meta: [{ title: "Deudores | pacta.ia" }] }),
+  head: () => ({ meta: [{ title: "Deudores | pacta.ai" }] }),
 })
 
 const PENDING: DebtStatus[] = ["open", "in_negotiation", "agreed"]
