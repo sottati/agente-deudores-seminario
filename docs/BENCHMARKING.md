@@ -28,7 +28,7 @@ Estudio de las alternativas que hoy usan las administraciones de consorcios para
 | **Debitia**                           | Software de cobranzas corporativo     | Cobranza multicanal con IA (prioriza cartera, sugiere canal) y autogestión por WhatsApp. Apunta a bancos, fintech, retail y servicios; no menciona consorcios.                  | Registra acuerdos dentro de políticas de la empresa.                                              | No publicado.                                                                         |
 | **Chau a Tus Deudas**                 | Servicio para el deudor (indirecto)   | Chatbot "MATE" por WhatsApp que acompaña al deudor; un equipo humano renegocia sus deudas con los acreedores. Trabaja del lado opuesto al de pacta.ai.                          | Sí, pero en nombre del deudor y con personas.                                                     | $4.900 por mes (octubre 2025).                                                        |
 
-**Lectura:** los software de gestión resuelven bien la parte contable (intereses, estado de cuenta, conciliación) y empiezan a sumar recordatorios y atención automática por WhatsApp (Adminia Manager, Mi Consorcio). Ninguno de los relevados conversa con el deudor para **negociar un plan de pago dentro de reglas aprobadas** y dejarlo registrado. Esa tarea sigue siendo manual.
+**Lectura:** los software de gestión resuelven bien la parte contable (intereses, estado de cuenta, conciliación) y empiezan a sumar recordatorios y atención automática por WhatsApp (Adminia Manager, Mi Consorcio). Ninguno de los relevados menciona en su información pública que converse con el deudor para **negociar un plan de pago dentro de reglas aprobadas** y dejarlo registrado. Esa tarea sigue siendo manual.
 
 ---
 
@@ -57,14 +57,14 @@ Estudio de las alternativas que hoy usan las administraciones de consorcios para
 - **Precio:** gestión manual = horas del equipo + arancel por convenio + abogado; software = abono por UF (ARS 140.000–440.000 por mes para 150 UF); SIRO = sin costo fijo; pacta.ai = ARS 23.500 por mes + 3% de lo cobrado (sección 6.1 de la Documentación).
 - **Negociación de planes:** la gestión manual negocia, pero con mucho tiempo humano; Mi Consorcio sugiere planes y Adminia Manager los registra; pacta.ai conversa con el deudor y propone el plan.
 - **Reglas aprobadas y trazabilidad:** pacta.ai solo ofrece condiciones cargadas por la administración según lo aprobado por el Consejo o la Asamblea, y registra cada acuerdo.
-- **Recordatorios e integración de pagos:** en el MVP (chat web), pacta.ai no envía recordatorios automáticos ni cobra; la administración comparte el link de la negociación. WhatsApp está previsto para el Release 2, y pagos y conexión con software de gestión, para el Release 3.
+- **Recordatorios e integración de pagos:** en el MVP (chat web), pacta.ai no envía recordatorios automáticos ni cobra; la administración comparte el link de la negociación. WhatsApp y los links de pago están previstos para el Release 2; la integración y conciliación de pagos y la conexión con software de gestión, para el Release 3.
 - **Cuidado del vínculo:** es un objetivo de diseño de pacta.ai (tono empático, derivación a una persona). Todavía no está validado con usuarios.
 
 ---
 
 ## 4. Conclusiones: el espacio en blanco
 
-1. **Hipótesis: el espacio libre es la negociación.** Entre las alternativas relevadas, ninguna automatiza la conversación para llegar a un acuerdo de pago dentro de reglas aprobadas; automatizan el aviso y el cobro. pacta.ai se concentra ahí. La hipótesis se valida con la encuesta y el análisis de no clientes.
+1. **Hipótesis: el espacio libre es la negociación.** Entre las alternativas relevadas, ninguna menciona en su información pública que automatice la conversación para llegar a un acuerdo de pago dentro de reglas aprobadas; automatizan el aviso y el cobro. pacta.ai se concentra ahí. La hipótesis se valida con la encuesta y el análisis de no clientes.
 2. **pacta.ai no compite en gestión contable ni en cobro.** Esos factores ya los cubren los software de gestión y las plataformas de cobro, y el cliente ya los paga. pacta.ai se posiciona como complemento: toma la deuda que el software ya calcula y la convierte en un acuerdo.
 3. **Riesgo competitivo:** Adminia Manager (agente IA por WhatsApp) y Mi Consorcio (IA que sugiere planes de pago) son los más cercanos y podrían sumar negociación. La defensa de pacta.ai es la especialización: reglas aprobadas, trazabilidad del acuerdo y derivación a una persona, más la integración con esos mismos software (Release 3).
 4. **Matriz ERIC:** qué hace pacta.ai con cada factor de la curva, en [ERIC.md](./ERIC.md).

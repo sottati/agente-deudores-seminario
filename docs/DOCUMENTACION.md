@@ -109,7 +109,7 @@ El Producto Mínimo Viable (MVP) consiste en un **prototipo web que simula un en
 
 - **Actor Administrador:** Carga una deuda y configura las **reglas de negociación permitidas** (ej. máximo de cuotas, quita de intereses), según lo aprobado por el Consejo de Administración o la Asamblea.
 - **Actor Deudor:** Interactúa en lenguaje natural para negociar su deuda.
-- **Sistema:** Procesa las solicitudes del deudor y ofrece un **acuerdo formal** estrictamente dentro de las políticas configuradas por la administración.
+- **Sistema:** Procesa las solicitudes del deudor y ofrece un **acuerdo de pago** estrictamente dentro de las políticas configuradas por la administración. Es un pre-acuerdo no vinculante: antes de cualquier pago o cobro, una persona de la administración lo revisa.
 
 ### 3.2 Propuesta de Valor
 
@@ -232,8 +232,8 @@ El modelo de cobro combina dos componentes. Los valores son hipótesis iniciales
 
 **Justificación:**
 
-- **Utilidad:** El agente automatiza el contacto con el deudor y la negociación inicial, la etapa que en la Entrevista 1 se señaló como la que más trabajo ahorraría. Ninguno de los software de consorcios relevados ofrece negociar planes de pago.
-- **Precio:** Queda por debajo de las alternativas actuales: el arancel por convenio manual y el abono de un software de gestión.
+- **Utilidad:** El agente automatiza el contacto con el deudor y la negociación inicial, la etapa que en la Entrevista 1 se señaló como la que más trabajo ahorraría. Ninguno de los software de consorcios relevados menciona en su información pública que negocie planes de pago.
+- **Precio:** Es un costo adicional bajo frente a lo que hoy cuesta negociar: el tiempo del equipo y el arancel por convenio manual. No reemplaza al software de gestión: se suma a él.
 - **Costo:** El costo variable del MVP (chat web) se estima en **USD 0,015 por negociación** con GPT-5.6 Luna (USD 0,20 por millón de tokens de entrada y USD 1,20 de salida), suponiendo un prompt base de ~1.200 tokens, 10 turnos y 2 pasos por turno. Aun con un error de 10 veces, son USD 0,15. Con WhatsApp (Release 2) se suma la plantilla del primer contacto, estimada en USD 0,012–0,03 por mensaje (la tarifa oficial para Argentina no está confirmada); las respuestas dentro de la ventana de 24 horas no tienen costo.
 - **Adopción:** Con la comisión, el cliente paga principalmente cuando recupera. La Entrevista 1 mencionó preferir una combinación de abono y comisión (es un indicio, no una validación).
 
@@ -261,7 +261,7 @@ Con el abono del primer escalón (ARS 23.500, unos USD 15), **4 administraciones
 - **Administraciones con 5 o más consorcios (target):** no hay dato oficial. Se estima con la encuesta (pregunta 2).
 - **Referencia:** ConsorcioAbierto, la plataforma más grande relevada, trabaja con unos 15.000 consorcios (Infobae, agosto 2026) y unos 1.500 administradores (El Cronista, agosto 2025).
 - **GBA (etapa posterior):** no se encontró un dato público de inscriptos en el registro provincial de administradores (Ley 14.701).
-- **Objetivo del año 1:** 30 administraciones, un 0,35% de los administradores activos de CABA. Es una meta del equipo, no una proyección.
+- **Objetivo del año 1:** 30 administraciones, un 0,35% de los administradores activos de CABA. Es una meta del equipo, no una proyección. El porcentaje es sobre todos los administradores activos, no sobre el target, cuyo tamaño todavía se desconoce.
 
 ### 6.5 Crecimiento
 
@@ -275,7 +275,7 @@ Con el abono del primer escalón (ARS 23.500, unos USD 15), **4 administraciones
 ### 6.6 Posicionamiento (Elevator Pitch)
 
 > "Actualmente, los administradores de consorcios sufren un gran desgaste cada cierre de mes al perseguir a los deudores uno por uno, enfrentándose a correos ignorados y llamadas incómodas que tensionan las relaciones y afectan la liquidez.
-> Hemos desarrollado un asistente autónomo de cobranzas B2B. El administrador simplemente carga la deuda y sus límites de negociación, y nuestro agente dialoga con el deudor en lenguaje natural para cerrar un acuerdo por escrito, siempre dentro de las políticas de la institución. El resultado es un mayor recupero de mora, de manera empática, trazable y sin confrontaciones manuales."
+> Hemos desarrollado un asistente de negociación de deudas B2B. El administrador simplemente carga la deuda y sus límites de negociación, y nuestro agente dialoga con el deudor en lenguaje natural para llegar a un pre-acuerdo por escrito, siempre dentro de las políticas de la institución, que una persona revisa antes de cualquier cobro. El objetivo es recuperar más mora, de manera empática, trazable y sin confrontaciones manuales."
 
 ---
 
@@ -293,7 +293,7 @@ Con el abono del primer escalón (ARS 23.500, unos USD 15), **4 administraciones
 ### 7.2 Plan de Lanzamientos (Releases)
 
 1.  **Release 1 (MVP - Sandbox):** Interfaz web simulada. Carga manual de parámetros. Diálogo de negociación asistida y emisión de acta de acuerdo de pago.
-2.  **Release 2 (Operación Real):** Integración con WhatsApp Cloud API para interacción real, arquitectura multi-tenant, importación masiva de deudores, y envíos de links de pago transaccionales.
+2.  **Release 2 (Operación Real):** Integración con WhatsApp Cloud API para interacción real, ampliación de la arquitectura multi-tenant para la operación real, importación masiva de deudores, y envíos de links de pago transaccionales.
 3.  **Release 3 (Ecosistema Integrado):** Omnicanalidad, conexión mediante API a software de gestión de expensas para conciliación automática de pagos.
 
 ---
