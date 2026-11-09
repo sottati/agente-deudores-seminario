@@ -1,7 +1,7 @@
 # Marco Legal, Regulatorio y de Cumplimiento Normativo: pacta.ai
 
 > **Producto:** pacta.ai — Asistente Autónomo de Cobranzas B2B  
-> **Jurisdicción Principal:** República Argentina (con foco operativo en CABA y Provincia de Buenos Aires)  
+> **Jurisdicción Principal:** República Argentina (con foco operativo en CABA para el MVP)  
 > **Ámbito de Aplicación:** Plataforma SaaS B2B, Inteligencia Artificial aplicada a la negociación, gestión de datos personales/crediticios y comunicaciones automatizadas multicanal.
 
 ---

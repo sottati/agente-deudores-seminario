@@ -24,7 +24,7 @@ Los métodos tradicionales (correos electrónicos genéricos o llamadas telefón
 
 ### 1.2 Declaración del Problema
 
-> Los administradores de consorcios profesionales e independientes (carteras de 5 o más edificios en CABA y GBA) enfrentan la dificultad de gestionar deudas vencidas de forma manual y mediante canales genéricos. Este contacto uno a uno mensual genera una baja tasa de respuesta, desgaste en la relación interpersonal, dilatación en el recupero de la mora, y afecta negativamente la liquidez y la capacidad operativa de los consorcios.
+> Los administradores de consorcios profesionales e independientes (carteras de 5 o más edificios en CABA) enfrentan la dificultad de gestionar deudas vencidas de forma manual y mediante canales genéricos. Este contacto uno a uno mensual genera una baja tasa de respuesta, desgaste en la relación interpersonal, dilatación en el recupero de la mora, y afecta negativamente la liquidez y la capacidad operativa de los consorcios.
 
 ### 1.3 Árbol de Problemas
 
@@ -36,7 +36,7 @@ Método de la Clase 03: causas → problema central → efectos. Cada punto indi
 
 **En el formato de la Clase 03:**
 
-> Las administraciones con 5 o más consorcios en CABA y GBA tienen el problema de recuperar la deuda de expensas en forma lenta y manual cuando deben contactar y negociar con cada deudor uno por uno, lo que genera horas de trabajo, desgaste con los vecinos y menos liquidez para el consorcio.
+> Las administraciones con 5 o más consorcios en CABA tienen el problema de recuperar la deuda de expensas en forma lenta y manual cuando deben contactar y negociar con cada deudor uno por uno, lo que genera horas de trabajo, desgaste con los vecinos y menos liquidez para el consorcio.
 
 **Causas**
 
@@ -64,7 +64,7 @@ Método de la Clase 03: causas → problema central → efectos. Cada punto indi
 | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | ¿Existe el problema?                  | Sí. El 15% de las UF de CABA y el 16% de las de Provincia tiene deuda de expensas (ConsorcioAbierto, agosto 2026), y la Entrevista 2 (target) describe la cobranza como un seguimiento continuo y desgastante.                      |
 | ¿A quién afecta?                      | A la administración (cliente), al consorcio (liquidez) y al deudor (la deuda crece).                                                                                                                                                |
-| ¿Dónde?                               | CABA y GBA. En CABA hay 122.561 consorcios (DG Rentas GCBA, agosto 2023).                                                                                                                                                           |
+| ¿Dónde?                               | CABA. Hay 122.561 consorcios (DG Rentas GCBA, agosto 2023).                                                                                                                                                                         |
 | ¿Qué magnitud tiene?                  | 15% de las UF de CABA y 16% de las de Provincia con deuda; en los barrios que monitorea ConsorcioAbierto, la deuda equivale al 23% de lo liquidado (junio 2025). La mora sube con obras extraordinarias y en verano (Entrevista 2). |
 | ¿Qué pasa si se resuelve? (hipótesis) | Menos horas de seguimiento, acuerdos dentro de reglas aprobadas en menos tiempo, menos casos derivados a legales y más liquidez para el consorcio.                                                                                  |
 
@@ -86,7 +86,7 @@ Fuentes de los datos: ver la sección 5 de [BENCHMARKING.md](./BENCHMARKING.md) 
 
 El enfoque de segmentación se basa en comprender la problemática real y el estrés operativo de gestionar los cobros.
 
-- **Geográfica:** Zonas urbanas de alta densidad en Argentina, con foco inicial en CABA y GBA.
+- **Geográfica:** Zonas urbanas de alta densidad en Argentina, con foco inicial en CABA. GBA queda para una etapa posterior (sección 6.5).
 - **Demográfica:** Profesionales de 30–60 años. Ocupación principal: administradores de consorcios matriculados.
 - **Psicográfica:** Profesionales que sufren de **estrés laboral** por la alta carga operativa y la presión del **flujo de caja**. Buscan profesionalizar la gestión manteniendo una **imagen empática** para evitar conflictos directos con vecinos o clientes.
 - **Comportamiento:** Uso intensivo de planillas (Excel) o sistemas contables tradicionales. Dependencia de WhatsApp y teléfono como canales principales de seguimiento, de manera desestructurada.
@@ -260,7 +260,7 @@ Con el abono del primer escalón (ARS 23.500, unos USD 15), **4 administraciones
 - **Administradores activos en CABA:** 8.505, según el CSV del Registro Público de Administradores que el GCBA publica en BA Data (corte 25/02/2026). Fuente secundaria: un repositorio público que procesa ese dataset.
 - **Administraciones con 5 o más consorcios (target):** no hay dato oficial. Se estima con la encuesta (pregunta 2).
 - **Referencia:** ConsorcioAbierto, la plataforma más grande relevada, trabaja con unos 15.000 consorcios (Infobae, agosto 2026) y unos 1.500 administradores (El Cronista, agosto 2025).
-- **GBA:** no se encontró un dato público de inscriptos en el registro provincial de administradores (Ley 14.701).
+- **GBA (etapa posterior):** no se encontró un dato público de inscriptos en el registro provincial de administradores (Ley 14.701).
 - **Objetivo del año 1:** 30 administraciones, un 0,35% de los administradores activos de CABA. Es una meta del equipo, no una proyección.
 
 ### 6.5 Crecimiento
@@ -304,14 +304,16 @@ Con el abono del primer escalón (ARS 23.500, unos USD 15), **4 administraciones
 
 El mercado tradicional de recuperación de deuda se caracteriza por prácticas invasivas (estudios jurídicos, llamadas reiterativas, intimaciones). Este enfoque intimida al deudor, genera rechazo y daña la reputación de la entidad acreedora.
 
-### 8.2 Diferenciación (Propuesta Estratégica)
+### 8.2 Diferenciación
 
-Nuestra solución busca abrir un nuevo segmento de mercado al redefinir la cobranza:
+pacta.ai se diferencia por lo que hace con cada factor de la curva de valor (detalle en [ERIC.md](./ERIC.md)):
 
-- **Elimina:** El hostigamiento, las llamadas invasivas y el involucramiento manual del administrador en discusiones.
-- **Reduce:** El costo de gestión operativa y los tiempos de recuperación.
-- **Incrementa:** La empatía, la flexibilidad paramétrica y el cuidado del vínculo institucional-vecinal.
-- **Crea:** Un mediador digital asincrónico que ofrece a los deudores la posibilidad de autogestionar su regularización financiera sin fricción.
+- **Elimina:** la gestión contable de la deuda. La resuelve el software que el consorcio ya usa.
+- **Reduce:** el precio para la administración, los recordatorios automáticos y la integración de pagos (quedan para los Releases 2 y 3).
+- **Incrementa:** la atención 24/7 al deudor, el ahorro de tiempo del equipo y el cuidado del vínculo con el vecino.
+- **Crea:** la negociación automatizada de planes de pago, dentro de reglas aprobadas por el Consejo o la Asamblea y con cada acuerdo registrado.
+
+**Lema:** "De la deuda al acuerdo."
 
 ### 8.3 Barreras de Entrada
 
