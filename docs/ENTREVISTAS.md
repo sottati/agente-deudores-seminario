@@ -257,4 +257,4 @@ puntos clave. Ante este nuevo enfoque, la institución accedió a responder.
 - **Aprobación humana de los acuerdos:** En la Entrevista 2 las quitas las aprueba el Consejo o la Asamblea; en la 1 los acuerdos se formalizan ante escribano; en la 3 cada caso se evalúa en forma personalizada. El agente propone dentro de reglas y la decisión final queda en manos humanas.
 - **Temores:** Que el trato sea rígido o frío (Entrevistas 2 y 3) y que una emergencia quede sin derivar (Entrevista 2).
 - **Implicancias para el producto:** Reglas de negociación que reflejen lo aprobado por el Consejo o la Asamblea; derivación inmediata a una persona ante casos sensibles; tono empático; registro formal de cada pre-acuerdo.
-- **Pendiente:** Entrevista con el experto en cobranzas (SEM-8) y resultados de la encuesta (SEM-66).
+- **Pendiente:** Entrevista con el experto en cobranzas (SEM-8). Los resultados de la encuesta están en [ENCUESTA.md](./ENCUESTA.md).

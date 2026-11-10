@@ -1,7 +1,7 @@
 # Marco Legal, Regulatorio y de Cumplimiento Normativo: pacta.ai
 
 > **Producto:** pacta.ai — Asistente Autónomo de Cobranzas B2B  
-> **Jurisdicción Principal:** República Argentina (con foco operativo en CABA y Provincia de Buenos Aires)  
+> **Jurisdicción Principal:** República Argentina (con foco operativo en CABA para el MVP)  
 > **Ámbito de Aplicación:** Plataforma SaaS B2B, Inteligencia Artificial aplicada a la negociación, gestión de datos personales/crediticios y comunicaciones automatizadas multicanal.
 
 ---
@@ -105,12 +105,12 @@ La gestión de mora extrajudicial está sujeta a estrictos controles contra el h
 
 ### 3.2 Prohibiciones Críticas que Limitan al Agente de IA (Guardrails Legales)
 
-| Práctica Prohibida por Ley                             | Guardrail Implementado en pacta.ai                                                                                                                                                                                   |
+| Práctica Prohibida por Ley                             | Guardrail en pacta.ai (implementado o previsto)                                                                                                                                                                                   |
 | :----------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Trato Indigno y Acoso (Art. 8 bis Ley 24.240)**      | El modelo tiene prohibido usar lenguaje intimidatorio, hostil o sarcástico. Su tono debe ser invariablemente empático, neutral y propositivo.                                                                        |
 | **Simulación de Acciones Judiciales Falsas**           | La IA no debe simular ser un juzgado, estudio jurídico externo o emitir amenazas de embargo inminente si no existe mandato formal. Todo mensaje debe identificarse claramente como mediación extrajudicial amistosa. |
 | **Exposición y Afectación del Honor (Ley 6.171 CABA)** | Prohibición absoluta de notificar la deuda a terceros (empleadores, familiares u otros vecinos del consorcio). La interacción inicia siempre requiriendo verificación de identidad previa.                           |
-| **Hostigamiento y Frecuencia de Contacto**             | Límites operativos de cadencia: máximo de 1 a 2 mensajes semanales por canal. Prohibición de contactar en horarios inhábiles (restringido a días hábiles de 9:00 a 19:00 hs, según estándares de CABA).              |
+| **Hostigamiento y Frecuencia de Contacto**             | Límites operativos de cadencia: máximo de 1 a 2 mensajes semanales por canal. Prohibición de contactar en horarios inhábiles (restringido a días hábiles de 9:00 a 19:00 hs, según estándares de CABA). Aplica a los contactos que inicia pacta.ai; el deudor puede escribir y negociar a cualquier hora.              |
 
 ---
 
