@@ -284,7 +284,7 @@ export function renderAgreementDocumentHtml(
     <section class="evidence">
       <h2 style="color:#09090b;font-size:0.875rem">Evidencia de aceptación y parámetros de política</h2>
       <p style="margin:0">
-        El deudor aceptó expresamente los términos mediante el botón "Acepto los términos del plan de pago" en el canal de negociación automatizada de pacta.ia.
+        El deudor aceptó expresamente los términos mediante el botón "Acepto los términos del plan de pago" en el canal de negociación automatizada de pacta.ai.
       </p>
       <dl>
         <dt>Fecha y hora</dt>

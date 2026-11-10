@@ -22,7 +22,7 @@ import { getOrganization, updateOrganization } from "@/server/settings"
 export const Route = createFileRoute("/_authed/configuracion")({
   loader: () => getOrganization(),
   component: SettingsPage,
-  head: () => ({ meta: [{ title: "Configuración | pacta.ia" }] }),
+  head: () => ({ meta: [{ title: "Configuración | pacta.ai" }] }),
 })
 
 function SettingsPage() {
@@ -76,7 +76,7 @@ function SettingsPage() {
                 name="displayNameForDebtors"
                 required
                 defaultValue={organization.display_name_for_debtors}
-                hint={`"Hola, soy el asistente virtual de pacta.ia en representación de …"`}
+                hint={`"Hola, soy el asistente virtual de pacta.ai en representación de …"`}
               />
               <Field label="Tipo de organización" htmlFor="kind">
                 <NativeSelect

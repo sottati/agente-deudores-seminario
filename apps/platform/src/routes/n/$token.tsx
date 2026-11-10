@@ -5,7 +5,7 @@ import { getDebtorChatState } from "@/server/debtor-chat"
 export const Route = createFileRoute("/n/$token")({
   loader: ({ params }) => getDebtorChatState({ data: { token: params.token } }),
   component: DebtorChatPage,
-  head: () => ({ meta: [{ title: "Conversá con pacta.ia" }] }),
+  head: () => ({ meta: [{ title: "Conversá con pacta.ai" }] }),
 })
 
 function DebtorChatPage() {

@@ -37,7 +37,7 @@ function PreviewSidebar() {
           <BrandIsotipo />
           <span className="min-w-0 leading-tight">
             <span className="block truncate text-sm font-semibold lowercase">
-              pacta.ia
+              pacta.ai
             </span>
             <span className="block truncate text-xs text-muted-foreground">
               Consorcios del Sur

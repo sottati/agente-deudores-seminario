@@ -16,7 +16,7 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "pacta.ia | Gestión de cobranzas",
+        title: "pacta.ai | Gestión de cobranzas",
       },
     ],
     links: [

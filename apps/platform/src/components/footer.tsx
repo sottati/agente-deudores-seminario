@@ -81,7 +81,7 @@ export function Footer() {
             isDark ? "text-white/45" : "text-muted-foreground"
           )}
         >
-          © {year} pacta.ia. Todos los derechos reservados.
+          © {year} pacta.ai. Todos los derechos reservados.
         </p>
       </div>
     </footer>

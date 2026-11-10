@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 
 export const Route = createFileRoute("/_authed/dashboard")({
   component: DashboardPage,
-  head: () => ({ meta: [{ title: "Dashboard | pacta.ia" }] }),
+  head: () => ({ meta: [{ title: "Dashboard | pacta.ai" }] }),
 })
 
 // Las métricas todavía son de ejemplo: se conectan a la base en el Sprint 4

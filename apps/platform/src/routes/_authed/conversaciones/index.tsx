@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authed/conversaciones/")({
   loaderDeps: ({ search }) => ({ filter: search.estado ?? "todas" }),
   loader: ({ deps }) => listNegotiations({ data: { filter: deps.filter } }),
   component: ConversationsPage,
-  head: () => ({ meta: [{ title: "Conversaciones | pacta.ia" }] }),
+  head: () => ({ meta: [{ title: "Conversaciones | pacta.ai" }] }),
 })
 
 function ConversationsPage() {

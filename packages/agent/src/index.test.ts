@@ -151,16 +151,16 @@ describe("@agente/agent", () => {
       const disclosure = buildBotDisclosureMessage(
         "Administración Consorcios del Sur"
       )
-      expect(disclosure).toContain("asistente virtual automatizado de pacta.ia")
+      expect(disclosure).toContain("asistente virtual automatizado de pacta.ai")
       expect(disclosure).toContain("Administración Consorcios del Sur")
       expect(disclosure).toContain("hablar con una persona")
       expect(disclosure).toContain("Ley 25.326")
       expect(disclosure).toContain(DEFAULT_PRIVACY_NOTICE_PATH)
 
       const customDisclosure = buildBotDisclosureMessage("Colegio San Martín", {
-        privacyNoticeUrl: "https://pacta.ia/privacidad",
+        privacyNoticeUrl: "https://pacta.ai/privacidad",
       })
-      expect(customDisclosure).toContain("https://pacta.ia/privacidad")
+      expect(customDisclosure).toContain("https://pacta.ai/privacidad")
 
       expect(isHumanHandoffKeyword("Quiero hablar con una persona")).toBe(true)
       expect(isHumanHandoffKeyword("prefiero hablar con un humano")).toBe(true)

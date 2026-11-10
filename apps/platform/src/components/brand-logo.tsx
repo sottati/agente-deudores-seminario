@@ -44,7 +44,7 @@ export function BrandLogo({
             wordmarkClassName
           )}
         >
-          pacta.ia
+          pacta.ai
         </span>
       )}
     </>
@@ -60,7 +60,7 @@ export function BrandLogo({
           rootClassName,
           "rounded-lg py-1.5 outline-none focus-visible:ring-2 focus-visible:ring-ring"
         )}
-        aria-label="pacta.ia, inicio"
+        aria-label="pacta.ai, inicio"
       >
         {content}
       </Link>
