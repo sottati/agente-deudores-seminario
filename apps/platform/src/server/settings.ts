@@ -20,6 +20,15 @@ export const updatePolicy = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator(policySchema)
   .handler(async ({ context, data }) => {
+    if (data.customInstructions) {
+      // Import dinámico: el validador usa el SDK del modelo, solo en el servidor.
+      const { createInstructionsValidator } =
+        await import("./instructions-guard")
+      const check = await createInstructionsValidator(process.env)(
+        data.customInstructions
+      )
+      if (!check.ok) throw new Error(check.message)
+    }
     const { error } = await context.supabase
       .from("negotiation_policies")
       .upsert({

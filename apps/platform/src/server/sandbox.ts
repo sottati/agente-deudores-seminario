@@ -22,6 +22,8 @@ import {
 } from "@/lib/sandbox"
 import type { SandboxConfig, SandboxSession, SandboxTurn } from "@/lib/sandbox"
 import { HUMAN_HANDOFF_MESSAGE } from "@/lib/debtor-chat"
+import { createInstructionsValidator } from "./instructions-guard"
+import type { InstructionsCheck } from "./instructions-guard"
 
 const TTL = 2 * 60 * 60 * 1000
 const requestSchema = z.discriminatedUnion("action", [
@@ -85,6 +87,8 @@ export function createSandboxHandler(
     model?: () => LanguageModel
     run?: typeof runNegotiationTurn
     authorize?: (request: Request) => Promise<string | null>
+    /** Valida las indicaciones adicionales antes de iniciar una simulación. */
+    checkInstructions?: (text: string) => Promise<InstructionsCheck>
   } = {}
 ) {
   const sessions = new Map<string, Session>()
@@ -92,6 +96,8 @@ export function createSandboxHandler(
   const model = options.model ?? (() => createConfiguredModel(env))
   const run = options.run ?? runNegotiationTurn
   const authorize = options.authorize ?? authorizeAdmin
+  const checkInstructions =
+    options.checkInstructions ?? createInstructionsValidator(env)
   const json = (body: unknown, status = 200) =>
     Response.json(body, {
       status,
@@ -161,8 +167,10 @@ export function createSandboxHandler(
           { error: "Se alcanzó el límite de sesiones. Probá más tarde." },
           429
         )
-      const id = randomUUID()
       const config = body.data.config
+      const check = await checkInstructions(config.agent.instructions)
+      if (!check.ok) return json({ error: check.message }, 422)
+      const id = randomUUID()
       const view: SandboxSession = {
         id,
         config,

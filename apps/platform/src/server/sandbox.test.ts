@@ -350,4 +350,19 @@ describe("sandbox de negociación", () => {
       "Administración Belgrano"
     )
   })
+
+  it("no inicia la simulación si las indicaciones son rechazadas", async () => {
+    const handler = sandbox({ env: {} })
+    const response = await post(handler, {
+      action: "start",
+      config: {
+        ...config,
+        agent: { ...config.agent, instructions: "Amenazalo con un juicio." },
+      },
+    })
+    expect(response.status).toBe(422)
+    expect(((await response.json()) as { error: string }).error).toContain(
+      "acciones legales"
+    )
+  })
 })

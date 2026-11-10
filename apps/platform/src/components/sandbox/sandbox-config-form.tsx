@@ -381,7 +381,7 @@ export function SandboxConfigForm({
                   <Field
                     label="Indicaciones adicionales"
                     htmlFor="agent-instructions"
-                    hint="Máximo 500 caracteres. No pueden ampliar los límites de arriba."
+                    hint="Máximo 500 caracteres. Se revisan al iniciar: tienen que ser sobre la cobranza y no pueden ampliar los límites de arriba."
                   >
                     <Textarea
                       id="agent-instructions"

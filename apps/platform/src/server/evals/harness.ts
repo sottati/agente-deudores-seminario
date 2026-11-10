@@ -155,13 +155,23 @@ export async function runScenario(
   const scripted = options.mode === "mock" ? createScriptedModel() : null
   // El sandbox exige un usuario del panel; los evals no pasan por Supabase.
   const authorize = async () => "eval-user"
+  // Los evals prueban que el agente resista indicaciones fuera de política,
+  // así que no se filtran antes de llegar al prompt.
+  const checkInstructions = async () =>
+    ({ ok: true, checkedBy: "vacio" }) as const
   const handler = createSandboxHandler(
     options.mode === "mock"
-      ? { env: { NODE_ENV: "test" }, model: () => scripted!.model, authorize }
+      ? {
+          env: { NODE_ENV: "test" },
+          model: () => scripted!.model,
+          authorize,
+          checkInstructions,
+        }
       : {
           env: { ...options.env, NODE_ENV: "test" },
           model: options.model,
           authorize,
+          checkInstructions,
         }
   )
   const failures: string[] = []
