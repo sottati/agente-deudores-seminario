@@ -19,6 +19,8 @@
 - **Documentación Principal:** [DOCUMENTACION.md](./docs/DOCUMENTACION.md)
 - **Plan del Backend:** [PLAN_BACKEND.md](./docs/PLAN_BACKEND.md)
 - **Análisis de Stakeholders:** [Stakeholders.md](./docs/Stakeholders.md)
+- **Benchmarking y Curva de Valor:** [BENCHMARKING.md](./docs/BENCHMARKING.md)
+- **Matriz ERIC:** [ERIC.md](./docs/ERIC.md)
 - **Marco Legal:** [MARCO_LEGAL.md](./docs/MARCO_LEGAL.md)
 - **Identidad Visual:** [identidad_visual.md](./docs/identidad_visual.md)
 - **Entrevistas y Trabajo de Campo:** [ENTREVISTAS.md](./docs/ENTREVISTAS.md)
