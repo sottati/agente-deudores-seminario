@@ -9,6 +9,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 
 import { ButtonLink } from "@/components/button-link"
+import { ChatText } from "@/components/chat-text"
 import { OfferCard } from "@/components/debtor-chat"
 import { PageHeader } from "@/components/page-header"
 import { Badge } from "@/components/ui/badge"
@@ -357,7 +358,9 @@ function ChatMessage({
       <MessageContent>
         <MessageHeader>{fromDebtor ? "Vos (deudor)" : author}</MessageHeader>
         <Bubble align={align} variant={fromDebtor ? "default" : "muted"}>
-          <BubbleContent className="whitespace-pre-wrap">{text}</BubbleContent>
+          <BubbleContent className="whitespace-pre-wrap">
+            <ChatText text={text} />
+          </BubbleContent>
         </Bubble>
         {turn && (
           <MessageFooter className="gap-1.5 font-normal">

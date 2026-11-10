@@ -3,6 +3,7 @@ import { Link, createFileRoute, useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 
 import { ButtonLink } from "@/components/button-link"
+import { ChatText } from "@/components/chat-text"
 import { FormError } from "@/components/form-field"
 import { PageBody, PageHeader } from "@/components/page-header"
 import { NegotiationStatusBadge } from "@/components/status-badge"
@@ -178,7 +179,7 @@ function Transcript({ negotiation }: { negotiation: Negotiation }) {
                 {partsToContent(message.parts).map((content, index) =>
                   content.kind === "text" ? (
                     <p key={index} className="whitespace-pre-wrap">
-                      {content.text}
+                      <ChatText text={content.text} />
                     </p>
                   ) : (
                     <Badge key={index} variant="outline">

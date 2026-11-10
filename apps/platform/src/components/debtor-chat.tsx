@@ -7,6 +7,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 
 import { Badge } from "@/components/ui/badge"
 import { Bubble, BubbleContent } from "@/components/ui/bubble"
+import { ChatText } from "@/components/chat-text"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Message, MessageContent, MessageHeader } from "@/components/ui/message"
@@ -470,7 +471,9 @@ export function DebtorChat({
                           variant={fromDebtor ? "default" : "muted"}
                         >
                           <BubbleContent className="whitespace-pre-wrap">
-                            <p>{text}</p>
+                            <p>
+                              <ChatText text={text} />
+                            </p>
                             {message.id === "bot-disclosure" && (
                               <p className="mt-2 border-t border-border/60 pt-1.5 text-xs text-muted-foreground">
                                 <a

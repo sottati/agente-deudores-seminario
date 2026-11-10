@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start"
 
 import { Field, FormError, TextField } from "@/components/form-field"
 import { PageBody, PageHeader } from "@/components/page-header"
+import { ThemeSettingsCard } from "@/components/theme-settings-card"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -107,6 +108,9 @@ function SettingsPage() {
             </CardFooter>
           </Card>
         </form>
+        <div className="mt-6 max-w-2xl">
+          <ThemeSettingsCard />
+        </div>
       </PageBody>
     </>
   )
