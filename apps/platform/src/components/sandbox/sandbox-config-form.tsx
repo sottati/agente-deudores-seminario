@@ -92,6 +92,18 @@ export function SandboxConfigForm({
     update({ ...config, agent: { ...config.agent, ...patch } })
 
   const parsed = sandboxConfigSchema.safeParse(config)
+  // Se destaca el juego de reglas que coincide con el actual; si se editó a
+  // mano, ninguno. Si las reglas guardadas son iguales a la política estricta,
+  // se destaca solo "Mis reglas".
+  const usingSavedAgent = sameAgentRules(config.agent, savedAgent)
+  const usingStrictAgent =
+    !usingSavedAgent && sameAgentRules(config.agent, strictSandboxAgent)
+  // El caso de prueba que coincide con la deuda actual; -1 si se editó a mano.
+  const selectedPreset = presets.findIndex((preset) =>
+    (Object.keys(preset.debt) as Array<keyof SandboxDebtConfig>).every(
+      (key) => preset.debt[key] === config.debt[key]
+    )
+  )
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -187,14 +199,14 @@ export function SandboxConfigForm({
                 <CardAction>
                   <NativeSelect
                     aria-label="Cargar un caso de prueba"
-                    value=""
+                    value={selectedPreset === -1 ? "" : selectedPreset}
                     onChange={(e) => {
                       const preset = presets.at(Number(e.target.value))
                       if (preset) setDebt(preset.debt)
                     }}
                   >
                     <NativeSelectOption value="" disabled>
-                      Cargar caso…
+                      Personalizado
                     </NativeSelectOption>
                     {presets.map((preset, i) => (
                       <NativeSelectOption key={preset.name} value={i}>
@@ -262,7 +274,8 @@ export function SandboxConfigForm({
                   <Button
                     type="button"
                     size="sm"
-                    variant="outline"
+                    variant={usingSavedAgent ? "default" : "outline"}
+                    aria-pressed={usingSavedAgent}
                     onClick={() => setAgent(savedAgent)}
                   >
                     Mis reglas
@@ -270,7 +283,8 @@ export function SandboxConfigForm({
                   <Button
                     type="button"
                     size="sm"
-                    variant="outline"
+                    variant={usingStrictAgent ? "default" : "outline"}
+                    aria-pressed={usingStrictAgent}
                     onClick={() => setAgent(strictSandboxAgent)}
                   >
                     Política estricta
@@ -439,6 +453,12 @@ export function SandboxConfigForm({
 }
 
 // Vista previa de lo que el motor de reglas le va a permitir ofrecer al agente.
+function sameAgentRules(a: SandboxAgentConfig, b: SandboxAgentConfig) {
+  return (Object.keys(b) as Array<keyof SandboxAgentConfig>).every(
+    (key) => a[key] === b[key]
+  )
+}
+
 function BoundsPreview({ config }: { config: SandboxConfig | null }) {
   if (!config)
     return (

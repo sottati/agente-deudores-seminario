@@ -9,10 +9,11 @@ import { createServerSupabase } from "./db/supabase-server"
 export const authMiddleware = createMiddleware({ type: "function" }).server(
   async ({ next }) => {
     const supabase = createServerSupabase()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) throw redirect({ to: "/login" })
+    // getClaims verifica la firma del JWT con las claves públicas del proyecto
+    // (cacheadas), sin ir al servidor de Auth en cada request como getUser.
+    const { data: auth } = await supabase.auth.getClaims()
+    if (!auth) throw redirect({ to: "/login" })
+    const user = { id: auth.claims.sub }
 
     const { data: membership, error } = await supabase
       .from("memberships")

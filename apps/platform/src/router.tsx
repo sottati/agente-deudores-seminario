@@ -6,8 +6,9 @@ export function getRouter() {
     routeTree,
 
     scrollRestoration: true,
+    // Al pasar el mouse por un link se precargan sus datos, y se reusan al
+    // hacer clic si tienen menos de 30 s (valor por defecto del router).
     defaultPreload: "intent",
-    defaultPreloadStaleTime: 0,
   })
 
   return router

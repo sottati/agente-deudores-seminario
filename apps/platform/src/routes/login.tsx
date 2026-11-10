@@ -13,6 +13,7 @@ import { HeroShaderGradient } from "@/components/hero-shader-gradient"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { formValues, useAction } from "@/hooks/use-action"
+import { clearCachedSession } from "@/lib/session-cache"
 import { getSessionContext, signIn } from "@/server/auth"
 
 // Solo rutas internas: evita redirecciones abiertas a otros dominios.
@@ -48,6 +49,7 @@ function LoginPage() {
       setCredentialsError(result.data.error)
       return
     }
+    clearCachedSession()
     await router.invalidate()
     await navigate({ href: safeRedirect(search.redirect) })
   }

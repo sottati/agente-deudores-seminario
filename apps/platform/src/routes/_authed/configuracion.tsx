@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 
 import { Field, FormError, TextField } from "@/components/form-field"
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { formValues, useAction } from "@/hooks/use-action"
+import { clearCachedSession } from "@/lib/session-cache"
 import { organizationKindLabel } from "@/lib/labels"
 import type { OrganizationKind } from "@/lib/labels"
 import { getOrganization, updateOrganization } from "@/server/settings"
@@ -28,6 +29,7 @@ export const Route = createFileRoute("/_authed/configuracion")({
 
 function SettingsPage() {
   const organization = Route.useLoaderData()
+  const router = useRouter()
   const save = useAction(useServerFn(updateOrganization))
   const [saved, setSaved] = useState(false)
 
@@ -42,7 +44,12 @@ function SettingsPage() {
         kind: values.kind as OrganizationKind,
       },
     })
-    if (result.ok) setSaved(true)
+    if (result.ok) {
+      setSaved(true)
+      // La barra lateral muestra el nombre de la organización: refrescarla.
+      clearCachedSession()
+      await router.invalidate()
+    }
   }
 
   return (

@@ -110,20 +110,17 @@ function NegotiationPage() {
 // ---------------------------------------------------------------------------
 
 type MessagePart = { type?: unknown; text?: unknown }
-type MessageContent = { kind: "text" | "tool"; text: string }
 
-/** Partes UIMessage del AI SDK → texto y llamadas a herramientas. */
-function partsToContent(parts: Json): MessageContent[] {
+/**
+ * Partes UIMessage del AI SDK → textos del mensaje. Las llamadas a
+ * herramientas quedan guardadas en la base (auditoría) pero no se muestran.
+ */
+function partsToTexts(parts: Json): string[] {
   if (!Array.isArray(parts)) return []
-  return parts.flatMap((part): MessageContent[] => {
+  return parts.flatMap((part): string[] => {
     if (!part || typeof part !== "object" || Array.isArray(part)) return []
     const { type, text } = part as MessagePart
-    if (type === "text" && typeof text === "string")
-      return [{ kind: "text", text }]
-    if (typeof type === "string" && type.startsWith("tool-")) {
-      return [{ kind: "tool", text: type.slice("tool-".length) }]
-    }
-    return []
+    return type === "text" && typeof text === "string" ? [text] : []
   })
 }
 
@@ -176,17 +173,11 @@ function Transcript({ negotiation }: { negotiation: Negotiation }) {
                     {formatDateTime(message.created_at)}
                   </p>
                 ) : null}
-                {partsToContent(message.parts).map((content, index) =>
-                  content.kind === "text" ? (
-                    <p key={index} className="whitespace-pre-wrap">
-                      <ChatText text={content.text} />
-                    </p>
-                  ) : (
-                    <Badge key={index} variant="outline">
-                      Herramienta: {content.text}
-                    </Badge>
-                  )
-                )}
+                {partsToTexts(message.parts).map((text, index) => (
+                  <p key={index} className="whitespace-pre-wrap">
+                    <ChatText text={text} />
+                  </p>
+                ))}
               </li>
             ))}
           </ol>

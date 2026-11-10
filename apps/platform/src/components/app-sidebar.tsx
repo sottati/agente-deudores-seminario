@@ -39,6 +39,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { clearCachedSession } from "@/lib/session-cache"
 import { signOut } from "@/server/auth"
 import type { SessionContext } from "@/server/auth"
 
@@ -150,6 +151,7 @@ function UserMenu({ session }: { session: SessionContext }) {
 
   async function handleSignOut() {
     await signOutFn()
+    clearCachedSession()
     await router.invalidate()
     await navigate({ to: "/login" })
   }
