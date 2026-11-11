@@ -3,7 +3,7 @@
 -- descarta al final.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(16);
+select plan(19);
 
 -- Organización B con su propio usuario y un deudor.
 insert into auth.users (instance_id, id, aud, role, email)
@@ -28,6 +28,9 @@ select is((select count(*)::int from public.negotiations), 0, 'B no ve negociaci
 select is((select count(*)::int from public.messages), 0, 'B no ve mensajes de A');
 select is((select count(*)::int from public.agreements), 0, 'B no ve acuerdos de A');
 select is((select count(*)::int from public.negotiation_policies), 0, 'B no ve la política de A');
+select is((select count(*)::int from public.v_recent_agreements), 0, 'B no ve acuerdos recientes de A en la vista');
+select is((select count(*)::int from public.v_attention_items), 0, 'B no ve alertas de A en la vista');
+select is((select agreements_count from public.v_dashboard_kpis), 0, 'B ve sus propios KPIs en 0 sin mezclar los de A');
 
 select is_empty(
   $$ update public.debtors set full_name = 'x' where organization_id = '11111111-1111-4111-8111-111111111111' returning id $$,

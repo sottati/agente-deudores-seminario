@@ -11,7 +11,10 @@ import {
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
-import { DashboardOverview } from "@/components/dashboard/dashboard-overview"
+import {
+  DEMO_DASHBOARD_VIEW_DATA,
+  DashboardOverview,
+} from "@/components/dashboard/dashboard-overview"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -139,7 +142,7 @@ export function DashboardPreview() {
             </header>
 
             <div className="overflow-hidden p-2 md:p-4">
-              <DashboardOverview compact />
+              <DashboardOverview data={DEMO_DASHBOARD_VIEW_DATA} compact />
             </div>
           </div>
         </div>
