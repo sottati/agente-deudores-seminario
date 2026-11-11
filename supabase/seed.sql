@@ -126,7 +126,7 @@ $$;
 
 create function pg_temp.disclosure(p_neg uuid, p_at timestamptz) returns void language sql as $$
   select pg_temp.msg(p_neg, 'system',
-    'Hola, soy el asistente virtual automatizado de pacta.ia en representación de Administración Consorcios del Sur. '
+    'Hola, soy el asistente virtual automatizado de pacta.ai en representación de Administración Consorcios del Sur. '
     || 'No soy una persona: si en algún momento preferís hablar con alguien de la administración, escribí "hablar con una persona". '
     || 'Antes de continuar necesito verificar tu identidad.', p_at);
 $$;

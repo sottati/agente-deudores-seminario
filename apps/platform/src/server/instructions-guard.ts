@@ -116,7 +116,7 @@ const verdictSchema = z.object({
   reason: z.string().nullish(),
 })
 
-const CLASSIFIER_PROMPT = `Sos un validador de configuración para pacta.ia, un agente de IA que negocia deudas vencidas (expensas de consorcios, cuotas de colegios) con los deudores en nombre de una administración.
+const CLASSIFIER_PROMPT = `Sos un validador de configuración para pacta.ai, un agente de IA que negocia deudas vencidas (expensas de consorcios, cuotas de colegios) con los deudores en nombre de una administración.
 
 La administración puede escribir "indicaciones adicionales" para el agente. Tu tarea es decidir si un texto es una indicación válida.
 

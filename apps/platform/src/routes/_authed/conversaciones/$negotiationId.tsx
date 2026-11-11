@@ -57,7 +57,7 @@ export const Route = createFileRoute("/_authed/conversaciones/$negotiationId")({
   head: ({ loaderData }) => ({
     meta: [
       {
-        title: `${loaderData?.debt.debtors.alias ?? "Conversación"} | pacta.ia`,
+        title: `${loaderData?.debt.debtors.alias ?? "Conversación"} | pacta.ai`,
       },
     ],
   }),

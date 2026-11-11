@@ -80,13 +80,13 @@ export function AppSidebar({ session }: { session: SessionContext }) {
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
-              tooltip="pacta.ia"
+              tooltip="pacta.ai"
               render={<Link to="/dashboard" />}
             >
               <BrandIsotipo />
               <span className="min-w-0 leading-tight">
                 <span className="block truncate font-semibold lowercase">
-                  pacta.ia
+                  pacta.ai
                 </span>
                 <span className="block truncate text-xs text-muted-foreground">
                   {session.organization.name}

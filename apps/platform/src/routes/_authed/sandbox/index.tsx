@@ -11,7 +11,7 @@ export const Route = createFileRoute("/_authed/sandbox/")({
   component: SandboxConfigPage,
   head: () => ({
     meta: [
-      { title: "Simulador del agente | pacta.ia" },
+      { title: "Simulador del agente | pacta.ai" },
       { name: "robots", content: "noindex" },
     ],
   }),

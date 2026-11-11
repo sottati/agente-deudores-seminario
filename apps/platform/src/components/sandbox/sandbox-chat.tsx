@@ -184,7 +184,7 @@ export function SandboxChat({
                     </p>
                   </MessageScrollerItem>
                   <MessageScrollerItem messageId="disclosure">
-                    <ChatMessage author="pacta.ia" text={session.disclosure} />
+                    <ChatMessage author="pacta.ai" text={session.disclosure} />
                   </MessageScrollerItem>
                   {session.turns.flatMap((turn, i) => [
                     <MessageScrollerItem
@@ -199,7 +199,7 @@ export function SandboxChat({
                       messageId={`agent-${i}`}
                     >
                       <ChatMessage
-                        author="pacta.ia"
+                        author="pacta.ai"
                         text={turn.assistant}
                         turn={turn}
                       />

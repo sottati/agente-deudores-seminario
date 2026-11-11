@@ -33,7 +33,7 @@ export const Route = createFileRoute("/login")({
     if (session) throw redirect({ href: safeRedirect(search.redirect) })
   },
   component: LoginPage,
-  head: () => ({ meta: [{ title: "Ingresar | pacta.ia" }] }),
+  head: () => ({ meta: [{ title: "Ingresar | pacta.ai" }] }),
 })
 
 function LoginPage() {

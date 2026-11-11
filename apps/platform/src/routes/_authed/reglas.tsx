@@ -29,7 +29,7 @@ import { getPolicy, updatePolicy } from "@/server/settings"
 export const Route = createFileRoute("/_authed/reglas")({
   loader: () => getPolicy(),
   component: PolicyPage,
-  head: () => ({ meta: [{ title: "Reglas del agente | pacta.ia" }] }),
+  head: () => ({ meta: [{ title: "Reglas del agente | pacta.ai" }] }),
 })
 
 function PolicyPage() {

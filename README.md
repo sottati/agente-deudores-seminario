@@ -22,8 +22,9 @@
 - **Marco Legal:** [MARCO_LEGAL.md](./docs/MARCO_LEGAL.md)
 - **Identidad Visual:** [identidad_visual.md](./docs/identidad_visual.md)
 - **Entrevistas y Trabajo de Campo:** [ENTREVISTAS.md](./docs/ENTREVISTAS.md)
+- **Guía de Entrevista:** [GUIA_ENTREVISTA.md](./docs/GUIA_ENTREVISTA.md) · [Google Doc](https://docs.google.com/document/d/1fJ-gs0pDBZQlddrDk2jeNWpVIRAxl3SzNdmKvg1ShNI/edit)
 - **Uso de IA:** [USO_IA.md](./docs/USO_IA.md)
-- **Documentación completa en Google Docs:** [pacta.ai — Documentación del proyecto](https://docs.google.com/document/d/1h325o7If-BrOCULb2lgOeMStN_tv_Rl_j3p4bNaM8c8/edit) (mismo contenido que los `.md`, se mantienen sincronizados)
+- **Documentación completa en Google Docs:** [pacta.ai — Documentación del proyecto](https://docs.google.com/document/d/1_kNWaiImR6zwwXVstNek1JIrBNHz43s_AzMevYIOCLk/edit) (mismo contenido que los `.md`, se mantienen sincronizados)
 
 ## Estructura del Repositorio (Monorepo)
 

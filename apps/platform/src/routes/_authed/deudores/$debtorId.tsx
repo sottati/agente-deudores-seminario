@@ -47,7 +47,7 @@ export const Route = createFileRoute("/_authed/deudores/$debtorId")({
   loader: ({ params }) => getDebtor({ data: { id: params.debtorId } }),
   component: DebtorPage,
   head: ({ loaderData }) => ({
-    meta: [{ title: `${loaderData?.alias ?? "Deudor"} | pacta.ia` }],
+    meta: [{ title: `${loaderData?.alias ?? "Deudor"} | pacta.ai` }],
   }),
 })
 

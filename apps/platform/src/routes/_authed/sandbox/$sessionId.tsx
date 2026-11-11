@@ -41,7 +41,7 @@ export const Route = createFileRoute("/_authed/sandbox/$sessionId")({
   ),
   head: () => ({
     meta: [
-      { title: "Simulación | pacta.ia" },
+      { title: "Simulación | pacta.ai" },
       { name: "robots", content: "noindex" },
     ],
   }),

@@ -29,7 +29,7 @@ import type {
 } from "ai"
 import { z } from "zod"
 
-export const SYSTEM_PROMPT_VERSION = "0.1.0"
+export const SYSTEM_PROMPT_VERSION = "0.1.1"
 export const MAX_STEPS_PER_TURN = 5
 export const MAX_TURNS_PER_NEGOTIATION = 20
 
@@ -124,7 +124,7 @@ export function buildBotDisclosureMessage(
   const privacyNoticeUrl =
     options.privacyNoticeUrl?.trim() || DEFAULT_PRIVACY_NOTICE_PATH
   return (
-    `Hola, soy el asistente virtual automatizado de pacta.ia en representación de ${orgName}. ` +
+    `Hola, soy el asistente virtual automatizado de pacta.ai en representación de ${orgName}. ` +
     `No soy una persona: si en algún momento preferís hablar con alguien de la administración, escribí "hablar con una persona" o usá el botón en la parte superior. ` +
     `Tus datos se tratan conforme a la Ley 25.326 de Protección de Datos Personales; podés consultar el aviso de privacidad en ${privacyNoticeUrl}.`
   )
@@ -183,8 +183,8 @@ export function buildSystemPrompt(
   const customInstructions = negotiation.policy.customInstructions?.trim()
 
   const lines: string[] = [
-    `[pacta.ia · system prompt v${SYSTEM_PROMPT_VERSION}]`,
-    `Sos el asistente virtual automatizado de pacta.ia que actúa en representación de «${orgName}».`,
+    `[pacta.ai · system prompt v${SYSTEM_PROMPT_VERSION}]`,
+    `Sos el asistente virtual automatizado de pacta.ai que actúa en representación de «${orgName}».`,
     KIND_DESCRIPTIONS[orgKind],
     "",
     "## Contexto del interlocutor (minimización de PII)",

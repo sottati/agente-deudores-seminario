@@ -13,7 +13,7 @@ export const Route = createFileRoute("/privacidad")({
   component: PrivacyNoticePage,
   head: () => ({
     meta: [
-      { title: "Aviso de Privacidad al Deudor | pacta.ia" },
+      { title: "Aviso de Privacidad al Deudor | pacta.ai" },
       {
         name: "description",
         content:
@@ -62,7 +62,7 @@ function PrivacyNoticePage() {
                 </strong>{" "}
                 (titular del vínculo jurídico y quien determina la finalidad del
                 tratamiento).{" "}
-                <strong className="text-foreground">pacta.ia</strong> interviene
+                <strong className="text-foreground">pacta.ai</strong> interviene
                 exclusivamente como{" "}
                 <strong className="text-foreground">
                   Encargado del Tratamiento

@@ -1,4 +1,4 @@
-# Plan de Implementación — Backend MVP pacta.ia
+# Plan de Implementación — Backend MVP pacta.ai
 
 > **Alcance:** todo lo necesario del lado servidor para cumplir el **Release 1 (MVP – Sandbox)** definido en [DOCUMENTACION.md](./DOCUMENTACION.md#L56-L76) y [§7.2](./DOCUMENTACION.md#L158-L161), más la conexión con el prototipo de `apps/platform`.
 
