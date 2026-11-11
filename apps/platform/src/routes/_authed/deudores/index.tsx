@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react"
 import { Link, createFileRoute } from "@tanstack/react-router"
+import { z } from "zod"
 import { PlusSignIcon, Search01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
+import { ButtonLink } from "@/components/button-link"
 import { CreateDebtorDialog } from "@/components/debtor-dialogs"
 import { PageBody, PageHeader } from "@/components/page-header"
 import { DebtStatusBadge } from "@/components/status-badge"
@@ -18,10 +20,32 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { formatARS } from "@/lib/format"
+import { debtStatusMeta } from "@/lib/labels"
 import type { DebtStatus } from "@/lib/labels"
 import { listDebtors } from "@/server/debtors"
 
+// Filtro por el estado que muestra la columna "Estado" (el más relevante del
+// deudor). "sin_deudas": deudores sin ninguna deuda cargada.
+const statusFilters = [
+  "todos",
+  "in_negotiation",
+  "open",
+  "agreed",
+  "paid",
+  "written_off",
+  "sin_deudas",
+] as const
+type StatusFilter = (typeof statusFilters)[number]
+
+const filterLabel = (filter: StatusFilter) =>
+  filter === "todos"
+    ? "Todos"
+    : filter === "sin_deudas"
+      ? "Sin deudas"
+      : debtStatusMeta[filter].label
+
 export const Route = createFileRoute("/_authed/deudores/")({
+  validateSearch: z.object({ estado: z.enum(statusFilters).optional() }),
   loader: () => listDebtors(),
   component: DebtorsPage,
   head: () => ({ meta: [{ title: "Deudores | pacta.ai" }] }),
@@ -51,20 +75,35 @@ function summarize(debtor: DebtorRow) {
 
 function DebtorsPage() {
   const debtors = Route.useLoaderData()
+  const { estado = "todos" } = Route.useSearch()
   const [query, setQuery] = useState("")
+
+  const summarized = useMemo(
+    () => debtors.map((debtor) => ({ debtor, ...summarize(debtor) })),
+    [debtors]
+  )
+  const counts = useMemo(() => {
+    const result = new Map<StatusFilter, number>([["todos", summarized.length]])
+    for (const { status } of summarized) {
+      const key = status ?? "sin_deudas"
+      result.set(key, (result.get(key) ?? 0) + 1)
+    }
+    return result
+  }, [summarized])
 
   const rows = useMemo(() => {
     const needle = query.trim().toLowerCase()
-    return debtors
-      .filter((debtor) =>
-        !needle
-          ? true
-          : [debtor.alias, debtor.full_name, debtor.group_label ?? ""].some(
-              (value) => value.toLowerCase().includes(needle)
-            )
+    return summarized.filter(({ debtor, status }) => {
+      if (estado !== "todos" && (status ?? "sin_deudas") !== estado)
+        return false
+      return (
+        !needle ||
+        [debtor.alias, debtor.full_name, debtor.group_label ?? ""].some(
+          (value) => value.toLowerCase().includes(needle)
+        )
       )
-      .map((debtor) => ({ debtor, ...summarize(debtor) }))
-  }, [debtors, query])
+    })
+  }, [summarized, query, estado])
 
   return (
     <>
@@ -79,6 +118,26 @@ function DebtorsPage() {
         />
       </PageHeader>
       <PageBody>
+        <nav aria-label="Filtrar por estado" className="flex flex-wrap gap-2">
+          {statusFilters.map((filter) => {
+            const count = counts.get(filter) ?? 0
+            // Se ocultan los estados sin deudores, salvo el que está activo.
+            if (count === 0 && filter !== estado) return null
+            return (
+              <ButtonLink
+                key={filter}
+                size="sm"
+                variant={filter === estado ? "default" : "outline"}
+                to="/deudores"
+                search={filter === "todos" ? {} : { estado: filter }}
+              >
+                {filterLabel(filter)}
+                <span className="tabular-nums opacity-70">{count}</span>
+              </ButtonLink>
+            )
+          })}
+        </nav>
+
         <div className="relative max-w-sm">
           <HugeiconsIcon
             icon={Search01Icon}
@@ -101,7 +160,9 @@ function DebtorsPage() {
               <p className="px-4 py-10 text-center text-muted-foreground">
                 {debtors.length === 0
                   ? "Todavía no cargaste deudores."
-                  : "Ningún deudor coincide con la búsqueda."}
+                  : estado !== "todos" && !query.trim()
+                    ? `No hay deudores con estado "${filterLabel(estado)}".`
+                    : "Ningún deudor coincide con la búsqueda."}
               </p>
             ) : (
               <Table>

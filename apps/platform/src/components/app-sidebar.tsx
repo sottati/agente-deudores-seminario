@@ -12,6 +12,7 @@ import {
   Logout01Icon,
   MessageMultiple02Icon,
   Settings02Icon,
+  TestTube01Icon,
   UserMultipleIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -38,6 +39,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { clearCachedSession } from "@/lib/session-cache"
 import { signOut } from "@/server/auth"
 import type { SessionContext } from "@/server/auth"
 
@@ -51,7 +53,15 @@ const navItems = [
   { title: "Deudores", to: "/deudores", icon: UserMultipleIcon },
 ] as const
 
+// El simulador solo existe en desarrollo (su API responde 404 en producción).
+const sandboxNavItem = {
+  title: "Simulador del agente",
+  to: "/sandbox",
+  icon: TestTube01Icon,
+} as const
+
 const footerNavItems = [
+  ...(import.meta.env.DEV ? [sandboxNavItem] : []),
   { title: "Reglas del agente", to: "/reglas", icon: BotIcon },
   { title: "Configuración", to: "/configuracion", icon: Settings02Icon },
 ] as const
@@ -141,6 +151,7 @@ function UserMenu({ session }: { session: SessionContext }) {
 
   async function handleSignOut() {
     await signOutFn()
+    clearCachedSession()
     await router.invalidate()
     await navigate({ to: "/login" })
   }

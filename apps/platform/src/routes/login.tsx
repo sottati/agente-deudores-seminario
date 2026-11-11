@@ -8,11 +8,16 @@ import { useState } from "react"
 import { useServerFn } from "@tanstack/react-start"
 import { z } from "zod"
 
+import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+
+import { ButtonLink } from "@/components/button-link"
 import { FormError } from "@/components/form-field"
 import { HeroShaderGradient } from "@/components/hero-shader-gradient"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { formValues, useAction } from "@/hooks/use-action"
+import { clearCachedSession } from "@/lib/session-cache"
 import { getSessionContext, signIn } from "@/server/auth"
 
 // Solo rutas internas: evita redirecciones abiertas a otros dominios.
@@ -48,6 +53,7 @@ function LoginPage() {
       setCredentialsError(result.data.error)
       return
     }
+    clearCachedSession()
     await router.invalidate()
     await navigate({ href: safeRedirect(search.redirect) })
   }
@@ -60,6 +66,16 @@ function LoginPage() {
 
       <main className="flex flex-col items-center justify-center px-6 py-8 sm:px-10 sm:py-12">
         <div className="w-full max-w-sm">
+          <ButtonLink
+            to="/"
+            variant="ghost"
+            size="sm"
+            className="mb-6 -ml-2 text-muted-foreground hover:text-foreground"
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} data-icon="inline-start" />
+            Volver al inicio
+          </ButtonLink>
+
           <div className="mb-6 sm:mb-8">
             <h1 className="text-2xl font-semibold tracking-tight">
               Iniciar sesión

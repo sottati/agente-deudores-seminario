@@ -17,10 +17,10 @@ export type SessionContext = {
 export const getSessionContext = createServerFn({ method: "GET" }).handler(
   async (): Promise<SessionContext | null> => {
     const supabase = createServerSupabase()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) return null
+    // Verificación local del JWT (ver middleware.ts): evita un viaje a Auth.
+    const { data: auth } = await supabase.auth.getClaims()
+    if (!auth) return null
+    const { claims } = auth
 
     const { data } = await supabase
       .from("memberships")
@@ -31,13 +31,11 @@ export const getSessionContext = createServerFn({ method: "GET" }).handler(
     const organization = data?.organizations
     if (!organization) return null
 
-    const email = user.email ?? ""
-    const fullName =
-      typeof user.user_metadata.full_name === "string"
-        ? user.user_metadata.full_name
-        : email
+    const email = claims.email ?? ""
+    const metadataName = claims.user_metadata?.full_name
+    const fullName = typeof metadataName === "string" ? metadataName : email
     return {
-      user: { id: user.id, email, fullName },
+      user: { id: claims.sub, email, fullName },
       organization: {
         id: organization.id,
         name: organization.name,

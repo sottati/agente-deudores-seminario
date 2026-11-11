@@ -18,7 +18,8 @@
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
     "db:types": "supabase gen types typescript --local > apps/platform/src/server/db/types.gen.ts",
-    "smoke:llm": "pnpm --filter @agente/agent smoke"
+    "smoke:llm": "pnpm --filter @agente/agent smoke",
+    "eval:llm": "pnpm --filter @agente/platform eval:llm"
   },
   "devDependencies": {
     "prettier": "^3.9.6",

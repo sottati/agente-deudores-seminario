@@ -7,6 +7,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 
+import { ButtonLink } from "@/components/button-link"
 import { AgreementPlansChart } from "@/components/dashboard/agreement-plans-chart"
 import { RecoveryTrendChart } from "@/components/dashboard/recovery-trend-chart"
 import { Badge } from "@/components/ui/badge"
@@ -127,10 +128,29 @@ export function DashboardOverview({
             Últimas negociaciones registradas por el agente.
           </CardDescription>
           <CardAction>
-            <Button variant="ghost" size="sm">
-              Ver todos
-              <HugeiconsIcon icon={ArrowUpRight01Icon} data-icon="inline-end" />
-            </Button>
+            {compact ? (
+              // Vista previa de la landing: decorativa, no navega.
+              <Button variant="ghost" size="sm">
+                Ver todos
+                <HugeiconsIcon
+                  icon={ArrowUpRight01Icon}
+                  data-icon="inline-end"
+                />
+              </Button>
+            ) : (
+              <ButtonLink
+                variant="ghost"
+                size="sm"
+                to="/conversaciones"
+                search={{ estado: "acordadas" }}
+              >
+                Ver todos
+                <HugeiconsIcon
+                  icon={ArrowUpRight01Icon}
+                  data-icon="inline-end"
+                />
+              </ButtonLink>
+            )}
           </CardAction>
         </CardHeader>
         <CardContent className="px-0">

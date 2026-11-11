@@ -11,7 +11,7 @@ import { HowItWorks } from "@/components/how-it-works"
 import { Navigation } from "@/components/navigation"
 import { Pricing } from "@/components/pricing"
 import { WhoItsFor } from "@/components/who-its-for"
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { useResolvedDark } from "@/hooks/use-resolved-dark"
 import { cn } from "@/lib/utils"
 
@@ -63,19 +63,20 @@ function HomePage() {
               Probar el dashboard
               <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
             </ButtonLink>
-            <Button
-              size="lg"
-              variant="outline"
+            {/* Enlace a una sección de la misma página: <a> con estilo de botón. */}
+            <a
+              href="#como-funciona"
+              data-slot="button"
               className={cn(
+                buttonVariants({ size: "lg", variant: "outline" }),
                 "h-11 px-4 backdrop-blur",
                 isDark
                   ? "border-white/30 bg-white/10 text-white hover:bg-white/15 hover:text-white"
                   : "bg-background/70"
               )}
-              render={<a href="#como-funciona" />}
             >
               Ver cómo funciona
-            </Button>
+            </a>
           </div>
         </section>
 

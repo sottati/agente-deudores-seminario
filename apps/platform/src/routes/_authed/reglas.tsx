@@ -202,7 +202,7 @@ function PolicyPage() {
               <Field
                 label="Indicaciones adicionales"
                 htmlFor="customInstructions"
-                hint="Máximo 500 caracteres. No pueden ampliar los límites de arriba."
+                hint="Máximo 500 caracteres. Se revisan al guardar: tienen que ser sobre la cobranza y no pueden ampliar los límites de arriba."
               >
                 <Textarea
                   id="customInstructions"
