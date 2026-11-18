@@ -1,30 +1,53 @@
 # Declaración de Uso de Inteligencia Artificial
 
-Este documento detalla cómo el equipo hizo uso de herramientas de Inteligencia Artificial Generativa durante el desarrollo del proyecto, enfocándose en la actual fase de Prototipado, Identidad Visual y desarrollo de la Landing Page.
+Este documento explica cómo usó el equipo herramientas de Inteligencia Artificial Generativa a lo largo del TIF, tanto en la parte de negocio como en la de producto. Ninguna parte del trabajo se hizo íntegramente con IA. La usamos para ordenar ideas, poner a prueba hipótesis y llegar a mejores decisiones como equipo. Las decisiones, el trabajo de campo y la responsabilidad sobre los entregables son del equipo.
 
-## 1. Herramientas Utilizadas
+## 1. Principio de Uso
 
-- **Google Antigravity (Agent / Gemini):** Utilizado como agente de Pair Programming y consultor estratégico.
-- **Modelos de Generación de Imágenes (DALL-E 3 / Ideogram):** Utilizados para la ideación y renderizado de prototipos de logotipos (Isotipos y Wordmarks).
-- **Vercel AI SDK / GPT-5.6 Luna:** (Herramientas core integradas en el producto final para el agente conversacional).
+La IA se usó como un interlocutor crítico, no como autor. Sirvió para:
 
-## 2. Áreas de Aplicación
+- Cuestionar nuestras hipótesis antes de darlas por válidas.
+- Plantear alternativas que no habíamos considerado, para compararlas.
+- Encontrar inconsistencias entre documentos y entre lo que afirmábamos y la evidencia que teníamos.
+- Ordenar el razonamiento con los marcos de la materia (Océano Azul, árbol de problemas, curva de valor, matriz ERIC).
 
-- [x] **Programación y Código:** Asistencia en la creación y estructuración de la Landing Page, implementación de componentes de interfaz (React 19, Tailwind CSS, shadcn/ui) y efectos visuales (`hero-shader-gradient`).
-- [x] **Redacción y Documentación:** Reestructuración de la documentación técnica a formato PRD profesional (`DOCUMENTACION.md`) y redacción del manual de identidad visual con justificaciones estratégicas (`identidad_visual.md`).
-- [x] **Ideación (Brainstorming):** Generación de propuestas de Naming enfocadas en la estrategia de Océano Azul, resultando en la elección del nombre **pacta.ai**.
-- [x] **Diseño:** Análisis de psicología del color (elección de magenta/dark mode), estructuración del sistema de bordes y tipografía (Geist Variable), y generación mediante _prompts_ de múltiples direcciones de diseño para el logotipo.
-- [ ] **Otro:** _________________
+## 2. Herramientas Utilizadas
 
-## 3. Metodología de Uso
+- **Claude (Anthropic):** apoyo para el razonamiento estratégico en la parte de negocio y asistente de código (Claude Code) en el sandbox y los tests (evals) del agente.
+- **Google Antigravity (Agent / Gemini):** pair programming y apoyo en la ideación de naming e identidad visual.
+- **Cursor:** asistente de código en las secciones de la landing page.
+- **Modelos de Generación de Imágenes (DALL-E 3 / Ideogram):** exploración de direcciones visuales para el logo (isotipos y wordmarks).
 
-La Inteligencia Artificial se integró en el flujo de trabajo bajo una metodología de **co-creación y revisión activa (Human-in-the-loop)**:
+**IA dentro del producto (no es uso del equipo):** el agente conversacional de pacta.ai usa **GPT-5.6 Luna** a través de Vercel AI SDK y Vercel AI Gateway. El modelo se configura por variable de entorno (decisión D8 de la arquitectura del backend).
 
-1. **Diseño y Naming:** Se le proporcionó al agente el contexto estratégico (Océano Azul, mediación vs. cobranza agresiva). A partir de allí, la IA generó opciones de naming y justificó la paleta de colores. El equipo seleccionó "pacta.ai" y validó las reglas tipográficas.
-2. **Generación de Logos:** Se utilizaron comandos descriptivos elaborados en conjunto con la IA para explorar direcciones visuales (App Icon, Abstracto, y Tipográfico) mediante generadores de imágenes, iterando sobre conceptos como ambigüedad tipográfica (la letra 'l' vs 'I').
-3. **Código de la Landing Page:** La IA asistió en la escritura de los componentes de React (`index.tsx`, `navigation.tsx`), optimizando el uso de Tailwind para el diseño responsivo y la adaptabilidad al _Dark/Light mode_. Todo el código fue inspeccionado e integrado manualmente.
-4. **Documentación:** Se delegó la formalización de los textos (pasar de apuntes académicos a documentación B2B formal), manteniendo las ideas originales del equipo humano.
+## 3. Áreas de Aplicación
 
-## 4. Compromiso de Revisión
+- [x] **Definición del problema y segmento:** sirvió para contrastar opciones de segmento. La decisión de acotar el MVP a administraciones de consorcios en CABA la tomó el equipo después de las entrevistas.
+- [x] **Análisis de entrevistas:** sirvió para revisar críticamente nuestras conclusiones y no dar por validado lo que tenía poca evidencia. Las entrevistas las diseñamos, hicimos e interpretamos nosotros.
+- [x] **Propuesta de valor:** sirvió para ajustarla a lo que encontramos en campo (las quitas las aprueba el Consejo o la Asamblea, no el administrador).
+- [x] **Benchmarking y curva de valor:** sirvió para estructurar los factores de comparación y ordenar la búsqueda de información pública. Cada competidor y cada dato de mercado se verificó en su fuente. Los puntajes son estimaciones del equipo, todavía no validadas en campo.
+- [x] **Modelo de negocio y cobro:** sirvió para comparar esquemas alternativos y sus riesgos. El esquema final (abono según cantidad de consorcios + 3% sobre lo efectivamente recuperado) lo definió el equipo, con el respaldo de la encuesta.
+- [x] **Naming e identidad visual:** se generaron opciones a partir del contexto estratégico que le dimos. El equipo eligió pacta.ai y validó paleta y tipografía.
+- [x] **Programación y código:** asistencia en componentes de la landing y la plataforma (React 19, Tailwind CSS, shadcn/ui) y en el sandbox y los tests del agente. Todo el código fue revisado e integrado por el equipo mediante pull requests.
+- [x] **Documentación:** ayuda para redactar y unificar criterios entre documentos, sobre contenido y decisiones del equipo.
+
+## 4. Metodología de Uso
+
+Seguimos un ciclo de cuatro pasos:
+
+1. El equipo plantea una idea o hipótesis.
+2. La IA la cuestiona o propone alternativas.
+3. El equipo la contrasta con evidencia (entrevistas, encuesta, fuentes, clases).
+4. El equipo decide.
+
+Si la IA aportaba algo que no podíamos respaldar con evidencia, no se incorporaba o se marcaba como hipótesis.
+
+## 5. Qué No Hizo la IA
+
+- No hizo las entrevistas ni la encuesta, ni habló con clientes.
+- No tomó decisiones de producto, de negocio ni de diseño.
+- No se usó como fuente de datos: toda cifra se tomó de una fuente verificable.
+
+## 6. Compromiso de Revisión
 
 Todo el contenido (código, texto, diseño) generado con asistencia de Inteligencia Artificial fue revisado, analizado y modificado manualmente por los integrantes del equipo para asegurar su calidad y veracidad. Las decisiones finales de arquitectura, branding y experiencia de usuario fueron tomadas íntegramente por el equipo, quien asume la total responsabilidad técnica y académica sobre los entregables finales.
