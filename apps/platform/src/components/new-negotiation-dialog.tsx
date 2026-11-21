@@ -29,11 +29,13 @@ type NewNegotiationDialogProps = {
   trigger: React.ReactElement
   /** Deuda preseleccionada (desde la ficha del deudor). */
   debt?: { id: string; label: string }
+  onOpenChange?: (open: boolean) => void
 }
 
 export function NewNegotiationDialog({
   trigger,
   debt,
+  onOpenChange,
 }: NewNegotiationDialogProps) {
   const [open, setOpen] = useState(false)
   const [created, setCreated] = useState<{
@@ -43,6 +45,7 @@ export function NewNegotiationDialog({
 
   function handleOpenChange(next: boolean) {
     setOpen(next)
+    onOpenChange?.(next)
     if (!next) setCreated(null)
   }
 

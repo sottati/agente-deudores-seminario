@@ -7,6 +7,7 @@ import {
   PlusSignIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import { useState } from "react"
 
 import { ButtonLink } from "@/components/button-link"
 import { CreateDebtDialog, EditDebtorDialog } from "@/components/debtor-dialogs"
@@ -202,13 +203,17 @@ function DebtActions({
     .at(0)
   const canClose = debt.status === "open" || debt.status === "agreed"
   const canReopen = debt.status === "paid" || debt.status === "written_off"
+  // Al crear la negociación la deuda deja de estar "open"; el diálogo sigue
+  // montado hasta que se cierra para que el link generado no se pierda.
+  const [negotiating, setNegotiating] = useState(false)
 
   return (
     <div className="flex items-center justify-end gap-1">
-      {debt.status === "open" ? (
+      {debt.status === "open" || negotiating ? (
         <NewNegotiationDialog
           debt={{ id: debt.id, label: debtLabel }}
           trigger={<Button size="sm">Negociar</Button>}
+          onOpenChange={setNegotiating}
         />
       ) : latest ? (
         <ButtonLink

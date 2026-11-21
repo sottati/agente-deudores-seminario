@@ -91,6 +91,16 @@ pnpm exec supabase migration up --local
 
 Los tests de la plataforma ejecutan las migraciones y verifican los RPCs y RLS con PostgreSQL embebido, sin requerir Docker. `pnpm db:test` mantiene la suite pgTAP de Supabase.
 
+### Grabación de la demo del MVP
+
+`pnpm demo:mvp` abre un Chrome visible y recorre el caso de uso completo sobre la app real, con cursor visible y pausas para la narración: dashboard, reglas del agente, deudor **Unidad 10D**, generación del link, portal del deudor (verificación, negociación con el agente y aceptación), conversación en el panel y acta del acuerdo.
+
+1. Con Supabase y la app levantados (`pnpm db:start` y `pnpm dev`) y un modelo configurado en `.env.local`, reseteá la base: `pnpm db:reset`.
+2. Corré `pnpm demo:mvp`. El script inicia sesión y precarga las pantallas; cuando indica **Listo para grabar**, empezá la grabación de pantalla y presioná Enter.
+3. Al terminar, detené la grabación. Para otra toma, repetí `pnpm db:reset`.
+
+Opciones: `DEMO_SPEED=1.5` alarga las pausas, `DEMO_STEP=1` espera Enter antes de cada escena y `DEMO_BROWSER=chromium` usa el Chromium de Playwright (`pnpm exec playwright install chromium`) en lugar de Chrome. Las esperas de la respuesta del agente se recortan al editar el video.
+
 | Script                           | Qué hace                                                   |
 | :------------------------------- | :--------------------------------------------------------- |
 | `pnpm typecheck` / `pnpm test`   | Typecheck y tests de todos los paquetes                    |
