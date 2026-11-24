@@ -22,7 +22,7 @@
 | Navegación         | [app-sidebar.tsx](../apps/platform/src/components/app-sidebar.tsx#L26-L34): "Conversaciones", "Deudores", "Reglas del agente", "Configuración" deshabilitados; org ("Consorcios del Sur") y usuario ("Simon") hardcodeados. Botón "Nueva negociación" sin acción.                                                                                         | Mapa directo de las pantallas/endpoints que faltan.                                     |
 | `apps/agent`       | Solo un [README](../apps/agent/README.md) ("Stack and tools are TBD").                                                                                                                                                                                                                                                                                    | Decisión pendiente (ver D1).                                                            |
 | Documentación      | [DOCUMENTACION.md §5.3](./DOCUMENTACION.md#L112-L127) ubica el agente en `apps/agent`.                                                                                                                                                                                                                                                                    | Si se adopta D1‑A hay que actualizar la doc (tarea del Sprint 0).                       |
-| Stack declarado    | Supabase (Auth + Postgres) y Vercel AI SDK con GPT‑5.6 Luna, ambos _pendientes_.                                                                                                                                                                                                                                                                          | Se respeta como base.                                                                   |
+| Stack declarado    | Supabase (Auth + Postgres) y Vercel AI SDK con GPT‑5.6 Luna, ambos _pendientes_ (luego el modelo pasó a DeepSeek V4.1 Flash vía OpenRouter).                                                                                                                                                                                                                                                                          | Se respeta como base.                                                                   |
 | Requisitos legales | [MARCO_LEGAL.md](./MARCO_LEGAL.md) exige: RLS multi-tenant, bot disclosure, LLM sin cálculo libre de montos (function calling + validación determinística), human‑in‑the‑loop, verificación de identidad, evidencia del acuerdo (timestamp, IP, aceptación explícita, hash), minimización de PII en prompts.                                              | Son requisitos **funcionales** del backend, no "nice to have".                          |
 | Higiene            | Dependencias `@tanstack/*` en `"latest"` en [package.json](../apps/platform/package.json); `.env*` ya ignorado.                                                                                                                                                                                                                                           | Fijar versiones antes de empezar (evita roturas de TanStack Start entre releases).      |
 
@@ -97,7 +97,7 @@ Propuesta mínima, validada contra [ENTREVISTAS.md](./ENTREVISTAS.md) y el dashb
 
 ### D8 — Proveedor/modelo y gateway
 
-Docs fijan GPT‑5.6 Luna vía Vercel AI SDK. Decidir: provider directo (`@ai-sdk/openai`) vs **Vercel AI Gateway** (⭐ si se deploya en Vercel: fallback de modelos, observabilidad y control de costos sin código extra). En ambos casos el modelo se inyecta por config para poder testear con `MockLanguageModel`.
+Docs fijaban GPT‑5.6 Luna vía Vercel AI SDK. **Decisión final:** DeepSeek V4.1 Flash vía **OpenRouter** (`@openrouter/ai-sdk-provider`), por costo y porque acata las reglas del system prompt igual que GPT en las pruebas; Vercel AI Gateway queda soportado con `AI_PROVIDER=gateway`. En ambos casos el modelo se inyecta por config para poder testear con `MockLanguageModel`.
 
 ### D9 — Handoff humano
 
@@ -119,7 +119,7 @@ El dashboard muestra "Monto recuperado", pero **el MVP no procesa pagos** (links
 
 ### D12 — Deploy y entornos
 
-⭐ **Vercel** (soporte nativo de TanStack Start y streaming del AI SDK) + **Supabase Cloud** (proyecto `dev` y `prod`; local con `supabase start`). Variables: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (solo servidor), `AI_GATEWAY_API_KEY`/`OPENAI_API_KEY`, `NEGOTIATION_TOKEN_SECRET`.
+⭐ **Vercel** (soporte nativo de TanStack Start y streaming del AI SDK) + **Supabase Cloud** (proyecto `dev` y `prod`; local con `supabase start`). Variables: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (solo servidor), `OPENROUTER_API_KEY` (o `AI_GATEWAY_API_KEY` si `AI_PROVIDER=gateway`), `NEGOTIATION_TOKEN_SECRET`.
 
 ---
 
@@ -142,7 +142,7 @@ flowchart LR
     EN["packages/negotiation-engine (reglas puras, sin IO)"]
   end
   SUPA[("Supabase: Auth + Postgres + RLS")]
-  LLM["LLM (GPT-5.6 Luna vía AI SDK)"]
+  LLM["LLM (DeepSeek V4.1 Flash vía OpenRouter + AI SDK)"]
 
   A --> SF
   D --> CR
@@ -321,7 +321,7 @@ flowchart LR
 - [x] Supabase CLI: `supabase init` y [.env.example](../apps/platform/.env.example) documentado.
 - [ ] Supabase: crear proyecto `dev` en la nube y `pnpm supabase link --project-ref <ref>`.
 - [x] Scripts raíz (`typecheck`, `test`, `db:*`, `smoke:llm`) y CI en [.github/workflows/ci.yml](../.github/workflows/ci.yml) (typecheck + test + build).
-- [ ] Acceso al LLM: key de AI Gateway + `AI_MODEL` en `.env.local`; `pnpm smoke:llm` responde.
+- [ ] Acceso al LLM: key de OpenRouter (o AI Gateway) + `AI_PROVIDER` + `AI_MODEL` en `.env.local`; `pnpm smoke:llm` responde.
 - [x] Formatear el código existente (`pnpm format`), corregir los errores de `pnpm lint`, agregar `.gitattributes` con `eol=lf` y sumar ambos chequeos al CI.
 - [x] Cargar los sprints como tickets en Linear; una rama + PR chico por ticket.
 

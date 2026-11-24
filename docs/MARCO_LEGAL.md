@@ -51,7 +51,7 @@ Para facilitar la lectura y comprensión técnica-legal del presente documento, 
 | **DPA**         | **Data Processing Agreement (Acuerdo de Encargo de Tratamiento):** Contrato obligatorio entre el Responsable de los datos (cliente) y el Encargado (pacta.ai) que estipula alcances, límites y medidas de seguridad según el Art. 25 LPDP. |
 | **NNyA**        | **Niñas, Niños y Adolescentes:** Sujetos de especial protección legal cuya información personal jamás puede ser expuesta en gestiones de cobranza escolar.                                                                                 |
 | **EIPD**        | **Evaluación de Impacto en la Protección de Datos:** Análisis preventivo de riesgos sobre la privacidad exigido en proyectos que incorporan Inteligencia Artificial.                                                                       |
-| **LLM**         | **Large Language Model (Modelo de Lenguaje Extenso):** Tipo de arquitectura de IA (ej. GPT-5.6 Luna) que impulsa el procesamiento de lenguaje natural y la negociación conversacional.                                                     |
+| **LLM**         | **Large Language Model (Modelo de Lenguaje Extenso):** Tipo de arquitectura de IA (ej. DeepSeek V4.1 Flash) que impulsa el procesamiento de lenguaje natural y la negociación conversacional.                                                     |
 | **RLS**         | **Row Level Security (Seguridad a Nivel de Fila):** Mecanismo de base de datos relacional (PostgreSQL en Supabase) que garantiza que un cliente jamás acceda a los registros o deudas de otro cliente.                                     |
 | **SaaS**        | **Software as a Service (Software como Servicio):** Modelo de distribución donde el software y los datos se alojan en servidores en la nube y se consumen vía navegador o API.                                                             |
 | **TLS / AES**   | **Protocolos Criptográficos de Seguridad:** TLS (_Transport Layer Security_) protege los datos en tránsito y AES (_Advanced Encryption Standard_) asegura el cifrado en reposo.                                                            |
@@ -87,7 +87,7 @@ Para facilitar la lectura y comprensión técnica-legal del presente documento, 
 
 ### 2.5 Transferencia Internacional de Datos
 
-- Dado que los modelos fundacionales de lenguaje (LLM APIs como OpenAI/Vercel AI SDK) y servicios en la nube (Supabase/AWS) operan servidores en el exterior (ej. EE. UU.), resulta aplicable el **Art. 12 de la Ley 25.326** y la **Resolución AAIP N° 60/2016** (países con legislación adecuada o Cláusulas Contractuales Tipo).
+- Dado que los modelos fundacionales de lenguaje (LLM vía OpenRouter, que enruta a distintos proveedores de inferencia) y servicios en la nube (Supabase/AWS) operan servidores en el exterior (ej. EE. UU.), resulta aplicable el **Art. 12 de la Ley 25.326** y la **Resolución AAIP N° 60/2016** (países con legislación adecuada o Cláusulas Contractuales Tipo).
 - **Medida de mitigación:** Minimización y anonimización de _prompts_. Se debe evitar enviar nombres completos o DNIs directos en el _system prompt_ del LLM si puede reemplazarse por identificadores internos ofuscados (tokens/IDs anónimos).
 
 ---

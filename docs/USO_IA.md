@@ -18,7 +18,7 @@ La IA se usó como un interlocutor crítico, no como autor. Sirvió para:
 - **Cursor:** asistente de código en las secciones de la landing page.
 - **Modelos de Generación de Imágenes (DALL-E 3 / Ideogram):** exploración de direcciones visuales para el logo (isotipos y wordmarks).
 
-**IA dentro del producto (no es uso del equipo):** el agente conversacional de pacta.ai usa **GPT-5.6 Luna** a través de Vercel AI SDK y Vercel AI Gateway. El modelo se configura por variable de entorno (decisión D8 de la arquitectura del backend).
+**IA dentro del producto (no es uso del equipo):** el agente conversacional de pacta.ai usa **DeepSeek V4.1 Flash** a través de Vercel AI SDK y OpenRouter. El modelo se configura por variable de entorno (decisión D8 de la arquitectura del backend).
 
 ## 3. Áreas de Aplicación
 

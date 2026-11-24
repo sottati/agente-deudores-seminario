@@ -131,10 +131,10 @@ Resolver la siguiente premisa: _¿Cómo podríamos ayudar a un administrador de 
 
 - **Frontend / Plataforma:** React 19 + TanStack Start (Router + SSR) + Vite.
 - **UI Components:** shadcn/ui, Base UI y Tailwind CSS v4 para el diseño de componentes, efectos (como `hero-shader-gradient`) y estilos estandarizados.
-- **IA y Agente:** Vercel AI SDK implementando **GPT-5.6 Luna** en `packages/agent` (system prompt versionado, tools tipadas con Zod y `runNegotiationTurn`), respaldado por el motor determinístico `packages/negotiation-engine`.
+- **IA y Agente:** Vercel AI SDK implementando **DeepSeek V4.1 Flash** (vía OpenRouter) en `packages/agent` (system prompt versionado, tools tipadas con Zod y `runNegotiationTurn`), respaldado por el motor determinístico `packages/negotiation-engine`.
 - **Backend / Auth:** Supabase (Auth + Base de datos relacional PostgreSQL con RLS multi-tenant).
 
-> **Decisión Técnica - Modelo de IA:** Se seleccionó **GPT-5.6 Luna** como modelo fundacional priorizando su robustez en el cumplimiento estricto de system prompts (guardrails) para evitar "alucinaciones" (como otorgar descuentos no permitidos por la administración), además de contar con excelentes capacidades de _Function Calling_ y un balance ideal de costo/velocidad.
+> **Decisión Técnica - Modelo de IA:** Se seleccionó **DeepSeek V4.1 Flash** (acceso vía OpenRouter) porque es mucho más económico y, en las pruebas del equipo con ambos modelos, acató las reglas del system prompt (guardrails) igual que GPT-5.6 Luna, evitando "alucinaciones" como otorgar descuentos no permitidos por la administración. Además soporta _Function Calling_ y streaming. Se probaron GPT-5.6 Luna y DeepSeek V4.1 Flash, y se eligió este último por costo y resultados.
 
 ### 5.3 Arquitectura de Monorepo
 
@@ -166,7 +166,7 @@ Detalle y alternativas evaluadas en [PLAN_BACKEND.md §1](./PLAN_BACKEND.md#1-de
 | D2  | Acceso a datos con supabase-js + `@supabase/ssr`, migraciones SQL con Supabase CLI y tipos generados.                                                                                         | El RLS se aplica con la sesión del usuario, cumpliendo el aislamiento de carteras exigido por el [Marco Legal](./MARCO_LEGAL.md).                                                       |
 | D3  | `organization_id` + Row Level Security desde el MVP, sin registro público (alta por seed o invitación) y un único rol de usuario.                                                             | Costo bajo ahora y migración cara después; requisito de la LPDP.                                                                                                                        |
 | D4  | El deudor accede por un link único tokenizado y debe verificar su identidad antes de ver montos; luego recibe una cookie firmada de corta duración.                                           | Evita exponer la deuda a terceros (Ley 6.171 CABA, Art. 26 LPDP). Es el mismo flujo que tendrá WhatsApp en R2.                                                                          |
-| D8  | El LLM se consume en la nube vía Vercel AI Gateway; el modelo se configura por variable de entorno.                                                                                           | Function calling confiable, deploy sin infraestructura de GPU y posibilidad de cambiar de modelo sin tocar código. La privacidad se mitiga minimizando datos personales en los prompts. |
+| D8  | El LLM se consume en la nube vía OpenRouter (Vercel AI Gateway queda soportado como alternativa); el modelo se configura por variable de entorno.                                                                                           | Function calling confiable, deploy sin infraestructura de GPU y posibilidad de cambiar de modelo sin tocar código. La privacidad se mitiga minimizando datos personales en los prompts. |
 
 ---
 
@@ -194,7 +194,7 @@ El modelo de cobro combina dos componentes. Los valores son hipótesis iniciales
 
 - **Utilidad:** El agente automatiza el contacto con el deudor y la negociación inicial, la etapa que en la Entrevista 1 se señaló como la que más trabajo ahorraría. Ninguno de los software de consorcios relevados ofrece negociar planes de pago.
 - **Precio:** Queda por debajo de las alternativas actuales: el arancel por convenio manual y el abono de un software de gestión.
-- **Costo:** El costo variable del MVP (chat web) se estima en **USD 0,015 por negociación** con GPT-5.6 Luna (USD 0,20 por millón de tokens de entrada y USD 1,20 de salida), suponiendo un prompt base de ~1.200 tokens, 10 turnos y 2 pasos por turno. Aun con un error de 10 veces, son USD 0,15. Con WhatsApp (Release 2) se suma la plantilla del primer contacto, estimada en USD 0,012–0,03 por mensaje (la tarifa oficial para Argentina no está confirmada); las respuestas dentro de la ventana de 24 horas no tienen costo.
+- **Costo:** El costo variable del MVP (chat web) se estima en **hasta USD 0,023 por negociación** con DeepSeek V4.1 Flash en OpenRouter (USD 0,30 por millón de tokens de entrada y USD 1,20 de salida), suponiendo un prompt base de ~1.200 tokens, 10 turnos y 2 pasos por turno. Aun con un error de 10 veces, son USD 0,23. Con WhatsApp (Release 2) se suma la plantilla del primer contacto, estimada en USD 0,012–0,03 por mensaje (la tarifa oficial para Argentina no está confirmada); las respuestas dentro de la ventana de 24 horas no tienen costo.
 - **Adopción:** Con la comisión, el cliente paga principalmente cuando recupera. La Entrevista 1 mencionó preferir una combinación de abono y comisión (es un indicio, no una validación).
 
 **Riesgo abierto:** La comisión se calcula sobre fondos del consorcio, no del administrador. Según la Entrevista 2, las excepciones las autoriza el Consejo de Administración o la Asamblea, por lo que cobrarla podría requerir esa aprobación. Se valida con la encuesta (preguntas 10 a 13).
