@@ -1,0 +1,33 @@
+{
+  "name": "@agente/video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render PactaPitch out/pacta-pitch.mp4",
+    "render:launch": "remotion render PactaLaunch out/pacta-launch.mp4",
+    "render:sting": "remotion render PactaSting out/pacta-sting.mp4",
+    "still": "remotion still PactaPitch out/poster.png --frame=1489",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.8.0",
+    "@hugeicons/core-free-icons": "^4.3.3",
+    "@hugeicons/react": "^1.1.10",
+    "@remotion/cli": "4.0.545",
+    "@remotion/google-fonts": "4.0.545",
+    "@remotion/tailwind-v4": "4.0.545",
+    "@remotion/transitions": "4.0.545",
+    "class-variance-authority": "^0.7.1",
+    "cn": "^0.2.6",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "remotion": "4.0.545",
+    "shadcn": "^4.21.0",
+    "tailwindcss": "^4"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "typescript": "^6"
+  }
+}

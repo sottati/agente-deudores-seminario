@@ -1,0 +1,5 @@
+/* Tokens, tipografía y utilidades de la plataforma: una sola fuente de verdad. */
+@import "../../platform/src/styles.css";
+
+@source "../../platform/src/components/ui";
+@source "./";

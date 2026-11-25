@@ -8,6 +8,9 @@
   },
   "scripts": {
     "dev": "pnpm --filter @agente/platform dev",
+    "video": "pnpm --filter @agente/video studio",
+    "video:render": "pnpm --filter @agente/video render",
+    "video:launch": "pnpm --filter @agente/video render:launch",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "lint": "pnpm -r --if-present lint",
