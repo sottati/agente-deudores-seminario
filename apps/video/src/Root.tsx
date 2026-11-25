@@ -43,6 +43,15 @@ export function RemotionRoot() {
         width={1920}
         height={1080}
       />
+      <Composition
+        id="PactaStingEditable2"
+        component={PactaStingEditable}
+        defaultProps={{ finalRosa: true, orbitaIconos: true }}
+        durationInFrames={2060}
+        fps={60}
+        width={1920}
+        height={1080}
+      />
     </>
   )
 }

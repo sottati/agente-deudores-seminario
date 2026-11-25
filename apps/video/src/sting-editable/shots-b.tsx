@@ -472,9 +472,27 @@ export function S6() {
             top: 568,
             width: 620,
             height: 400,
-            translate: interpolate(frame, [3.54, 55.81, 65.84, 95.94], ["0px 359px", "0px 0.84px", "0px -6px", "0px -24px"], { easing: [Easing.bezier(0.163, 0.968, 0.364, 0.991), Easing.linear, Easing.linear], extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
-            opacity: interpolate(frame, [3.54, 18.47], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
-            filter: blur(botBlur),
+            translate: interpolate(
+              frame,
+              [3.54, 24, 55.81, 65.84, 95.94],
+              ["0px 359px", "0px 33.9px", "0px 0.84px", "0px -6px", "0px -24px"],
+              {
+                easing: [
+                  Easing.bezier(0.163, 0.968, 0.364, 0.991),
+                  Easing.bezier(0.163, 0.968, 0.364, 0.991),
+                  Easing.linear,
+                  Easing.linear
+                ],
+                extrapolateLeft: "clamp",
+                extrapolateRight: "clamp",
+                outputType: "translate"
+              }
+            ),
+            opacity: interpolate(frame, [3.54, 18.47], [0, 1], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp"
+            }),
+            filter: blur(botBlur)
           }}
         >
           <GlassCard kind="deals" title="Actas" pill="El agente cierra" uid="c2" />
@@ -551,7 +569,13 @@ const WORD = "pacta"
 /** Ancho de referencia de la palabra a escala 1. */
 const WORD_W = 560
 
-export function S8() {
+/** Fondo de S8: oscuro (original) o rosa Pacta (`rosa`). */
+const S8_BG = {
+  dark: "radial-gradient(42% 46% at 50% 50%, #2A2729 0%, #121012 55%, #020204 100%)",
+  rosa: `radial-gradient(42% 46% at 50% 50%, #D42A63 0%, ${P.primary} 55%, ${P.deep} 100%)`,
+}
+
+export function S8({ rosa = false }: { rosa?: boolean } = {}) {
   const frame = useCurrentFrame()
   // Frame de guion viejo (301 → 359).
   const f = kf(frame, [
@@ -625,7 +649,7 @@ export function S8() {
       style={{
         position: "absolute",
         inset: 0,
-        background: "radial-gradient(42% 46% at 50% 50%, #2A2729 0%, #121012 55%, #020204 100%)",
+        background: rosa ? S8_BG.rosa : S8_BG.dark,
         overflow: "hidden",
       }}
     >
@@ -668,9 +692,7 @@ export function S8() {
               fontFamily: font,
               scale: interpolate(frame, [-0.97, 1.38, 3.74, 6.09, 17.85, 22.56, 39.03, 44.44, 103.96, 120.19, 125.28, 138.01, 148.19], [3.3929, 2.6786, 2.1964, 2.0714, 1.4464, 1.3357, 1.1579, 1.1071, 1.0143, 0.9795, 0.9679, 0.8857, 0.525], { easing: [Easing.linear, Easing.linear, Easing.linear, Easing.linear, Easing.linear, Easing.linear, Easing.linear, Easing.linear, Easing.linear, Easing.linear, Easing.quad, Easing.quad], extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
             }}
-          >
-            pacta
-          </Interactive.Div>
+          >pacta.ai</Interactive.Div>
         </Smear>
         <Interactive.Div
           name="Lema"
@@ -682,16 +704,14 @@ export function S8() {
             textAlign: "center",
             fontSize: 34,
             fontWeight: 500,
-            color: "#B9B4B7",
+            color: rosa ? "#F7CFDD" : "#B9B4B7",
             letterSpacing: -0.2,
             translate: interpolate(frame, [34.33, 76.91, 125.28, 143.1], ["0px 18px", "0px 0px", "0px 0px", "0px 18px"], { easing: [Easing.bezier(0.154, 1.04, 0.347, 0.985), Easing.linear, Easing.quad], extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
             opacity: interpolate(frame, [34.33, 76.91, 125.28, 143.1], [0, 1, 1, 0], { easing: [Easing.bezier(0.154, 1.04, 0.347, 0.985), Easing.linear, Easing.quad], extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
             filter: blur((1 - tag) * 10 + tagOut * 6),
             fontFamily: font,
           }}
-        >
-          El agente que negocia las expensas por vos.
-        </Interactive.Div>
+        >El agente que negocia las deudas por vos.</Interactive.Div>
       </div>
     </div>
   )

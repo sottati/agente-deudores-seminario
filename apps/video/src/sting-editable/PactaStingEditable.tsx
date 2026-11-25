@@ -19,11 +19,27 @@ import { S1, S2, S3 } from "./shots-a"
 import { S4, S5, S6, S7, S8 } from "./shots-b"
 import { Chat, Config, Fanout } from "./shots-product"
 
-export function PactaStingEditable() {
+/**
+ * `finalRosa`: la pantalla final (S8) va sobre el rosa Pacta en vez del fondo oscuro.
+ * `orbitaIconos`: en S2 orbitan insignias con íconos (chat, pago, acuerdo, acta)
+ * en vez de los cuadrados lisos.
+ */
+export function PactaStingEditable({
+  finalRosa = false,
+  orbitaIconos = false,
+}: {
+  finalRosa?: boolean
+  orbitaIconos?: boolean
+}) {
   return (
     <AbsoluteFill
       className="antialiased"
-      style={{ fontFamily: font, background: "#FDFBFC", overflow: "hidden" }}
+      style={{
+        fontFamily: font,
+        background: "#FDFBFC",
+        overflow: "hidden",
+        color: "#000000"
+      }}
     >
       {/* Intro, antes del drop */}
       <Sequence name="S1" from={0} durationInFrames={188} layout="none">
@@ -31,44 +47,41 @@ export function PactaStingEditable() {
       </Sequence>
       {/* cut(0): drop, beat 0 en el frame 192 */}
       <Sequence name="S2" from={188} durationInFrames={117} layout="none">
-        <S2 />
+        <S2 orbita={orbitaIconos ? "iconos" : "cuadrados"} />
       </Sequence>
       {/* cut(4): beat 4 en el frame 308.13 */}
-      <Sequence name="Config" from={305} durationInFrames={464} layout="none">
+      <Sequence name="Config" from={299} durationInFrames={464} layout="none">
         <Config />
       </Sequence>
       {/* cut(20): beat 20 en el frame 772.65 */}
-      <Sequence name="S3" from={769} durationInFrames={174} layout="none">
-        <S3 />
-      </Sequence>
       {/* cut(26): beat 26 en el frame 946.84 */}
-      <Sequence name="Fanout" from={943} durationInFrames={233} layout="none">
+      <Sequence name="Fanout" from={769} durationInFrames={233} layout="none">
         <Fanout />
       </Sequence>
       {/* cut(34): beat 34 en el frame 1179.10 */}
-      <Sequence name="Chat" from={1176} durationInFrames={348} layout="none">
+      <Sequence name="Chat" from={1002} durationInFrames={348} layout="none">
         <Chat />
       </Sequence>
       {/* cut(46): beat 46 en el frame 1527.48 */}
-      <Sequence name="S4" from={1524} durationInFrames={145} layout="none">
+      <Sequence name="S4" from={1350} durationInFrames={145} layout="none">
         <S4 />
       </Sequence>
       {/* cut(51): beat 51 en el frame 1672.65 */}
-      <Sequence name="S5" from={1669} durationInFrames={145} layout="none">
+      <Sequence name="S5" from={1495} durationInFrames={145} layout="none">
         <S5 />
       </Sequence>
       {/* cut(56): beat 56 en el frame 1817.81 */}
-      <Sequence name="S6" from={1814} durationInFrames={116} layout="none">
+      <Sequence name="S6" from={1640} durationInFrames={116} layout="none">
         <S6 />
       </Sequence>
       {/* cut(60): beat 60 en el frame 1933.94 */}
-      <Sequence name="S7" from={1930} durationInFrames={88} layout="none">
+      <Sequence name={"S7"} from={1756} durationInFrames={149} layout="none">
+        <S8 rosa={finalRosa} />
+      </Sequence>
+      <Sequence name={"S8"} from={1905} durationInFrames={88} layout="none">
         <S7 />
       </Sequence>
       {/* cut(63): beat 63 en el frame 2021.03; termina en beat(68), frame 2167 */}
-      <Sequence name="S8" from={2018} durationInFrames={149} layout="none">
-        <S8 />
-      </Sequence>
       <Audio name="Música" src={staticFile("audio/pacta-sting.wav")} />
     </AbsoluteFill>
   )

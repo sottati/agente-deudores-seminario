@@ -277,9 +277,7 @@ export function S1() {
                 opacity: interpolate(frame, [5.22, 33.94], [0, 1], { easing: Easing.bezier(0.154, 1.04, 0.347, 0.985), extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
                 filter: blur((1 - nameP) * 14),
               }}
-            >
-              pacta
-            </Interactive.Div>
+            >pacta.ai</Interactive.Div>
             <Interactive.Div
               name="Píldora"
               style={{
@@ -296,18 +294,24 @@ export function S1() {
                 display: "flex",
                 alignItems: "center",
                 whiteSpace: "nowrap",
-                translate: interpolate(frame, [29.439999999999998, 63.39], ["40px 0px", "0px 0px"], {
-                  easing: [Easing.bezier(0.154, 1.04, 0.347, 0.985)],
-                  extrapolateLeft: "clamp",
-                  extrapolateRight: "clamp",
-                  outputType: "translate"
-                }),
+                translate: interpolate(
+                  frame,
+                  [29.439999999999998, 63.39, 142],
+                  ["50px 0px", "40px 0px", "61px 2px"],
+                  {
+                    easing: [Easing.bezier(0.154, 1.04, 0.347, 0.985), Easing.linear],
+                    extrapolateLeft: "clamp",
+                    extrapolateRight: "clamp",
+                    outputType: "translate"
+                  }
+                ),
                 opacity: interpolate(frame, [29.439999999999998, 55.25], [0, 1], {
                   easing: [Easing.bezier(0.344, 0.548, 0.741, 0.851)],
                   extrapolateLeft: "clamp",
                   extrapolateRight: "clamp"
                 }),
-                filter: blur((1 - pillP) * 22)
+                filter: blur((1 - pillP) * 22),
+                transformOrigin: "60% 50%"
               }}
             >
               Agente de cobranzas
@@ -425,7 +429,40 @@ const SQUARES = [
   { color: "#2E2A2C", angle: 90, row: 3 }, // abajo
 ]
 
-export function S2() {
+/** Insignias que orbitan en el modo "iconos": lo que hace el agente. */
+const BADGES = [
+  { bg: "#FFFFFF", fg: P.primary, angle: 180, edge: true, icon: "chat" }, // negocia
+  { bg: P.primary, fg: "#FFFFFF", angle: 270, icon: "pago" }, // cobra
+  { bg: P.pink, fg: "#FFFFFF", angle: 0, icon: "ok" }, // acuerda
+  { bg: "#2E2A2C", fg: "#FFFFFF", angle: 90, icon: "acta" }, // documenta
+] as const
+
+function BadgeIcon({ kind, color }: { kind: (typeof BADGES)[number]["icon"]; color: string }) {
+  const s = { fill: "none", stroke: color, strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" } as const
+  return (
+    <svg width={40} height={40} viewBox="0 0 24 24">
+      {kind === "chat" && (
+        <>
+          <path d="M4 5.5h16v10.5H10l-4.5 3.5V16H4z" {...s} />
+          <path d="M8.5 10.8h.01M12 10.8h.01M15.5 10.8h.01" {...s} strokeWidth={2.6} />
+        </>
+      )}
+      {kind === "pago" && (
+        <path d="M12 3.5v17M16 8c0-1.7-1.8-2.8-4-2.8S8 6.3 8 8s1.8 2.5 4 3 4 1.4 4 3.2-1.8 2.9-4 2.9-4-1.2-4-2.9" {...s} />
+      )}
+      {kind === "ok" && <path d="M5.5 12.5l4.2 4.2L18.5 7.8" {...s} strokeWidth={2.6} />}
+      {kind === "acta" && (
+        <>
+          <path d="M6 3.5h8.5L18 7v13.5H6z" {...s} />
+          <path d="M9 11h6M9 14.5h6M9 18h3.5" {...s} />
+        </>
+      )}
+    </svg>
+  )
+}
+
+export function S2({ orbita = "cuadrados" }: { orbita?: "cuadrados" | "iconos" } = {}) {
+  const cuadrados = orbita === "cuadrados"
   const frame = useCurrentFrame()
   // Frame de guion viejo (72 → 100), con los mismos tramos que PactaSting.
   const f = kf(frame, [
@@ -474,7 +511,7 @@ export function S2() {
           }}
         />
         {/* Cuadrados en órbita: calculados (giro polar compartido) */}
-        {SQUARES.map((s, i) => {
+        {cuadrados && SQUARES.map((s, i) => {
           const a = ((s.angle + spin) * Math.PI) / 180
           const ox = Math.cos(a) * orbit
           const oy = Math.sin(a) * orbit
@@ -503,6 +540,78 @@ export function S2() {
             />
           )
         })}
+        {/* Órbita de íconos: anillo punteado, insignias y puntos en contragiro */}
+        {orbita === "iconos" && (() => {
+          // Mismo giro que los cuadrados, más una deriva constante para que no se frene.
+          const turn = spin - frame * 0.45
+          const ringIn = prog(f, 73, 80, outCubic)
+          return (
+            <>
+              <svg
+                width={W}
+                height={H}
+                style={{ position: "absolute", left: 0, top: 0, overflow: "visible", opacity: ringIn }}
+              >
+                <circle
+                  cx={gx}
+                  cy={gy}
+                  r={orbit}
+                  fill="none"
+                  stroke={P.primary}
+                  strokeOpacity={0.28}
+                  strokeWidth={2}
+                  strokeDasharray="2 14"
+                  strokeLinecap="round"
+                  transform={`rotate(${-turn * 0.5} ${gx} ${gy})`}
+                />
+                {Array.from({ length: 7 }, (_, i) => {
+                  const a = ((i * 360) / 7 + frame * 0.9) * (Math.PI / 180)
+                  const r = orbit + 70 + (i % 3) * 18
+                  return (
+                    <circle
+                      key={i}
+                      cx={gx + Math.cos(a) * r}
+                      cy={gy + Math.sin(a) * r}
+                      r={[5, 3.5, 7, 4][i % 4] * prog(f, 74 + i * 0.6, 80 + i * 0.6, outCubic)}
+                      fill={i % 2 ? P.pink : P.primary}
+                      fillOpacity={i % 3 === 0 ? 0.9 : 0.5}
+                    />
+                  )
+                })}
+              </svg>
+              {BADGES.map((b, i) => {
+                const a = ((b.angle + turn) * Math.PI) / 180
+                const appear = prog(f, 72 + i * 0.8, 77 + i * 0.8, outCubic)
+                const pulse = 1 + 0.05 * Math.sin(frame * 0.12 + i * 1.6)
+                const d = 96
+                return (
+                  <div
+                    key={b.icon}
+                    style={{
+                      position: "absolute",
+                      left: gx + Math.cos(a) * orbit - d / 2,
+                      top: gy + Math.sin(a) * orbit - d / 2,
+                      width: d,
+                      height: d,
+                      borderRadius: "50%",
+                      background: b.bg,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      boxShadow: "edge" in b
+                        ? "inset 0 0 0 1px #EBDFE4, 0 6px 18px rgba(110,12,48,.12)"
+                        : "0 8px 20px rgba(110,12,48,.18)",
+                      transform: `scale(${appear * pulse})`,
+                      zIndex: 2,
+                    }}
+                  >
+                    <BadgeIcon kind={b.icon} color={b.fg} />
+                  </div>
+                )
+              })}
+            </>
+          )
+        })()}
         {/* Ícono: 276 → 178 px (outExpo) y 178 → 174 px, como escala de un ícono de 174 px */}
         <Interactive.Div
           name="Ícono"
